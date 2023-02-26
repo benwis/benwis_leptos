@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::error_template::{ErrorTemplate, ErrorTemplateProps};
 use cfg_if::cfg_if;
 use leptos::*;
@@ -6,81 +8,168 @@ use leptos_router::*;
 use serde::{Deserialize, Serialize};
 
 cfg_if! {
-    if #[cfg(feature = "ssr")] {
-        use sqlx::{Connection, SqliteConnection};
-        use bcrypt::{hash, verify, DEFAULT_COST};
-        use axum_login::{
-            axum_sessions::{async_session::MemoryStore, SessionLayer},
-            secrecy::SecretVec,
-            AuthLayer, AuthUser, RequireAuthorizationLayer, SqliteStore,
-        };
-        use crate::todo::db;
-        // use http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode};
+if #[cfg(feature = "ssr")] {
+    use sqlx::{Connection, SqliteConnection, SqlitePool};
+    use axum_sessions_auth::{SessionSqlitePool, Authentication, HasPermission};
+    use async_trait::async_trait;
+    use bcrypt::{hash, verify, DEFAULT_COST};
+    use crate::todo::db;
 
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow)]
-        pub struct User {
-            pub id: u16,
-            pub username: String,
-            pub password: String,
-        }
+    pub type AuthSession = axum_sessions_auth::AuthSession<User, u32, SessionSqlitePool, SqlitePool>;
+}}
 
-        pub type AuthContext = axum_login::extractors::AuthContext<User, SqliteStore<User>>;
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct User {
+    pub id: u32,
+    pub username: String,
+    pub password: String,
+    pub anonymous: bool,
+    pub permissions: HashSet<String>,
+}
+impl Default for User {
+    fn default() -> Self {
+        let mut permissions = HashSet::new();
 
-        impl AuthUser for User {
-            fn get_id(&self) -> String {
-                format!("{}", self.id)
-            }
+        permissions.insert("category:view".to_owned());
 
-            fn get_password_hash(&self) -> SecretVec<u8> {
-                SecretVec::new(self.password.clone().into())
-            }
-        }
-    } else {
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-        pub struct User {
-            pub id: u16,
-            pub username: String,
-            pub password: String,
+        Self {
+            id: 1,
+            anonymous: true,
+            username: "Guest".into(),
+            password: "".into(),
+            permissions,
         }
     }
 }
 
+cfg_if! {
+if #[cfg(feature = "ssr")] {
+
+    impl User {
+        pub async fn get_user(id: u32, pool: &SqlitePool) -> Option<Self> {
+            let sqluser = sqlx::query_as::<_, SqlUser>("SELECT * FROM users WHERE id = ?")
+                .bind(id)
+                .fetch_one(pool)
+                .await
+                .ok()?;
+
+            //lets just get all the tokens the user can use, we will only use the full permissions if modifing them.
+            let sql_user_perms = sqlx::query_as::<_, SqlPermissionTokens>(
+                "SELECT token FROM user_permissions WHERE user_id = ?;",
+            )
+            .bind(id)
+            .fetch_all(pool)
+            .await
+            .ok()?;
+
+            Some(sqluser.into_user(Some(sql_user_perms)))
+        }
+    }
+
+    #[derive(sqlx::FromRow, Clone)]
+    pub struct SqlPermissionTokens {
+        pub token: String,
+    }
+
+    #[async_trait]
+    impl Authentication<User, u32, SqlitePool> for User {
+        async fn load_user(userid: u32, pool: Option<&SqlitePool>) -> Result<User, anyhow::Error> {
+            let pool = pool.unwrap();
+
+            User::get_user(userid, pool)
+                .await
+                .ok_or_else(|| anyhow::anyhow!("Cannot get user"))
+        }
+
+        fn is_authenticated(&self) -> bool {
+            !self.anonymous
+        }
+
+        fn is_active(&self) -> bool {
+            !self.anonymous
+        }
+
+        fn is_anonymous(&self) -> bool {
+            self.anonymous
+        }
+    }
+
+    #[async_trait]
+    impl HasPermission<SqlitePool> for User {
+        async fn has(&self, perm: &str, _pool: &Option<&SqlitePool>) -> bool {
+            self.permissions.contains(perm)
+        }
+    }
+
+    #[derive(sqlx::FromRow, Clone)]
+    pub struct SqlUser {
+        pub id: u32,
+        pub anonymous: bool,
+        pub username: String,
+        pub password: String,
+    }
+
+    impl SqlUser {
+        pub fn into_user(self, sql_user_perms: Option<Vec<SqlPermissionTokens>>) -> User {
+            User {
+                id: self.id,
+                anonymous: self.anonymous,
+                username: self.username,
+                password: self.password,
+                permissions: if let Some(user_perms) = sql_user_perms {
+                    user_perms
+                        .into_iter()
+                        .map(|x| x.token)
+                        .collect::<HashSet<String>>()
+                } else {
+                    HashSet::<String>::new()
+                },
+            }
+        }
+    }
+}
+}
+
+#[server(Foo, "/api")]
+pub async fn foo() -> Result<String, ServerFnError> {
+    Ok(String::from("Bar!"))
+}
+
 #[server(GetUser, "/api")]
 pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
-    let mut auth = use_context::<AuthContext>(cx)
-        .ok_or("Auth context missing.")
+    let mut auth = use_context::<AuthSession>(cx)
+        .ok_or("Auth session missing.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    Ok(auth.current_user)
+    Ok(Some(User::default()))
 }
 
 #[server(Login, "/api")]
 pub async fn login(cx: Scope, username: String, password: String) -> Result<(), ServerFnError> {
     let mut conn = db().await?;
 
-    let user: Option<User> = sqlx::query_as::<_, User>("SELECT * FROM users WHERE username = ?")
-        .bind(username)
-        .fetch_optional(&mut conn)
-        .await
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    todo!();
 
-    let mut auth = use_context::<AuthContext>(cx)
-        .ok_or("Auth context missing.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    // let user: Option<User> = sqlx::query_as::<_, User>("SELECT * FROM users WHERE username = ?")
+    //     .bind(username)
+    //     .fetch_optional(&mut conn)
+    //     .await
+    //     .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    let user = user
-        .ok_or("User does not exist.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    // let mut auth = use_context::<AuthSession>(cx)
+    //     .ok_or("Auth session missing.")
+    //     .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    match verify(password, &user.password).map_err(|e| ServerFnError::ServerError(e.to_string()))? {
-        true => auth
-            .login(&user)
-            .await
-            .map_err(|e| ServerFnError::ServerError(e.to_string())),
-        false => Err(ServerFnError::ServerError(
-            "Password does not match.".to_string(),
-        )),
-    }
+    // let user = user
+    //     .ok_or("User does not exist.")
+    //     .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    // match verify(password, &user.password).map_err(|e| ServerFnError::ServerError(e.to_string()))? {
+    //     true => todo!(),
+    //     false => Err(ServerFnError::ServerError(
+    //         "Password does not match.".to_string(),
+    //     )),
+    // }
 }
 
 #[server(Signup, "/api")]
@@ -110,78 +199,14 @@ pub async fn signup(
     }
 }
 
-#[component]
-pub fn Signup(cx: Scope) -> impl IntoView {
-    let signup = create_server_action::<Signup>(cx);
-
-    view! {
-        cx,
-        <ActionForm action=signup>
-            <h1>"Sign Up"</h1>
-            <label>
-                "User ID:"
-                <input type="text" placeholder="User ID" maxlength="32" name="username" class="auth-input" />
-            </label>
-            <br/>
-            <label>
-                "Password:"
-                <input type="password" placeholder="Password" name="password" class="auth-input" />
-            </label>
-            <br/>
-            <label>
-                "Confirm Password:"
-                <input type="password" placeholder="Password again" name="password_confirmation" class="auth-input" />
-            </label>
-            <br/>
-            <button type="submit" class="button">"Sign Up"</button>
-        </ActionForm>
-    }
-}
-
-#[component]
-pub fn Login(cx: Scope) -> impl IntoView {
-    let login = create_server_action::<Login>(cx);
-
-    view! {
-        cx,
-        <ActionForm action=login>
-            <h1>"Log In"</h1>
-            <label>
-                "User ID:"
-                <input type="text" placeholder="User ID" maxlength="32" name="username" class="auth-input" />
-            </label>
-            <br/>
-            <label>
-                "Password:"
-                <input type="password" placeholder="Password" name="password" class="auth-input" />
-            </label>
-            <br/>
-            <button type="submit" class="button">"Log In"</button>
-        </ActionForm>
-    }
-}
-
 #[server(Logout, "/api")]
 pub async fn logout(cx: Scope) -> Result<(), ServerFnError> {
-    let mut auth = use_context::<AuthContext>(cx)
-        .ok_or("Auth context missing.")
+    let mut auth = use_context::<AuthSession>(cx)
+        .ok_or("Auth session missing.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    auth.logout().await;
+    todo!();
+    // auth.logout().await;
 
-    Ok(())
-}
-
-#[component]
-pub fn Logout(cx: Scope) -> impl IntoView {
-    let logout = create_server_action::<Logout>(cx);
-
-    view! {
-        cx,
-        <div id="loginbox">
-            <ActionForm action=logout>
-                <button type="submit" class="button">"Log Out"</button>
-            </ActionForm>
-        </div>
-    }
+    // Ok(())
 }

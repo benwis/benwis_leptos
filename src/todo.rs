@@ -11,11 +11,6 @@ cfg_if! {
         use sqlx::{Connection, SqliteConnection};
         // use http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode};
 
-        use axum_login::{
-            axum_sessions::SessionLayer,
-            secrecy::SecretVec,
-            AuthLayer, SqliteStore,
-        };
         pub async fn db() -> Result<SqliteConnection, ServerFnError> {
             SqliteConnection::connect("sqlite:Todos.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))
         }
@@ -27,6 +22,7 @@ cfg_if! {
             _ = Login::register();
             _ = Signup::register();
             _ = GetUser::register();
+            _ = Foo::register();
         }
 
         #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow)]
@@ -96,7 +92,7 @@ pub async fn add_todo(cx: Scope, title: String) -> Result<(), ServerFnError> {
 
     let id = match user {
         Some(user) => user.id,
-        None => 999,
+        None => User::default().id,
     };
 
     // fake API delay
@@ -136,19 +132,34 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/todo_app_sqlite_axum.css"/>
         <Router>
             <header>
-                <h1>"My Tasks"</h1>
-                <a href="/signup">"Signup"</a>", "
-                <a href="/login">"Login"</a>", "
+                <a href="/"><h1>"My Tasks"</h1></a>
                 <Suspense
                     fallback=move || view! {cx, <span>"Loading..."</span>}
                 >
-                    {move || {
-                        user.read(cx).map(|user| match user {
-                            Err(e) => view! {cx, <span>{format!("Login error: {}", e.to_string())}</span>}.into_any(),
-                            Ok(None) => view! {cx, <span>"Logged out."</span>}.into_any(),
-                            Ok(Some(user)) => view! {cx, <span>{format!("Logged in as: {}", user.username)}</span>}.into_any()
-                        })
-                    }}
+                {move || {
+                    user.read(cx).map(|user| match user {
+                        Err(e) => view! {cx,
+                            <a href="/signup">"Signup"</a>", "
+                            <a href="/login">"Login"</a>", "
+                            <span>{format!("Login error: {}", e.to_string())}</span>
+                        }.into_view(cx),
+                        Ok(None) => view! {cx,
+                            <a href="/signup">"Signup"</a>", "
+                            <a href="/login">"Login"</a>", "
+                            <span>"Logged out."</span>
+                        }.into_view(cx),
+                        Ok(Some(user)) if user.id == User::default().id => view! {cx,
+                            <a href="/signup">"Signup"</a>", "
+                            <a href="/login">"Login"</a>", "
+                            <a href="/settings">"Settings"</a>", "
+                            <span>{format!("Logged in as: {}", user.username)}</span>
+                        }.into_view(cx),
+                        Ok(Some(user)) => view! {cx,
+                            <a href="/settings">"Settings"</a>", "
+                            <span>{format!("Logged in as: {}", user.username)}</span>
+                        }.into_view(cx)
+                    })
+                }}
                 </Suspense>
             </header>
             <hr/>
@@ -167,6 +178,11 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
                     <Route path="login" view=|cx| view! {
                         cx,
                         <Login/>
+                    }/>
+                    <Route path="settings" view=|cx| view! {
+                        cx,
+                        <h1>"Settings"</h1>
+                        <Logout/>
                     }/>
                 </Routes>
             </main>
@@ -259,6 +275,71 @@ pub fn Todos(cx: Scope) -> impl IntoView {
                 }
             }
             </Transition>
+        </div>
+    }
+}
+
+#[component]
+pub fn Login(cx: Scope) -> impl IntoView {
+    let login = create_server_action::<Login>(cx);
+
+    view! {
+        cx,
+        <ActionForm action=login>
+            <h1>"Log In"</h1>
+            <label>
+                "User ID:"
+                <input type="text" placeholder="User ID" maxlength="32" name="username" class="auth-input" />
+            </label>
+            <br/>
+            <label>
+                "Password:"
+                <input type="password" placeholder="Password" name="password" class="auth-input" />
+            </label>
+            <br/>
+            <button type="submit" class="button">"Log In"</button>
+        </ActionForm>
+    }
+}
+
+#[component]
+pub fn Signup(cx: Scope) -> impl IntoView {
+    let signup = create_server_action::<Signup>(cx);
+
+    view! {
+        cx,
+        <ActionForm action=signup>
+            <h1>"Sign Up"</h1>
+            <label>
+                "User ID:"
+                <input type="text" placeholder="User ID" maxlength="32" name="username" class="auth-input" />
+            </label>
+            <br/>
+            <label>
+                "Password:"
+                <input type="password" placeholder="Password" name="password" class="auth-input" />
+            </label>
+            <br/>
+            <label>
+                "Confirm Password:"
+                <input type="password" placeholder="Password again" name="password_confirmation" class="auth-input" />
+            </label>
+            <br/>
+            <button type="submit" class="button">"Sign Up"</button>
+        </ActionForm>
+    }
+}
+
+#[component]
+pub fn Logout(cx: Scope) -> impl IntoView {
+    let logout = create_server_action::<Logout>(cx);
+
+    view! {
+        cx,
+        <div id="loginbox">
+            <ActionForm action=logout>
+                <button type="submit" class="button">"Log Out"</button>
+            </ActionForm>
         </div>
     }
 }
