@@ -1,15 +1,14 @@
 use cfg_if::cfg_if;
 use leptos::*;
+
 // boilerplate to run in different modes
 cfg_if! {
 if #[cfg(feature = "ssr")] {
     use axum::{
-        routing::{post, get},
-        response::{IntoResponse, Response},
-        extract::{Json, TypedHeader, Path, Extension, Query},
-        headers::UserAgent,
+        routing::post,
+        extract::{Path, Extension},
         http::{Request, header::HeaderMap},
-        body::{Bytes, Body},
+        body::Body,
         Router,
     };
     use crate::todo::*;
@@ -20,10 +19,9 @@ if #[cfg(feature = "ssr")] {
     use std::sync::Arc;
     use rand::Rng;
     use axum_login::{
-        axum_sessions::{async_session::MemoryStore, SessionLayer},
-        axum_sessions::extractors::{ ReadableSession, WritableSession },
+        axum_sessions::SessionLayer,
         secrecy::SecretVec,
-        AuthLayer, AuthUser, RequireAuthorizationLayer, SqliteStore,
+        AuthLayer, SqliteStore,
     };
     use async_sqlx_session::SqliteSessionStore;
     use sqlx::sqlite::SqlitePoolOptions;
@@ -31,7 +29,7 @@ if #[cfg(feature = "ssr")] {
 
     pub type AuthContext = axum_login::extractors::AuthContext<User, SqliteStore<User>>;
 
-    async fn server_fn_handler(mut auth_context: AuthContext, path: Path<String>, headers: HeaderMap, request: Request<Body>){
+    async fn server_fn_handler(auth_context: AuthContext, path: Path<String>, headers: HeaderMap, request: Request<Body>){
         handle_server_fns_with_context(path, headers, move |cx| {
             provide_context(cx, auth_context.clone());
         }, request).await;
@@ -53,7 +51,7 @@ if #[cfg(feature = "ssr")] {
         let session_store = SqliteSessionStore::new("sqlite:Todos.db")
             .await
             .expect("Could not make Sqlite session store");
-        session_store.migrate().await;
+        session_store.migrate().await.expect("Migration failed.");
         let session_layer = SessionLayer::new(session_store, &secret).with_secure(false);
 
         let pool = SqlitePoolOptions::new()

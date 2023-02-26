@@ -28,6 +28,7 @@ cfg_if! {
         pub struct Todo {
             id: u16,
             title: String,
+            created_at: String,
             completed: bool,
         }
     } else {
@@ -35,6 +36,7 @@ cfg_if! {
         pub struct Todo {
             id: u16,
             title: String,
+            created_at: String,
             completed: bool,
         }
     }
@@ -82,14 +84,22 @@ pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
 }
 
 #[server(AddTodo, "/api")]
-pub async fn add_todo(title: String) -> Result<(), ServerFnError> {
+pub async fn add_todo(cx: Scope, title: String) -> Result<(), ServerFnError> {
     let mut conn = db().await?;
+
+    let user = get_user(cx).await?;
+
+    let id = match user {
+        Some(user) => user.id,
+        None => 999,
+    };
 
     // fake API delay
     std::thread::sleep(std::time::Duration::from_millis(1250));
 
-    match sqlx::query("INSERT INTO todos (title, completed) VALUES ($1, false)")
+    match sqlx::query("INSERT INTO todos (title, user_id, completed) VALUES (?, ?, false)")
         .bind(title)
+        .bind(id)
         .execute(&mut conn)
         .await
     {
@@ -122,13 +132,13 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
             <header>
                 <h1>"My Tasks"</h1>
                 <a href="/signup">"Signup"</a>", "
-                <a href="/login">"Login"</a>
+                <a href="/login">"Login"</a>", "
                 <Suspense
                     fallback=move || view! {cx, <span>"Loading..."</span>}
                 >
                     {move || {
                         user.read(cx).map(|user| match user {
-                            Err(e) => view! {cx, <span>{e.to_string()}</span>}.into_any(),
+                            Err(e) => view! {cx, <span>{format!("Login error: {}", e.to_string())}</span>}.into_any(),
                             Ok(None) => view! {cx, <span>"Logged out."</span>}.into_any(),
                             Ok(Some(user)) => view! {cx, <span>{format!("Logged in as: {}", user.username)}</span>}.into_any()
                         })
@@ -201,6 +211,8 @@ pub fn Todos(cx: Scope) -> impl IntoView {
                                                         cx,
                                                         <li>
                                                             {todo.title}
+                                                            ": "
+                                                            {todo.created_at}
                                                             <ActionForm action=delete_todo>
                                                                 <input type="hidden" name="id" value={todo.id}/>
                                                                 <input type="submit" value="X"/>

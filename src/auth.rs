@@ -130,7 +130,7 @@ pub fn Signup(cx: Scope) -> impl IntoView {
             <br/>
             <label>
                 "Confirm Password:"
-                <input type="password" placeholder="Password again" name="password-confirmation" class="auth-input" />
+                <input type="password" placeholder="Password again" name="password_confirmation" class="auth-input" />
             </label>
             <br/>
             <button type="submit" class="button">"Sign Up"</button>
