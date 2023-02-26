@@ -21,6 +21,7 @@ cfg_if! {
             _ = DeleteTodo::register();
             _ = Login::register();
             _ = Signup::register();
+            _ = GetUser::register();
         }
 
         #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow)]
