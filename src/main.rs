@@ -5,10 +5,11 @@ use leptos::*;
 cfg_if! {
 if #[cfg(feature = "ssr")] {
     use axum::{
-        routing::post,
+        response::{Response, IntoResponse},
+        routing::{post, get},
         extract::{Path, Extension},
         http::{Request, header::HeaderMap},
-        body::Body,
+        body::Body as AxumBody,
         Router,
     };
     use crate::todo::*;
@@ -26,13 +27,21 @@ if #[cfg(feature = "ssr")] {
     use async_sqlx_session::SqliteSessionStore;
     use sqlx::sqlite::SqlitePoolOptions;
 
-
-    pub type AuthContext = axum_login::extractors::AuthContext<User, SqliteStore<User>>;
-
-    async fn server_fn_handler(auth_context: AuthContext, path: Path<String>, headers: HeaderMap, request: Request<Body>){
+    async fn server_fn_handler(auth_context: AuthContext, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>){
         handle_server_fns_with_context(path, headers, move |cx| {
             provide_context(cx, auth_context.clone());
         }, request).await;
+    }
+
+    async fn leptos_routes_handler(auth_context: AuthContext, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<AxumBody>) -> Response{
+            let handler = leptos_axum::render_app_to_stream_with_context((*options).clone(),
+            move |cx| {
+                // provide_context(cx, id.clone());
+                provide_context(cx, auth_context.clone())
+            },
+            |cx| view! { cx, <TodoApp/> }
+        );
+        handler(req).await.into_response()
     }
 
     #[tokio::main]
@@ -73,7 +82,7 @@ if #[cfg(feature = "ssr")] {
         // build our application with a route
         let app = Router::new()
         .route("/api/*fn_name", post(server_fn_handler))
-        .leptos_routes(leptos_options.clone(), routes, |cx| view! { cx, <TodoApp/> } )
+        .leptos_routes_with_handler(routes, get(leptos_routes_handler) )
         .fallback(file_and_error_handler)
         .layer(auth_layer)
         .layer(session_layer)

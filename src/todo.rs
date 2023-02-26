@@ -11,6 +11,11 @@ cfg_if! {
         use sqlx::{Connection, SqliteConnection};
         // use http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode};
 
+        use axum_login::{
+            axum_sessions::SessionLayer,
+            secrecy::SecretVec,
+            AuthLayer, SqliteStore,
+        };
         pub async fn db() -> Result<SqliteConnection, ServerFnError> {
             SqliteConnection::connect("sqlite:Todos.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))
         }
@@ -124,6 +129,7 @@ pub async fn delete_todo(id: u16) -> Result<(), ServerFnError> {
 pub fn TodoApp(cx: Scope) -> impl IntoView {
     let user = create_resource(cx, || (), move |_| get_user(cx));
     provide_meta_context(cx);
+
     view! {
         cx,
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
