@@ -18,12 +18,18 @@ pub struct Todo {
 cfg_if! {
 if #[cfg(feature = "ssr")] {
 
-    use async_trait::async_trait;
-    use sqlx::{sqlite::SqlitePoolOptions, SqlitePool, Connection, SqliteConnection};
-    // use http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode};
+    use sqlx::SqlitePool;
 
-    pub async fn db() -> Result<SqliteConnection, ServerFnError> {
-        SqliteConnection::connect("sqlite:Todos.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))
+    pub fn pool(cx: Scope) -> Result<SqlitePool, ServerFnError> {
+        Ok(use_context::<SqlitePool>(cx)
+            .ok_or("Pool missing.")
+            .map_err(|e| ServerFnError::ServerError(e.to_string()))?)
+    }
+
+    pub fn auth(cx: Scope) -> Result<AuthSession, ServerFnError> {
+        Ok(use_context::<AuthSession>(cx)
+            .ok_or("Auth session missing.")
+            .map_err(|e| ServerFnError::ServerError(e.to_string()))?)
     }
 
     pub fn register_server_functions() {
@@ -64,14 +70,10 @@ if #[cfg(feature = "ssr")] {
 pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
     use futures::TryStreamExt;
 
-    let mut conn = db().await?;
-    let pool = SqlitePoolOptions::new()
-        .connect("sqlite:Todos.db")
-        .await
-        .unwrap();
+    let pool = pool(cx)?;
 
     let mut todos = Vec::new();
-    let mut rows = sqlx::query_as::<_, SqlTodo>("SELECT * FROM todos").fetch(&mut conn);
+    let mut rows = sqlx::query_as::<_, SqlTodo>("SELECT * FROM todos").fetch(&pool);
 
     while let Some(row) = rows
         .try_next()
@@ -98,9 +100,8 @@ pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
 
 #[server(AddTodo, "/api")]
 pub async fn add_todo(cx: Scope, title: String) -> Result<(), ServerFnError> {
-    let mut conn = db().await?;
-
     let user = get_user(cx).await?;
+    let pool = pool(cx)?;
 
     let id = match user {
         Some(user) => user.id,
@@ -113,7 +114,7 @@ pub async fn add_todo(cx: Scope, title: String) -> Result<(), ServerFnError> {
     match sqlx::query("INSERT INTO todos (title, user_id, completed) VALUES (?, ?, false)")
         .bind(title)
         .bind(id)
-        .execute(&mut conn)
+        .execute(&pool)
         .await
     {
         Ok(_row) => Ok(()),
@@ -122,12 +123,12 @@ pub async fn add_todo(cx: Scope, title: String) -> Result<(), ServerFnError> {
 }
 
 #[server(DeleteTodo, "/api")]
-pub async fn delete_todo(id: u16) -> Result<(), ServerFnError> {
-    let mut conn = db().await?;
+pub async fn delete_todo(cx: Scope, id: u16) -> Result<(), ServerFnError> {
+    let pool = pool(cx)?;
 
     sqlx::query("DELETE FROM todos WHERE id = $1")
         .bind(id)
-        .execute(&mut conn)
+        .execute(&pool)
         .await
         .map(|_| ())
         .map_err(|e| ServerFnError::ServerError(e.to_string()))

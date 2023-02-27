@@ -7,11 +7,10 @@ use serde::{Deserialize, Serialize};
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
-    use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
+    use sqlx::SqlitePool;
     use axum_sessions_auth::{SessionSqlitePool, Authentication, HasPermission};
     use bcrypt::{hash, verify, DEFAULT_COST};
-    use crate::todo::db;
-
+    use crate::todo::{pool, auth};
     pub type AuthSession = axum_sessions_auth::AuthSession<User, i64, SessionSqlitePool, SqlitePool>;
 }}
 
@@ -149,9 +148,7 @@ pub async fn foo() -> Result<String, ServerFnError> {
 
 #[server(GetUser, "/api")]
 pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
-    let auth = use_context::<AuthSession>(cx)
-        .ok_or("Auth session missing.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    let auth = auth(cx)?;
 
     Ok(auth.current_user)
 }
@@ -163,23 +160,13 @@ pub async fn login(
     password: String,
     remember: Option<String>,
 ) -> Result<(), ServerFnError> {
-    let pool = SqlitePoolOptions::new()
-        .connect("sqlite:Todos.db")
-        .await
-        .unwrap();
+    let pool = pool(cx)?;
+    let auth = auth(cx)?;
 
     let user: User = User::get_from_username(username, &pool)
         .await
         .ok_or("User does not exist.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
-
-    let auth = use_context::<AuthSession>(cx)
-        .ok_or("Auth session missing.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
-
-    // let user = user
-    //     .ok_or("User does not exist.")
-    //     .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
     match verify(password, &user.password).map_err(|e| ServerFnError::ServerError(e.to_string()))? {
         true => {
@@ -202,7 +189,8 @@ pub async fn signup(
     password_confirmation: String,
     remember: Option<String>,
 ) -> Result<(), ServerFnError> {
-    let mut conn = db().await?;
+    let pool = pool(cx)?;
+    let auth = auth(cx)?;
 
     if password != password_confirmation {
         return Err(ServerFnError::ServerError(
@@ -215,18 +203,9 @@ pub async fn signup(
     sqlx::query("INSERT INTO users (username, password) VALUES (?,?)")
         .bind(username.clone())
         .bind(password_hashed)
-        .execute(&mut conn)
+        .execute(&pool)
         .await
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
-
-    let auth = use_context::<AuthSession>(cx)
-        .ok_or("Auth session missing.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
-
-    let pool = SqlitePoolOptions::new()
-        .connect("sqlite:Todos.db")
-        .await
-        .unwrap();
 
     let user = User::get_from_username(username, &pool)
         .await
@@ -243,9 +222,7 @@ pub async fn signup(
 
 #[server(Logout, "/api")]
 pub async fn logout(cx: Scope) -> Result<(), ServerFnError> {
-    let auth = use_context::<AuthSession>(cx)
-        .ok_or("Auth session missing.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    let auth = auth(cx)?;
 
     auth.logout_user();
     leptos_axum::redirect(cx, "/");
