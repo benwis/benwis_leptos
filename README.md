@@ -1,6 +1,6 @@
-# Leptos Todo App Sqlite with Axum
+# Leptos Authenticated Todo App Sqlite with Axum
 
-This example creates a basic todo app with an Axum backend that uses Leptos' server functions to call sqlx from the client and seamlessly run it on the server.
+This example creates a basic todo app with an Axum backend that uses Leptos' server functions to call sqlx from the client and seamlessly run it on the server. It lets you login, signup, and submit todos as different users, or a guest.
 
 ## Client Side Rendering
 This example cannot be built as a trunk standalone CSR-only app. Only the server may directly connect to the database.
