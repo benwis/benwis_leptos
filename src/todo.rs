@@ -6,59 +6,73 @@ use leptos_meta::*;
 use leptos_router::*;
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Todo {
+    id: u32,
+    user: Option<User>,
+    title: String,
+    created_at: String,
+    completed: bool,
+}
+
 cfg_if! {
-    if #[cfg(feature = "ssr")] {
-        use sqlx::{Connection, SqliteConnection};
-        // use http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode};
+if #[cfg(feature = "ssr")] {
 
-        pub async fn db() -> Result<SqliteConnection, ServerFnError> {
-            SqliteConnection::connect("sqlite:Todos.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))
-        }
+    use async_trait::async_trait;
+    use sqlx::{sqlite::SqlitePoolOptions, SqlitePool, Connection, SqliteConnection};
+    // use http::{header::SET_COOKIE, HeaderMap, HeaderValue, StatusCode};
 
-        pub fn register_server_functions() {
-            _ = GetTodos::register();
-            _ = AddTodo::register();
-            _ = DeleteTodo::register();
-            _ = Login::register();
-            _ = Signup::register();
-            _ = GetUser::register();
-            _ = Foo::register();
-        }
+    pub async fn db() -> Result<SqliteConnection, ServerFnError> {
+        SqliteConnection::connect("sqlite:Todos.db").await.map_err(|e| ServerFnError::ServerError(e.to_string()))
+    }
 
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, sqlx::FromRow)]
-        pub struct Todo {
-            id: u16,
-            title: String,
-            created_at: String,
-            completed: bool,
-        }
-    } else {
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-        pub struct Todo {
-            id: u16,
-            title: String,
-            created_at: String,
-            completed: bool,
+    pub fn register_server_functions() {
+        _ = GetTodos::register();
+        _ = AddTodo::register();
+        _ = DeleteTodo::register();
+        _ = Login::register();
+        _ = Logout::register();
+        _ = Signup::register();
+        _ = GetUser::register();
+        _ = Foo::register();
+    }
+
+    #[derive(sqlx::FromRow, Clone)]
+    pub struct SqlTodo {
+        id: u32,
+        user_id: i64,
+        title: String,
+        created_at: String,
+        completed: bool,
+    }
+
+    impl SqlTodo {
+        pub async fn into_todo(self, pool: &SqlitePool) -> Todo {
+            Todo {
+                id: self.id,
+                user: User::get(self.user_id, pool).await,
+                title: self.title,
+                created_at: self.created_at,
+                completed: self.completed,
+            }
         }
     }
+}
 }
 
 #[server(GetTodos, "/api")]
 pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
-    // this is just an example of how to access server context injected in the handlers
-    // http::Request doesn't implement Clone, so more work will be needed to do use_context() on this
-    let req_parts = use_context::<leptos_axum::RequestParts>(cx);
-
-    if let Some(req_parts) = req_parts {
-        println!("Uri = {:?}", req_parts.uri);
-    }
-
     use futures::TryStreamExt;
 
     let mut conn = db().await?;
+    let pool = SqlitePoolOptions::new()
+        .connect("sqlite:Todos.db")
+        .await
+        .unwrap();
 
     let mut todos = Vec::new();
-    let mut rows = sqlx::query_as::<_, Todo>("SELECT * FROM todos").fetch(&mut conn);
+    let mut rows = sqlx::query_as::<_, SqlTodo>("SELECT * FROM todos").fetch(&mut conn);
+
     while let Some(row) = rows
         .try_next()
         .await
@@ -67,19 +81,17 @@ pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
         todos.push(row);
     }
 
-    // Add a random header(because why not)
-    // let mut res_headers = HeaderMap::new();
-    // res_headers.insert(SET_COOKIE, HeaderValue::from_str("fizz=buzz").unwrap());
+    // why can't we just have async closures?
+    // let mut rows: Vec<Todo> = rows.iter().map(|t| async { t }).collect();
 
-    // let res_parts = leptos_axum::ResponseParts {
-    //     headers: res_headers,
-    //     status: Some(StatusCode::IM_A_TEAPOT),
-    // };
+    let mut converted_todos = Vec::with_capacity(todos.len());
 
-    // let res_options_outer = use_context::<leptos_axum::ResponseOptions>(cx);
-    // if let Some(res_options) = res_options_outer {
-    //     res_options.overwrite(res_parts).await;
-    // }
+    for t in todos {
+        let todo = t.into_todo(&pool).await;
+        converted_todos.push(todo);
+    }
+
+    let mut todos: Vec<Todo> = converted_todos;
 
     Ok(todos)
 }
@@ -92,7 +104,7 @@ pub async fn add_todo(cx: Scope, title: String) -> Result<(), ServerFnError> {
 
     let id = match user {
         Some(user) => user.id,
-        None => User::default().id,
+        None => -1,
     };
 
     // fake API delay
@@ -123,7 +135,14 @@ pub async fn delete_todo(id: u16) -> Result<(), ServerFnError> {
 
 #[component]
 pub fn TodoApp(cx: Scope) -> impl IntoView {
-    let user = create_resource(cx, || (), move |_| get_user(cx));
+    let login = create_server_action::<Login>(cx);
+    let logout = create_server_action::<Logout>(cx);
+
+    let user = create_resource(
+        cx,
+        move || (login.version().get(), logout.version().get()),
+        move |_| get_user(cx),
+    );
     provide_meta_context(cx);
 
     view! {
@@ -132,35 +151,31 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
         <Stylesheet id="leptos" href="/pkg/todo_app_sqlite_axum.css"/>
         <Router>
             <header>
-                <a href="/"><h1>"My Tasks"</h1></a>
-                <Suspense
+                <A href="/"><h1>"My Tasks"</h1></A>
+                <Transition
                     fallback=move || view! {cx, <span>"Loading..."</span>}
                 >
                 {move || {
                     user.read(cx).map(|user| match user {
                         Err(e) => view! {cx,
-                            <a href="/signup">"Signup"</a>", "
-                            <a href="/login">"Login"</a>", "
+                            <A href="/signup">"Signup"</A>", "
+                            <A href="/login">"Login"</A>", "
                             <span>{format!("Login error: {}", e.to_string())}</span>
                         }.into_view(cx),
                         Ok(None) => view! {cx,
-                            <a href="/signup">"Signup"</a>", "
-                            <a href="/login">"Login"</a>", "
+                            <A href="/signup">"Signup"</A>", "
+                            <A href="/login">"Login"</A>", "
                             <span>"Logged out."</span>
                         }.into_view(cx),
-                        Ok(Some(user)) if user.id == User::default().id => view! {cx,
-                            <a href="/signup">"Signup"</a>", "
-                            <a href="/login">"Login"</a>", "
-                            <a href="/settings">"Settings"</a>", "
-                            <span>{format!("Logged in as: {}", user.username)}</span>
-                        }.into_view(cx),
                         Ok(Some(user)) => view! {cx,
-                            <a href="/settings">"Settings"</a>", "
-                            <span>{format!("Logged in as: {}", user.username)}</span>
+                            <A href="/signup">"Signup"</A>", "
+                            <A href="/login">"Login"</A>", "
+                            <A href="/settings">"Settings"</A>", "
+                            <span>{format!("Logged in as: {} ({})", user.username, user.id)}</span>
                         }.into_view(cx)
                     })
                 }}
-                </Suspense>
+                </Transition>
             </header>
             <hr/>
             <main>
@@ -177,12 +192,12 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
                     }/>
                     <Route path="login" view=|cx| view! {
                         cx,
-                        <Login/>
+                        <Login action=login />
                     }/>
                     <Route path="settings" view=|cx| view! {
                         cx,
                         <h1>"Settings"</h1>
-                        <Logout/>
+                        <Logout action=logout/>
                     }/>
                 </Routes>
             </main>
@@ -233,8 +248,12 @@ pub fn Todos(cx: Scope) -> impl IntoView {
                                                         cx,
                                                         <li>
                                                             {todo.title}
-                                                            ": "
+                                                            ": Created at "
                                                             {todo.created_at}
+                                                            " by "
+                                                            {
+                                                                todo.user.unwrap_or_default().username
+                                                            }
                                                             <ActionForm action=delete_todo>
                                                                 <input type="hidden" name="id" value={todo.id}/>
                                                                 <input type="submit" value="X"/>
@@ -280,12 +299,10 @@ pub fn Todos(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn Login(cx: Scope) -> impl IntoView {
-    let login = create_server_action::<Login>(cx);
-
+pub fn Login(cx: Scope, action: Action<Login, Result<(), ServerFnError>>) -> impl IntoView {
     view! {
         cx,
-        <ActionForm action=login>
+        <ActionForm action=action>
             <h1>"Log In"</h1>
             <label>
                 "User ID:"
@@ -331,13 +348,13 @@ pub fn Signup(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn Logout(cx: Scope) -> impl IntoView {
-    let logout = create_server_action::<Logout>(cx);
+pub fn Logout(cx: Scope, action: Action<Logout, Result<(), ServerFnError>>) -> impl IntoView {
+    let user = create_resource(cx, || (), move |_| get_user(cx));
 
     view! {
         cx,
         <div id="loginbox">
-            <ActionForm action=logout>
+            <ActionForm action=action>
                 <button type="submit" class="button">"Log Out"</button>
             </ActionForm>
         </div>

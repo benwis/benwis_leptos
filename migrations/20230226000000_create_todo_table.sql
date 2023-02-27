@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
   id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  anonymous  BOOLEAN NOT NULL,
-  username   TEXT NOT NULL,
+  username   TEXT NOT NULL UNIQUE,
   password   TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -11,11 +10,11 @@ CREATE TABLE IF NOT EXISTS user_permissions (
     token    TEXT NOT NULL
 );
 
-INSERT INTO users (id, anonymous, username, password) 
-SELECT 0, true, 'Guest', ''
-ON CONFLICT(id) DO UPDATE SET
-    anonymous = EXCLUDED.anonymous,
-    username = EXCLUDED.username;
+-- INSERT INTO users (id, anonymous, username, password) 
+-- SELECT 0, true, 'Guest', ''
+-- ON CONFLICT(id) DO UPDATE SET
+--     anonymous = EXCLUDED.anonymous,
+--     username = EXCLUDED.username;
 
 
 CREATE TABLE IF NOT EXISTS todos (

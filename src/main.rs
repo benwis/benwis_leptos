@@ -23,13 +23,13 @@ if #[cfg(feature = "ssr")] {
     use axum_database_sessions::{SessionConfig, SessionLayer, SessionStore};
     use axum_sessions_auth::{AuthSessionLayer, Authentication, AuthConfig, SessionSqlitePool};
 
-    async fn server_fn_handler(auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>){
+    async fn server_fn_handler(auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
 
         log!("{:?}", path);
 
         handle_server_fns_with_context(path, headers, move |cx| {
             provide_context(cx, auth_session.clone());
-        }, request).await;
+        }, request).await
     }
 
     async fn leptos_routes_handler(auth_session: AuthSession, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<AxumBody>) -> Response{
@@ -45,7 +45,7 @@ if #[cfg(feature = "ssr")] {
 
     #[tokio::main]
     async fn main() {
-        simple_logger::init_with_level(log::Level::Debug).expect("couldn't initialize logging");
+        simple_logger::init_with_level(log::Level::Info).expect("couldn't initialize logging");
 
         // let secret = rand::thread_rng().gen::<[u8; 64]>();
 
@@ -58,7 +58,7 @@ if #[cfg(feature = "ssr")] {
 
         // Auth section
         let session_config = SessionConfig::default().with_table_name("axum_sessions_list");
-        let auth_config = AuthConfig::<u32>::default().with_anonymous_user_id(Some(1));
+        let auth_config = AuthConfig::<i64>::default();
         let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config);
 
         session_store.initiate().await.unwrap();
@@ -88,12 +88,12 @@ if #[cfg(feature = "ssr")] {
 
         // build our application with a route
         let app = Router::new()
-        .route("/api/*fn_name", post(server_fn_handler))
+        .route("/api/*fn_name", get(server_fn_handler).post(server_fn_handler))
         .leptos_routes_with_handler(routes, get(leptos_routes_handler) )
         .fallback(file_and_error_handler)
         .layer(
                 AuthSessionLayer
-                ::<User, u32, SessionSqlitePool, SqlitePool>
+                ::<User, i64, SessionSqlitePool, SqlitePool>
                 ::new(Some(pool))
                     .with_config(auth_config),
             )
