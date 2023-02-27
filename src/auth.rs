@@ -1,17 +1,14 @@
 use std::collections::HashSet;
 
-use crate::error_template::{ErrorTemplate, ErrorTemplateProps};
 use cfg_if::cfg_if;
 use leptos::*;
-use leptos_meta::*;
-use leptos_router::*;
+
 use serde::{Deserialize, Serialize};
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
-    use sqlx::{sqlite::SqlitePoolOptions, Connection, SqliteConnection, SqlitePool};
+    use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
     use axum_sessions_auth::{SessionSqlitePool, Authentication, HasPermission};
-    use async_trait::async_trait;
     use bcrypt::{hash, verify, DEFAULT_COST};
     use crate::todo::db;
 
@@ -41,6 +38,7 @@ impl Default for User {
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
+    use async_trait::async_trait;
 
     impl User {
         pub async fn get(id: i64, pool: &SqlitePool) -> Option<Self> {
@@ -221,7 +219,7 @@ pub async fn signup(
         .await
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    let mut auth = use_context::<AuthSession>(cx)
+    let auth = use_context::<AuthSession>(cx)
         .ok_or("Auth session missing.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
@@ -245,13 +243,9 @@ pub async fn signup(
 
 #[server(Logout, "/api")]
 pub async fn logout(cx: Scope) -> Result<(), ServerFnError> {
-    let mut auth = use_context::<AuthSession>(cx)
+    let auth = use_context::<AuthSession>(cx)
         .ok_or("Auth session missing.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
-
-    let user = auth.current_user.as_ref().ok_or_else(|| {
-        ServerFnError::ServerError("Can't logout without a logged in user!".to_string())
-    })?;
 
     auth.logout_user();
     leptos_axum::redirect(cx, "/");

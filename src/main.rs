@@ -1,5 +1,4 @@
 use cfg_if::cfg_if;
-use leptos::*;
 
 // boilerplate to run in different modes
 cfg_if! {
@@ -17,11 +16,11 @@ if #[cfg(feature = "ssr")] {
     use todo_app_sqlite_axum::*;
     use crate::fallback::file_and_error_handler;
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
+    use leptos::{log, view, provide_context, LeptosOptions, get_configuration};
     use std::sync::Arc;
-    use rand::Rng;
     use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
     use axum_database_sessions::{SessionConfig, SessionLayer, SessionStore};
-    use axum_sessions_auth::{AuthSessionLayer, Authentication, AuthConfig, SessionSqlitePool};
+    use axum_sessions_auth::{AuthSessionLayer, AuthConfig, SessionSqlitePool};
 
     async fn server_fn_handler(auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
 
@@ -88,7 +87,7 @@ if #[cfg(feature = "ssr")] {
 
         // build our application with a route
         let app = Router::new()
-        .route("/api/*fn_name", get(server_fn_handler).post(server_fn_handler))
+        .route("/api/*fn_name", post(server_fn_handler))
         .leptos_routes_with_handler(routes, get(leptos_routes_handler) )
         .fallback(file_and_error_handler)
         .layer(

@@ -91,7 +91,7 @@ pub async fn get_todos(cx: Scope) -> Result<Vec<Todo>, ServerFnError> {
         converted_todos.push(todo);
     }
 
-    let mut todos: Vec<Todo> = converted_todos;
+    let todos: Vec<Todo> = converted_todos;
 
     Ok(todos)
 }
