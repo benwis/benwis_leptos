@@ -159,7 +159,12 @@ pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
 }
 
 #[server(Login, "/api")]
-pub async fn login(cx: Scope, username: String, password: String) -> Result<(), ServerFnError> {
+pub async fn login(
+    cx: Scope,
+    username: String,
+    password: String,
+    remember: Option<String>,
+) -> Result<(), ServerFnError> {
     let pool = SqlitePoolOptions::new()
         .connect("sqlite:Todos.db")
         .await
@@ -181,6 +186,7 @@ pub async fn login(cx: Scope, username: String, password: String) -> Result<(), 
     match verify(password, &user.password).map_err(|e| ServerFnError::ServerError(e.to_string()))? {
         true => {
             auth.login_user(user.id);
+            auth.remember_user(remember.is_some());
             leptos_axum::redirect(cx, "/");
             Ok(())
         }
@@ -196,6 +202,7 @@ pub async fn signup(
     username: String,
     password: String,
     password_confirmation: String,
+    remember: Option<String>,
 ) -> Result<(), ServerFnError> {
     let mut conn = db().await?;
 
@@ -229,6 +236,7 @@ pub async fn signup(
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
     auth.login_user(user.id);
+    auth.remember_user(remember.is_some());
 
     leptos_axum::redirect(cx, "/");
 

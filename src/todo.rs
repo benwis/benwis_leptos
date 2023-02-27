@@ -319,6 +319,11 @@ pub fn Login(cx: Scope, action: Action<Login, Result<(), ServerFnError>>) -> imp
                 <input type="password" placeholder="Password" name="password" class="auth-input" />
             </label>
             <br/>
+            <label>
+                <input type="checkbox" name="remember" class="auth-input" />
+                "Remember me?"
+            </label>
+            <br/>
             <button type="submit" class="button">"Log In"</button>
         </ActionForm>
     }
@@ -344,6 +349,12 @@ pub fn Signup(cx: Scope, action: Action<Signup, Result<(), ServerFnError>>) -> i
                 "Confirm Password:"
                 <input type="password" placeholder="Password again" name="password_confirmation" class="auth-input" />
             </label>
+            <br/>
+            <label>
+                "Remember me?"
+                <input type="checkbox" name="remember" class="auth-input" />
+            </label>
+
             <br/>
             <button type="submit" class="button">"Sign Up"</button>
         </ActionForm>
