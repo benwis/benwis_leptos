@@ -2276,6 +2276,42 @@ dependencies = [
 ]
 
 [[package]]
+name = "session_auth_axum"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum",
+ "axum_database_sessions",
+ "axum_sessions_auth",
+ "bcrypt",
+ "cfg-if",
+ "console_error_panic_hook",
+ "console_log",
+ "futures 0.3.26",
+ "gloo-net",
+ "http",
+ "leptos",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_reactive",
+ "leptos_router",
+ "log",
+ "rand",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "simple_logger",
+ "sqlx",
+ "thiserror",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "wasm-bindgen",
+]
+
+[[package]]
 name = "sha1"
 version = "0.10.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2619,42 +2655,6 @@ name = "tinyvec_macros"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
-
-[[package]]
-name = "todo_app_sqlite_axum"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "axum",
- "axum_database_sessions",
- "axum_sessions_auth",
- "bcrypt",
- "cfg-if",
- "console_error_panic_hook",
- "console_log",
- "futures 0.3.26",
- "gloo-net",
- "http",
- "leptos",
- "leptos_axum",
- "leptos_meta",
- "leptos_reactive",
- "leptos_router",
- "log",
- "rand",
- "reqwest",
- "serde",
- "serde_json",
- "simple_logger",
- "sqlx",
- "thiserror",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "wasm-bindgen",
-]
 
 [[package]]
 name = "tokio"
