@@ -207,15 +207,32 @@ pub async fn signup(
 
     let password_hashed = hash(password, DEFAULT_COST).unwrap();
 
-    match sqlx::query("INSERT INTO users (username, password) VALUES (?,?)")
-        .bind(username)
+    sqlx::query("INSERT INTO users (username, password) VALUES (?,?)")
+        .bind(username.clone())
         .bind(password_hashed)
         .execute(&mut conn)
         .await
-    {
-        Ok(_row) => Ok(leptos_axum::redirect(cx, "/login")),
-        Err(e) => Err(ServerFnError::ServerError(e.to_string())),
-    }
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    let mut auth = use_context::<AuthSession>(cx)
+        .ok_or("Auth session missing.")
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    let pool = SqlitePoolOptions::new()
+        .connect("sqlite:Todos.db")
+        .await
+        .unwrap();
+
+    let user = User::get_from_username(username, &pool)
+        .await
+        .ok_or("Signup failed: User does not exist.")
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+
+    auth.login_user(user.id);
+
+    leptos_axum::redirect(cx, "/");
+
+    Ok(())
 }
 
 #[server(Logout, "/api")]

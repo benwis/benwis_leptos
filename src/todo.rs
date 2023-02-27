@@ -137,10 +137,17 @@ pub async fn delete_todo(id: u16) -> Result<(), ServerFnError> {
 pub fn TodoApp(cx: Scope) -> impl IntoView {
     let login = create_server_action::<Login>(cx);
     let logout = create_server_action::<Logout>(cx);
+    let signup = create_server_action::<Signup>(cx);
 
     let user = create_resource(
         cx,
-        move || (login.version().get(), logout.version().get()),
+        move || {
+            (
+                login.version().get(),
+                signup.version().get(),
+                logout.version().get(),
+            )
+        },
         move |_| get_user(cx),
     );
     provide_meta_context(cx);
@@ -168,8 +175,6 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
                             <span>"Logged out."</span>
                         }.into_view(cx),
                         Ok(Some(user)) => view! {cx,
-                            <A href="/signup">"Signup"</A>", "
-                            <A href="/login">"Login"</A>", "
                             <A href="/settings">"Settings"</A>", "
                             <span>{format!("Logged in as: {} ({})", user.username, user.id)}</span>
                         }.into_view(cx)
@@ -186,18 +191,18 @@ pub fn TodoApp(cx: Scope) -> impl IntoView {
                             <Todos/>
                         </ErrorBoundary>
                     }/> //Route
-                    <Route path="signup" view=|cx| view! {
+                    <Route path="signup" view=move |cx| view! {
                         cx,
-                        <Signup/>
+                        <Signup action=signup/>
                     }/>
-                    <Route path="login" view=|cx| view! {
+                    <Route path="login" view=move |cx| view! {
                         cx,
                         <Login action=login />
                     }/>
-                    <Route path="settings" view=|cx| view! {
+                    <Route path="settings" view=move |cx| view! {
                         cx,
                         <h1>"Settings"</h1>
-                        <Logout action=logout/>
+                        <Logout action=logout />
                     }/>
                 </Routes>
             </main>
@@ -320,12 +325,10 @@ pub fn Login(cx: Scope, action: Action<Login, Result<(), ServerFnError>>) -> imp
 }
 
 #[component]
-pub fn Signup(cx: Scope) -> impl IntoView {
-    let signup = create_server_action::<Signup>(cx);
-
+pub fn Signup(cx: Scope, action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView {
     view! {
         cx,
-        <ActionForm action=signup>
+        <ActionForm action=action>
             <h1>"Sign Up"</h1>
             <label>
                 "User ID:"
@@ -349,8 +352,6 @@ pub fn Signup(cx: Scope) -> impl IntoView {
 
 #[component]
 pub fn Logout(cx: Scope, action: Action<Logout, Result<(), ServerFnError>>) -> impl IntoView {
-    let user = create_resource(cx, || (), move |_| get_user(cx));
-
     view! {
         cx,
         <div id="loginbox">
