@@ -32,7 +32,7 @@ if #[cfg(feature = "ssr")] {
         }, request).await
     }
 
-    async fn leptos_routes_handler(pool: Extension<SqlitePool>, auth_session: AuthSession, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<AxumBody>) -> Response{
+    async fn leptos_routes_handler(Extension(pool): Extension<SqlitePool>, auth_session: AuthSession, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<AxumBody>) -> Response{
             let handler = leptos_axum::render_app_to_stream_with_context((*options).clone(),
             move |cx| {
                 provide_context(cx, auth_session.clone());
