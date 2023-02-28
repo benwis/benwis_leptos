@@ -15,7 +15,3 @@ playwright/.cache/
 # made by j0
 /.sass-cache/
 /.direnv/
-
-*.db
-*.db-shm
-*.db-wal
