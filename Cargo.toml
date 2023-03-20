@@ -44,15 +44,16 @@ async-trait = { version = "0.1.64", optional = true }
 miette = "5.6.0"
 axum-extra = { version = "0.7.1", features = ["cookie"] }
 web-sys = { version = "0.3.61", features = ["HtmlDocument"] }
+femark = { path="../femark", optional = true }
 
 [features]
 default = ["csr"]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = ["dep:axum", "dep:tower", "dep:tower-http", "dep:tokio", "dep:axum_sessions_auth", "dep:axum_database_sessions", "dep:async-trait", "dep:sqlx", "dep:bcrypt", "dep:rand", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum"]
+ssr = ["dep:axum", "dep:tower", "dep:tower-http", "dep:tokio", "dep:axum_sessions_auth", "dep:axum_database_sessions", "dep:async-trait", "dep:sqlx", "dep:bcrypt", "dep:femark", "dep:rand", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum"]
 
 [package.metadata.cargo-all-features]
-denylist = ["axum", "tower", "tower-http", "tokio", "sqlx", "leptos_axum"]
+denylist = ["axum", "tower", "tower-http", "tokio", "sqlx", "leptos_axum", "femark"]
 skip_feature_sets = [["csr", "ssr"], ["csr", "hydrate"], ["ssr", "hydrate"]]
 
 [package.metadata.leptos]
