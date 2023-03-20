@@ -1,19 +1,20 @@
 use http::status::StatusCode;
+use miette::Diagnostic;
 use thiserror::Error;
 
-#[derive(Debug, Clone, Error)]
-pub enum TodoAppError {
+#[derive(Debug, Clone, Error, Diagnostic)]
+pub enum BenwisAppError {
     #[error("Not Found")]
     NotFound,
     #[error("Internal Server Error")]
     InternalServerError,
 }
 
-impl TodoAppError {
+impl BenwisAppError {
     pub fn status_code(&self) -> StatusCode {
         match self {
-            TodoAppError::NotFound => StatusCode::NOT_FOUND,
-            TodoAppError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            BenwisAppError::NotFound => StatusCode::NOT_FOUND,
+            BenwisAppError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }

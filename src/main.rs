@@ -11,16 +11,17 @@ if #[cfg(feature = "ssr")] {
         body::Body as AxumBody,
         Router,
     };
-    use session_auth_axum::todo::*;
-    use session_auth_axum::auth::*;
-    use session_auth_axum::*;
-    use session_auth_axum::fallback::file_and_error_handler;
+    use benwis_leptos::*;
+    use benwis_leptos::fallback::file_and_error_handler;
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
     use leptos::{log, view, provide_context, LeptosOptions, get_configuration, ServerFnError};
     use std::sync::Arc;
     use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
     use axum_database_sessions::{SessionConfig, SessionLayer, SessionStore};
     use axum_sessions_auth::{AuthSessionLayer, AuthConfig, SessionSqlitePool};
+    use crate::functions::auth::{AuthSession};
+    use crate::app::*;
+    use crate::models::User;
 
     async fn server_fn_handler(Extension(pool): Extension<SqlitePool>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
 
@@ -38,7 +39,7 @@ if #[cfg(feature = "ssr")] {
                 provide_context(cx, auth_session.clone());
                 provide_context(cx, pool.clone());
             },
-            |cx| view! { cx, <TodoApp/> }
+            |cx| view! { cx, <BenwisApp/> }
         );
         handler(req).await.into_response()
     }
@@ -63,13 +64,13 @@ if #[cfg(feature = "ssr")] {
             .await
             .expect("could not run SQLx migrations");
 
-        crate::todo::register_server_functions();
+        crate::functions::register_server_functions();
 
         // Setting this to None means we'll be using cargo-leptos and its env vars
         let conf = get_configuration(None).await.unwrap();
         let leptos_options = conf.leptos_options;
         let addr = leptos_options.site_addr;
-        let routes = generate_route_list(|cx| view! { cx, <TodoApp/> }).await;
+        let routes = generate_route_list(|cx| view! { cx, <BenwisApp/> }).await;
 
         // build our application with a route
         let app = Router::new()

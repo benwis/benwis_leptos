@@ -1,5 +1,5 @@
 [package]
-name = "session_auth_axum"
+name = "benwis_leptos"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,22 +13,18 @@ rand = { version = "0.8.5", features = ["min_const_gen"], optional = true }
 console_error_panic_hook = "0.1.7"
 futures = "0.3.25"
 cfg-if = "1.0.0"
-leptos = { version = "0.2.0", default-features = false, features = [
-  "serde",
+leptos = { git="https://github.com/leptos-rs/leptos", default-features = false, features = [
+	"serde",
 ] }
-leptos_meta = { version = "0.2.0", default-features = false }
-leptos_axum = { version = "0.2.0", optional = true }
-leptos_router = { version = "0.2.0", default-features = false }
-leptos_reactive = { version = "0.2.0", default-features = false }
+leptos_meta = { git="https://github.com/leptos-rs/leptos", default-features = false }
+leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true }
+leptos_router = {  git="https://github.com/leptos-rs/leptos", default-features = false }
 log = "0.4.17"
 simple_logger = "4.0.0"
 serde = { version = "1.0.148", features = ["derive"] }
-serde_json = "1.0.89"
-gloo-net = { version = "0.2.5", features = ["http"] }
-reqwest = { version = "0.11.13", features = ["json"] }
 axum = { version = "0.6.1", optional = true }
 tower = { version = "0.4.13", optional = true }
-tower-http = { version = "0.3.4", features = ["fs"], optional = true }
+tower-http = { version = "0.4", features = ["fs"], optional = true }
 tokio = { version = "1.22.0", features = ["full"], optional = true }
 http = { version = "0.2.8" }
 sqlx = { version = "0.6.2", features = [
@@ -36,33 +32,22 @@ sqlx = { version = "0.6.2", features = [
 	"sqlite",
 ], optional = true }
 thiserror = "1.0.38"
-tracing = "0.1.37"
 wasm-bindgen = "0.2"
-axum_sessions_auth = { version = "7.0.0", features = [ "sqlite-rustls" ], optional = true }
-axum_database_sessions = { version = "7.0.0", features = [ "sqlite-rustls" ], optional = true }
+axum_sessions_auth = { version = "7.0.0", features = [
+	"sqlite-rustls",
+], optional = true }
+axum_database_sessions = { version = "7.0.0", features = [
+	"sqlite-rustls",
+], optional = true }
 bcrypt = { version = "0.14", optional = true }
-async-trait = {version = "0.1.64", optional = true }
+async-trait = { version = "0.1.64", optional = true }
+miette = "5.6.0"
 
 [features]
 default = ["csr"]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = [
-	"dep:axum",
-	"dep:tower",
-	"dep:tower-http",
-	"dep:tokio",
-	"dep:axum_sessions_auth",
-	"dep:axum_database_sessions",
-	"dep:async-trait",
-	"dep:sqlx",
-	"dep:bcrypt",
-	"dep:rand",
-	"leptos/ssr",
-	"leptos_meta/ssr",
-	"leptos_router/ssr",
-	"dep:leptos_axum",
-]
+ssr = ["dep:axum", "dep:tower", "dep:tower-http", "dep:tokio", "dep:axum_sessions_auth", "dep:axum_database_sessions", "dep:async-trait", "dep:sqlx", "dep:bcrypt", "dep:rand", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum"]
 
 [package.metadata.cargo-all-features]
 denylist = ["axum", "tower", "tower-http", "tokio", "sqlx", "leptos_axum"]
