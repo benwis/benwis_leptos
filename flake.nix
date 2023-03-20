@@ -23,12 +23,12 @@
               pkg-config
             ];
             buildInputs = [
-              trunk
               sqlite
-              sass
+              nodejs
+              nodePackages.tailwindcss
               openssl
               (rust-bin.nightly.latest.default.override {
-                extensions = [ "rust-src" ];
+                extensions = [ "rust-src" "rust-analyzer"];
                 targets = [ "wasm32-unknown-unknown" ];
               })
             ];

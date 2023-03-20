@@ -6,6 +6,7 @@ use crate::functions::user::get_user;
 use crate::functions;
 use crate::error_template::*;
 use crate::routes::todos::*;
+use crate::components::{DarkModeToggle, DarkModeToggleProps};
 
 #[component]
 pub fn BenwisApp(cx: Scope) -> impl IntoView {
@@ -29,10 +30,11 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
     view! {
         cx,
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
-        <Stylesheet id="leptos" href="/pkg/session_auth_axum.css"/>
+        <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
         <Router>
             <header>
-                <A href="/"><h1>"My Tasks"</h1></A>
+                <A href="/"><h1 class="text-sky-400">"My Blog"</h1></A>
+                <DarkModeToggle/>
                 <Transition
                     fallback=move || view! {cx, <span>"Loading..."</span>}
                 >

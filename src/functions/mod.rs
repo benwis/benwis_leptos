@@ -1,6 +1,7 @@
 pub mod auth;
 pub mod todo;
 pub mod user;
+pub mod dark_mode;
 
 use cfg_if::cfg_if;
 
@@ -29,5 +30,6 @@ cfg_if! {
             _ = auth::Logout::register();
             _ = auth::Signup::register();
             _ = user::GetUser::register();
+            _ = dark_mode::ToggleDarkMode::register();
         }
 }}

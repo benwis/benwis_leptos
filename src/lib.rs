@@ -8,6 +8,7 @@ pub mod error_template;
 pub mod errors;
 pub mod fallback;
 pub mod models;
+pub mod components;
 // Needs to be in lib.rs AFAIK because wasm-bindgen needs us to be compiling a lib. I may be wrong.
 cfg_if! {
     if #[cfg(feature = "hydrate")] {
