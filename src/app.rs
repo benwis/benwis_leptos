@@ -15,10 +15,9 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
     let signup = create_server_action::<functions::auth::Signup>(cx);
 
     let color_scheme_signal = create_rw_signal(cx, false);
-    let color_scheme = ColorScheme(color_scheme_signal);
-    provide_context(cx, color_scheme.clone());
+    provide_context(cx, ColorScheme(color_scheme_signal));
 
-    println!("Current Color Scheme is: {:#?}", color_scheme.0.get());
+    println!("Current Color Scheme is: {:#?}", color_scheme_signal());
 
     let user = create_resource(
         cx,
@@ -38,7 +37,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
         <Router>
-        <div class:dark=move || color_scheme.0()>
+        <div class:dark=move || color_scheme_signal()>
             <header>
                 <A href="/"><h1 class="text-sky-400">"My Blog"</h1></A>
                 <DarkModeToggle/>

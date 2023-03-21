@@ -2,7 +2,7 @@ use crate::functions::dark_mode::ToggleDarkMode;
 use leptos::*;
 use leptos_router::{ActionForm, ActionFormProps};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct ColorScheme(pub RwSignal<bool>);
 
 #[cfg(not(feature = "ssr"))]
