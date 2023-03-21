@@ -1,18 +1,24 @@
+use crate::components::{ColorScheme, DarkModeToggle, DarkModeToggleProps};
+use crate::error_template::*;
+use crate::functions;
+use crate::functions::user::get_user;
+use crate::routes::auth::{Join, JoinProps, Login, LoginProps, Logout, LogoutProps};
+use crate::routes::todos::*;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
-use crate::routes::auth::{Join, JoinProps, Login, LoginProps, Logout, LogoutProps};
-use crate::functions::user::get_user;
-use crate::functions;
-use crate::error_template::*;
-use crate::routes::todos::*;
-use crate::components::{DarkModeToggle, DarkModeToggleProps};
 
 #[component]
 pub fn BenwisApp(cx: Scope) -> impl IntoView {
     let login = create_server_action::<functions::auth::Login>(cx);
     let logout = create_server_action::<functions::auth::Logout>(cx);
     let signup = create_server_action::<functions::auth::Signup>(cx);
+
+    let color_scheme_signal = create_rw_signal(cx, false);
+    let color_scheme = ColorScheme(color_scheme_signal);
+    provide_context(cx, color_scheme.clone());
+
+    println!("Current Color Scheme is: {:#?}", color_scheme.0.get());
 
     let user = create_resource(
         cx,
@@ -32,6 +38,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
         <Router>
+        <div class:dark=move || color_scheme.0()>
             <header>
                 <A href="/"><h1 class="text-sky-400">"My Blog"</h1></A>
                 <DarkModeToggle/>
@@ -66,7 +73,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         <ErrorBoundary fallback=|cx, errors| view!{cx, <ErrorTemplate errors=errors/>}>
                             <Todos/>
                         </ErrorBoundary>
-                    }/> 
+                    }/>
                     <Route path="signup" view=move |cx| view! {
                         cx,
                         <Join action=signup/>
@@ -82,6 +89,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                     }/>
                 </Routes>
             </main>
+            </div>
         </Router>
     }
 }

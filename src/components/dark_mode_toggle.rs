@@ -1,8 +1,9 @@
+use crate::functions::dark_mode::ToggleDarkMode;
 use leptos::*;
-use leptos_meta::{Meta, MetaProps};
 use leptos_router::{ActionForm, ActionFormProps};
 
-use crate::functions::dark_mode::ToggleDarkMode;
+#[derive(Debug, Clone)]
+pub struct ColorScheme(pub RwSignal<bool>);
 
 #[cfg(not(feature = "ssr"))]
 fn initial_prefers_dark(_cx: Scope) -> bool {
@@ -15,20 +16,17 @@ fn initial_prefers_dark(_cx: Scope) -> bool {
 
 #[cfg(feature = "ssr")]
 fn initial_prefers_dark(cx: Scope) -> bool {
-
-    use axum_extra::extract::cookie::{CookieJar};
+    use axum_extra::extract::cookie::CookieJar;
     use_context::<leptos_axum::RequestParts>(cx)
         .and_then(|req| {
             let cookies = CookieJar::from_headers(&req.headers);
-             cookies.get("darkmode").and_then(|v|{
-                println!("Cookie Value: {v:#?}");
-                match v.value(){
-                        "true" => Some(true),
-                        "false" => Some(false),
-                        _ => None
-                    }
+            cookies.get("darkmode").and_then(|v| match v.value() {
+                "true" => Some(true),
+                "false" => Some(false),
+                _ => None,
+            })
         })
-    }).unwrap_or(false)
+        .unwrap_or(false)
 }
 
 #[component]
@@ -46,6 +44,7 @@ pub fn DarkModeToggle(cx: Scope) -> impl IntoView {
     // was not resetting input. This is how it should have been implemented
     // all along, which would also have fixed the bug at 49:24!
     let prefers_dark = move || {
+        println!("Rerunning prefers_dark()");
         match (input(), value()) {
             // if there's some current input, use that optimistically
             (Some(submission), _) => submission.prefers_dark,
@@ -55,20 +54,25 @@ pub fn DarkModeToggle(cx: Scope) -> impl IntoView {
             _ => initial,
         }
     };
-
-    let color_scheme = move || {
-        if prefers_dark() {
-            "dark".to_string()
-        } else {
-            "light".to_string()
-        }
-    };
+    println!("PREFERS DARK IS {:#?}", prefers_dark());
+    // Set parent signal provided by context to value of prefers_dark
+    let color_scheme = use_context::<ColorScheme>(cx).expect("Failed to find color scheme signal!");
+    color_scheme.0.set(prefers_dark());
+    // let color_scheme = move || {
+    //     if prefers_dark() {
+    //       //  "dark".to_string()
+    //        true
+    //     } else {
+    //         //"light".to_string()
+    //         false
+    //     }
+    // };
 
     view! { cx,
-        <Meta
-            name="color-scheme"
-            content=color_scheme
-        />
+     //   <Meta
+       //     name="color-scheme"
+         //   content=color_scheme
+        // />
         <ActionForm action=toggle_dark_mode_action>
             <input
                 type="hidden"
