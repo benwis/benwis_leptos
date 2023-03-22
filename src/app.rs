@@ -1,4 +1,4 @@
-use crate::components::{ColorScheme, DarkModeToggle, DarkModeToggleProps};
+use crate::components::{provide_color_scheme, ColorScheme, DarkModeToggle, DarkModeToggleProps};
 use crate::error_template::*;
 use crate::functions;
 use crate::functions::user::get_user;
@@ -15,12 +15,6 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
     let logout = create_server_action::<functions::auth::Logout>(cx);
     let signup = create_server_action::<functions::auth::Signup>(cx);
 
-    let color_scheme_signal = create_rw_signal(cx, false);
-    provide_context(cx, ColorScheme(color_scheme_signal));
-    let t = move || {
-        println!("Current Color Scheme is: {:#?}", color_scheme_signal());
-    };
-
     let user = create_resource(
         cx,
         move || {
@@ -33,6 +27,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
         move |_| get_user(cx),
     );
     provide_meta_context(cx);
+    let color_scheme_signal = provide_color_scheme(cx);
 
     view! {
         cx,
@@ -79,6 +74,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         cx,
                         <Join action=signup/>
                     }/>
+                    <Route path="test" view=move |cx| view!{cx, <h1 class="dark:text-red-500">"POTATO"</h1>}/>
 
                     <Route path="posts" view=move |cx| view! {
                         cx,
