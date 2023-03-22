@@ -3,6 +3,7 @@ use crate::error_template::*;
 use crate::functions;
 use crate::functions::user::get_user;
 use crate::routes::auth::{Join, JoinProps, Login, LoginProps, Logout, LogoutProps};
+use crate::routes::blog::*;
 use crate::routes::todos::*;
 use leptos::*;
 use leptos_meta::*;
@@ -16,8 +17,9 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
 
     let color_scheme_signal = create_rw_signal(cx, false);
     provide_context(cx, ColorScheme(color_scheme_signal));
-
-    println!("Current Color Scheme is: {:#?}", color_scheme_signal());
+    let t = move || {
+        println!("Current Color Scheme is: {:#?}", color_scheme_signal());
+    };
 
     let user = create_resource(
         cx,
@@ -49,7 +51,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         Err(e) => view! {cx,
                             <A href="/signup">"Signup"</A>", "
                             <A href="/login">"Login"</A>", "
-                            <span>{format!("Login error: {}", e.to_string())}</span>
+                            <span>{format!("Login error: {}", e)}</span>
                         }.into_view(cx),
                         Ok(None) => view! {cx,
                             <A href="/signup">"Signup"</A>", "
@@ -77,6 +79,15 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         cx,
                         <Join action=signup/>
                     }/>
+
+                    <Route path="posts" view=move |cx| view! {
+                        cx,
+                        <Blog/>
+                    }/>
+                    <Route
+                        path="posts/:slug"
+                        view=move |cx| view! { cx,  <Post/> }
+                        />
                     <Route path="login" view=move |cx| view! {
                         cx,
                         <Login action=login />

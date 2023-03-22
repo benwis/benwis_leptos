@@ -54,10 +54,12 @@ pub fn DarkModeToggle(cx: Scope) -> impl IntoView {
             _ => initial,
         }
     };
-    println!("PREFERS DARK IS {:#?}", prefers_dark());
     // Set parent signal provided by context to value of prefers_dark
-    let color_scheme = use_context::<ColorScheme>(cx).expect("Failed to find color scheme signal!");
-    color_scheme.0.set(prefers_dark());
+    let color_scheme = move || {
+        println!("PREFERS DARK IS {:#?}", prefers_dark());
+        let cs = use_context::<ColorScheme>(cx).expect("Failed to find color scheme signal!");
+        cs.0.set(prefers_dark());
+    };
     // let color_scheme = move || {
     //     if prefers_dark() {
     //       //  "dark".to_string()
