@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS posts (
   excerpt    TEXT,
   content    TEXT NOT NULL,
   tags       TEXT,
+  slug       TEXT NOT NULL,
   published  BOOLEAN DEFAULT FALSE NOT NULL,
   preview    BOOLEAN DEFAULT FALSE NOT NULL,
   hero       TEXT,

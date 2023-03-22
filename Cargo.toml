@@ -45,6 +45,7 @@ miette = "5.6.0"
 axum-extra = { version = "0.7.1", features = ["cookie"] }
 web-sys = { version = "0.3.61", features = ["HtmlDocument"] }
 femark = { path="../femark", optional = true }
+slug = "0.1.4"
 
 [features]
 default = ["csr"]

@@ -330,6 +330,7 @@ dependencies = [
  "rand",
  "serde",
  "simple_logger",
+ "slug",
  "sqlx",
  "thiserror",
  "tokio",

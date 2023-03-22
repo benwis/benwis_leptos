@@ -1,19 +1,20 @@
-use leptos::*;
-use crate::models::post::*;
+use crate::{errors::BenwisAppError, models::post::*};
 use cfg_if::cfg_if;
+use leptos::*;
 
 cfg_if! {
-    if #[cfg(feature = "ssr")] {
-        use crate::functions::pool;
-    }}
+if #[cfg(feature = "ssr")] {
+    use crate::functions::pool;
+    use slug::slugify;
+}}
 
 #[server(GetPosts, "/api")]
-pub async fn get_posts(cx: Scope) -> Result<Vec<post>, ServerFnError> {
+pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
     let pool = pool(cx)?;
 
     let mut posts = Vec::new();
-    let mut rows = sqlx::query_as::<_, Sqlpost>("SELECT * FROM posts").fetch(&pool);
+    let mut rows = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts").fetch(&pool);
 
     while let Some(row) = rows
         .try_next()
@@ -33,29 +34,60 @@ pub async fn get_posts(cx: Scope) -> Result<Vec<post>, ServerFnError> {
         converted_posts.push(post);
     }
 
-    let posts: Vec<post> = converted_posts;
+    let posts: Vec<Post> = converted_posts;
 
     Ok(posts)
 }
+#[server(GetPost, "/api")]
+pub async fn get_post(
+    cx: Scope,
+    slug: String,
+) -> Result<Result<Option<Post>, BenwisAppError>, ServerFnError> {
+    let pool = pool(cx)?;
+
+    let post = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts WHERE slug=?")
+        .bind(slug)
+        .fetch_one(&pool)
+        .await;
+    let post = match post {
+        Ok(r) => Ok(Some(r.into_post(&pool).await)),
+        Err(sqlx::Error::RowNotFound) => Ok(None),
+        Err(e) => Err(e),
+    }
+    .map_err(|e| e.into());
+    Ok(post)
+}
 
 #[server(AddPost, "/api")]
-pub async fn add_post(cx: Scope, title: String) -> Result<(), ServerFnError> {
+pub async fn add_post(
+    cx: Scope,
+    title: String,
+    slug: String,
+    excerpt: String,
+    content: String,
+) -> Result<(), ServerFnError> {
     let user = super::user::get_user(cx).await?;
     let pool = pool(cx)?;
+    let slug = match slug.is_empty() {
+        true => slugify(&title),
+        false => slug,
+    };
 
     let id = match user {
         Some(user) => user.id,
         None => -1,
     };
 
-    // fake API delay
-    std::thread::sleep(std::time::Duration::from_millis(1250));
-
-    match sqlx::query("INSERT INTO posts (title, user_id, completed) VALUES (?, ?, false)")
-        .bind(title)
-        .bind(id)
-        .execute(&pool)
-        .await
+    match sqlx::query(
+        "INSERT INTO posts (title, slug, user_id, excerpt, content) VALUES (?, ?, ?, ?, ?)",
+    )
+    .bind(title)
+    .bind(slug)
+    .bind(id)
+    .bind(excerpt)
+    .bind(content)
+    .execute(&pool)
+    .await
     {
         Ok(_row) => Ok(()),
         Err(e) => Err(ServerFnError::ServerError(e.to_string())),
