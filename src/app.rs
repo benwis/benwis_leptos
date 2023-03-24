@@ -1,7 +1,7 @@
-use crate::components::{provide_color_scheme, ColorScheme, DarkModeToggle, DarkModeToggleProps};
+use crate::components::{DarkModeToggle, DarkModeToggleProps};
 use crate::error_template::*;
-use crate::functions;
 use crate::functions::user::get_user;
+use crate::providers::{provide_auth, provide_color_scheme, AuthContext};
 use crate::routes::auth::{Join, JoinProps, Login, LoginProps, Logout, LogoutProps};
 use crate::routes::blog::*;
 use crate::routes::todos::*;
@@ -11,17 +11,21 @@ use leptos_router::*;
 
 #[component]
 pub fn BenwisApp(cx: Scope) -> impl IntoView {
-    let login = create_server_action::<functions::auth::Login>(cx);
-    let logout = create_server_action::<functions::auth::Logout>(cx);
-    let signup = create_server_action::<functions::auth::Signup>(cx);
+    // let login = create_server_action::<functions::auth::Login>(cx);
+    // let logout = create_server_action::<functions::auth::Logout>(cx);
+    // let signup = create_server_action::<functions::auth::Signup>(cx);
+
+    // Create Actions for the Auth methods and provide the current user
+    provide_auth(cx);
+    let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContezt");
 
     let user = create_resource(
         cx,
         move || {
             (
-                login.version().get(),
-                signup.version().get(),
-                logout.version().get(),
+                auth_context.login.version().get(),
+                auth_context.signup.version().get(),
+                auth_context.logout.version().get(),
             )
         },
         move |_| get_user(cx),
@@ -34,7 +38,8 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
         <Router>
-        <div class:dark=move || color_scheme_signal()>
+        <div  class:dark=color_scheme_signal class="dummy">
+        <div class="dark:bg-gray-800">
             <header>
                 <A href="/"><h1 class="text-sky-400">"My Blog"</h1></A>
                 <DarkModeToggle/>
@@ -72,7 +77,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                     }/>
                     <Route path="signup" view=move |cx| view! {
                         cx,
-                        <Join action=signup/>
+                        <Join action=auth_context.signup/>
                     }/>
                     <Route path="test" view=move |cx| view!{cx, <h1 class="dark:text-red-500">"POTATO"</h1>}/>
 
@@ -84,17 +89,22 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         path="posts/:slug"
                         view=move |cx| view! { cx,  <Post/> }
                         />
+                        <Route
+                        path="posts/:slug/edit"
+                        view=move |cx| view! { cx,  <PostEdit/> }
+                        />
                     <Route path="login" view=move |cx| view! {
                         cx,
-                        <Login action=login />
+                        <Login action=auth_context.login />
                     }/>
                     <Route path="settings" view=move |cx| view! {
                         cx,
                         <h1>"Settings"</h1>
-                        <Logout action=logout />
+                        <Logout action=auth_context.logout />
                     }/>
                 </Routes>
             </main>
+            </div>
             </div>
         </Router>
     }

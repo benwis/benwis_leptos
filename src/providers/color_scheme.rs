@@ -48,7 +48,6 @@ pub fn provide_color_scheme(cx: Scope) -> Signal<bool> {
     // was not resetting input. This is how it should have been implemented
     // all along, which would also have fixed the bug at 49:24!
     let prefers_dark_fn = move || {
-        println!("Rerunning prefers_dark()");
         match (input(), value()) {
             // if there's some current input, use that optimistically
             (Some(submission), _) => submission.prefers_dark,

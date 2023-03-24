@@ -48,7 +48,6 @@ if #[cfg(feature = "ssr")] {
 }
 }
 
-
 #[server(Foo, "/api")]
 pub async fn foo() -> Result<String, ServerFnError> {
     Ok(String::from("Bar!"))
