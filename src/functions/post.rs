@@ -8,6 +8,42 @@ if #[cfg(feature = "ssr")] {
     use slug::slugify;
 }}
 
+#[server(AddPost, "/api")]
+pub async fn add_post(
+    cx: Scope,
+    title: String,
+    slug: String,
+    excerpt: String,
+    content: String,
+) -> Result<(), ServerFnError> {
+    let user = super::user::get_user(cx).await?;
+    let pool = pool(cx)?;
+    let slug = match slug.is_empty() {
+        true => slugify(&title),
+        false => slug,
+    };
+
+    let id = match user {
+        Some(user) => user.id,
+        None => -1,
+    };
+
+    match sqlx::query(
+        "INSERT INTO posts (title, slug, user_id, excerpt, content) VALUES (?, ?, ?, ?, ?)",
+    )
+    .bind(title)
+    .bind(slug)
+    .bind(id)
+    .bind(excerpt)
+    .bind(content)
+    .execute(&pool)
+    .await
+    {
+        Ok(_row) => Ok(()),
+        Err(e) => Err(ServerFnError::ServerError(e.to_string())),
+    }
+}
+
 #[server(GetPosts, "/api")]
 pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
@@ -57,41 +93,39 @@ pub async fn get_post(
     .map_err(|e| e.into());
     Ok(post)
 }
-
-#[server(AddPost, "/api")]
-pub async fn add_post(
+#[server(UpdatePost, "/api")]
+pub async fn update_post(
     cx: Scope,
-    title: String,
     slug: String,
+    title: String,
+    author: String,
+    hero: String,
+    created_at: String,
     excerpt: String,
     content: String,
-) -> Result<(), ServerFnError> {
-    let user = super::user::get_user(cx).await?;
+    published: String,
+    preview: String,
+) -> Result<Result<bool, BenwisAppError>, ServerFnError> {
     let pool = pool(cx)?;
-    let slug = match slug.is_empty() {
-        true => slugify(&title),
-        false => slug,
-    };
 
-    let id = match user {
-        Some(user) => user.id,
-        None => -1,
+    let post = sqlx::query("UPDATE posts SET title=?, author=? hero=?, created_at=?, excerpt=?, content=?,published=?,preview=? WHERE slug=?")
+        .bind(title)
+        .bind(author)
+        .bind(hero)
+        .bind(created_at)
+        .bind(excerpt)
+        .bind(content)
+        .bind(published)
+        .bind(preview)
+        .bind(slug)
+        .execute(&pool)
+        .await;
+    let res = match post {
+        Ok(_) => Ok(true),
+        Err(sqlx::Error::RowNotFound) => Ok(false),
+        Err(e) => Err(e.into()),
     };
-
-    match sqlx::query(
-        "INSERT INTO posts (title, slug, user_id, excerpt, content) VALUES (?, ?, ?, ?, ?)",
-    )
-    .bind(title)
-    .bind(slug)
-    .bind(id)
-    .bind(excerpt)
-    .bind(content)
-    .execute(&pool)
-    .await
-    {
-        Ok(_row) => Ok(()),
-        Err(e) => Err(ServerFnError::ServerError(e.to_string())),
-    }
+    Ok(res)
 }
 
 #[server(DeletePost, "/api")]

@@ -1,4 +1,3 @@
-pub mod archive;
 pub mod index;
 pub use index::*;
 pub mod post;
