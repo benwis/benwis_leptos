@@ -8,7 +8,7 @@ pub struct AuthContext {
     pub login: Action<Login, Result<(), ServerFnError>>,
     pub logout: Action<Logout, Result<(), ServerFnError>>,
     pub signup: Action<Signup, Result<(), ServerFnError>>,
-    pub user: Signal<Option<User>>,
+    pub user: Resource<(usize, usize, usize), Result<Option<User>, ServerFnError>>,
 }
 /// Get the current user and place it in Context
 pub fn provide_auth(cx: Scope) {
@@ -16,7 +16,7 @@ pub fn provide_auth(cx: Scope) {
     let logout = create_server_action::<Logout>(cx);
     let signup = create_server_action::<Signup>(cx);
 
-    let user_resource = create_resource(
+    let user = create_resource(
         cx,
         move || {
             (
@@ -28,18 +28,18 @@ pub fn provide_auth(cx: Scope) {
         move |_| get_user(cx),
     );
 
-    let user = Signal::derive(cx, move || {
-        {
-            {
-                user_resource.read(cx).map(|user| match user {
-                    Err(_) => None,
-                    Ok(None) => None,
-                    Ok(Some(user)) => Some(user),
-                })
-            }
-        }
-        .unwrap()
-    });
+    // let user = Signal::derive(cx, move || {
+    //     {
+    //         {
+    //             user_resource.read(cx).map(|user| match user {
+    //                 Err(_) => None,
+    //                 Ok(None) => None,
+    //                 Ok(Some(user)) => Some(user),
+    //             })
+    //         }
+    //     }
+    //     .unwrap_or(None)
+    // });
     provide_context(
         cx,
         AuthContext {

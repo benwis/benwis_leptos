@@ -17,18 +17,17 @@ pub fn Blog(cx: Scope) -> impl IntoView {
 
     view! {
         cx,
-        <div>
-            <MultiActionForm action=add_post>
-                <label>
-                    "Add a Post"
-                    <input type="text" name="title"/>
-                    <input type="text" name="slug"/>
-                    <textarea type="text" name="excerpt"/>
-                    <textarea type="text" name="content"/>
+                // <MultiActionForm action=add_post>
+                //     <label>
+                //         "Add a Post"
+                //         <input type="text" name="title"/>
+                //         <input type="text" name="slug"/>
+                //         <textarea type="text" name="excerpt"/>
+                //         <textarea type="text" name="content"/>
 
-                </label>
-                <input type="submit" value="Add"/>
-            </MultiActionForm>
+                //     </label>
+                //     <input type="submit" value="Add"/>
+                // </MultiActionForm>
             <Transition fallback=move || view! {cx, <p>"Loading..."</p> }>
                 {move || {
                     let existing_posts = {
@@ -40,7 +39,7 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                     }
                                     Ok(posts) => {
                                         if posts.is_empty() {
-                                            vec![view! { cx, <p>"No posts were found."</p> }.into_any()]
+                                            vec![view! { cx, <p class="text-black dark:text-white">"No posts were found."</p> }.into_any()]
                                         } else {
                                             posts
                                                 .into_iter()
@@ -48,36 +47,21 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                     view! {
                                                         cx,
                                                         <section>
-                                                        <A href={post.slug} class="no-underline hover:underline hover:decoration-yellow-400">
+                                                        <a href=format!("/posts/{}", post.slug) class="no-underline hover:underline hover:decoration-yellow-400">
                                                             <li class="mb-8 text-lg">
                                                                 <div class="inline-flex justify-between w-full">
                                                                     <h4 class="text-lg font-medium md:text-xl text-black dark:text-white">{post.title}</h4>
                                                                     <p class=" text-left text-gray-500 dark:text-gray-400 md:mb-0 md:text-right">{post.created_at}</p>
                                                                 </div>
                                                                 <p class="text-gray-500">{post.excerpt}</p>
-
                                                             </li>
-                                                        </A>
+                                                        </a>
                                                         <ActionForm action=delete_post>
                                                         <input type="hidden" name="id" value={post.id}/>
                                                         <input type="submit" value="X"/>
                                                         </ActionForm>
                                                         </section>
                                                     }.into_any()
-                                                        // <li>
-                                                        // <section>
-                                                        // <h2> {post.title}</h2>
-                                                        // <h4>{post.created_at}</h4>
-                                                        // <h4>{post.user.unwrap_or_default().username}</h4>
-                                                        // <div inner_html={post.content}></div>
-                                                        // </section>
-                                                        //     <ActionForm action=delete_post>
-                                                        //         <input type="hidden" name="id" value={post.id}/>
-                                                        //         <input type="submit" value="X"/>
-                                                        //     </ActionForm>
-                                                        // </li>
-                                                    //}
-
                                                 })
                                                 .collect::<Vec<_>>()
                                         }
@@ -103,14 +87,16 @@ pub fn Blog(cx: Scope) -> impl IntoView {
 
                     view! {
                         cx,
-                        <ul>
-                            {pending_posts}
-                            {existing_posts}
-                        </ul>
+                        <div class="dark:text-white w-full max-w-5xl px-12">
+                            <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">"Posts"</h1>
+                            <ul>
+                                {pending_posts}
+                                {existing_posts}
+                            </ul>
+                        </div>
                     }
                 }
             }
             </Transition>
-        </div>
     }
 }

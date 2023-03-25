@@ -60,7 +60,7 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
         <div class="">
 
         <div class="flex justify-between w-full">
-            <a href="/posts" class="dark:text-white">"Back to Posts Posts"</a>
+            <a href="/posts" class="dark:text-white">"Back to Posts"</a>
 
         //     {admin ? <div class="dark:text-white">
         //     <a class="dark:text-white no-underline" href="edit"> Edit</a>

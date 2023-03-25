@@ -1,7 +1,6 @@
 pub mod auth;
 pub mod dark_mode;
 pub mod post;
-pub mod todo;
 pub mod user;
 
 use cfg_if::cfg_if;
@@ -24,9 +23,6 @@ cfg_if! {
                 .map_err(|e| ServerFnError::ServerError(e.to_string()))
         }
         pub fn register_server_functions() {
-            _ = todo::GetTodos::register();
-            _ = todo::AddTodo::register();
-            _ = todo::DeleteTodo::register();
             _ = post::AddPost::register();
             _ = post::GetPosts::register();
             _ = post::GetPost::register();
