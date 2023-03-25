@@ -57,24 +57,33 @@ pub fn Footer(cx: Scope) -> impl IntoView{
         rel: None
     });
    
-    view!{cx,
+    view! { cx,
         <footer class="bg-white dark:bg-gray-900 mt-auto">
-        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
-          <div class="flex justify-center space-x-6 md:order-2">
-            {navigation.into_iter().map(|link| {
-                view! { cx, 
-                <a key={link.name} href={link.href} rel={link.rel} class="text-gray-400 dark:text-white hover:text-gray-500">
-                    <span class="sr-only">{link.name}</span>
-                    {link.icon}
-              </a>
-            }})
-            .collect::<Vec<_>>()
-            }
-          </div>
-          <div class="mt-8 md:mt-0 md:order-1">
-            <p class="text-center text-base text-gray-400 dark:text-white">"© 2022 Ben Wishovich"</p>
-          </div>
-        </div>
-      </footer>
+            <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+                <div class="flex justify-center space-x-6 md:order-2">
+                    {navigation
+                        .into_iter()
+                        .map(|link| {
+                            view! { cx,
+                                <a
+                                    key={link.name}
+                                    href={link.href}
+                                    rel={link.rel}
+                                    class="text-gray-400 dark:text-white hover:text-gray-500"
+                                >
+                                    <span class="sr-only">{link.name}</span>
+                                    {link.icon}
+                                </a>
+                            }
+                        })
+                        .collect::<Vec<_>>()}
+                </div>
+                <div class="mt-8 md:mt-0 md:order-1">
+                    <p class="text-center text-base text-gray-400 dark:text-white">
+                        "© 2022 Ben Wishovich"
+                    </p>
+                </div>
+            </div>
+        </footer>
     }
 }
