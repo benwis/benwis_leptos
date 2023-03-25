@@ -6,7 +6,5 @@ use crate::functions;
 pub fn Logout(cx: Scope, action: Action<functions::auth::Logout, Result<(), ServerFnError>>) -> impl IntoView {
     _ = &action.dispatch(functions::auth::Logout{});
 
-    view! { cx,
-        <Redirect path="/"/>
-      }
+    view! { cx, <Redirect path="/"/> }
 }
