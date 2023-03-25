@@ -9,7 +9,7 @@ pub fn Nav(cx: Scope) -> impl IntoView{
     
     view!{cx,
     <nav class="relative bg-white dark:bg-gray-900 text-gray-700 dark:text-white  flex items-center justify-between max-w-7xl p-4">
-        <div class="flex space-x-10">
+        <div class="flex space-x-10 items-center">
             <a href="/">"Home"</a>
             <a href="/posts">"Blog"</a>
             <a href="/about">"About Me"</a>

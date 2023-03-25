@@ -30,11 +30,6 @@ pub fn Login(cx: Scope, action: Action<functions::auth::Login, Result<(), Server
                 aria-describedby="username-error"
                 class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
               />
-            //   {actionData?.errors?.email && (
-            //     <div class="pt-1 text-red-700" id="email-error">
-            //       {actionData.errors.email}
-            //     </div>
-            //   )}
             </div>
           </div>
 
@@ -55,11 +50,6 @@ pub fn Login(cx: Scope, action: Action<functions::auth::Login, Result<(), Server
                 aria-describedby="password-error"
                 class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
               />
-            //   {actionData?.errors?.password && (
-            //     <div class="pt-1 text-red-700" id="password-error">
-            //       {actionData.errors.password}
-            //     </div>
-            //   )}
             </div>
           </div>
           <button

@@ -58,12 +58,16 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         <Blog/>
                     }/>
                     <Route
+                    path="posts/add"
+                    view=move |cx| view! { cx,  <AddPost/> }
+                    />
+                    <Route
                         path="posts/:slug"
                         view=move |cx| view! { cx,  <Post/> }
                         />
                         <Route
                         path="posts/:slug/edit"
-                        view=move |cx| view! { cx,  <PostEdit/> }
+                        view=move |cx| view! { cx,  <EditPost/> }
                         />
                     <Route path="login" view=move |cx| view! {
                         cx,
