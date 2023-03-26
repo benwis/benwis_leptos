@@ -22,6 +22,8 @@ if #[cfg(feature = "ssr")] {
     use crate::functions::auth::{AuthSession};
     use crate::app::*;
     use crate::models::User;
+    use tower_http::{compression::CompressionLayer};
+
 
     async fn server_fn_handler(Extension(pool): Extension<SqlitePool>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
 
@@ -81,7 +83,8 @@ if #[cfg(feature = "ssr")] {
                     .with_config(auth_config))
         .layer(SessionLayer::new(session_store))
         .layer(Extension(Arc::new(leptos_options)))
-        .layer(Extension(pool));
+        .layer(Extension(pool))
+        .layer(CompressionLayer::new());
 
         // run our app with hyper
         // `axum::Server` is a re-export of `hyper::Server`

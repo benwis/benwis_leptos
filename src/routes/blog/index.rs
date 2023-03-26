@@ -1,17 +1,25 @@
-use crate::functions::post::{get_posts, AddPost, DeletePost};
+use crate::functions::post::{get_posts, AddPost, DeletePost, UpdatePost};
 use leptos::*;
 use leptos_router::*;
 
 #[component]
 pub fn Blog(cx: Scope) -> impl IntoView {
     let add_post = create_server_multi_action::<AddPost>(cx);
+    let update_post = create_server_action::<UpdatePost>(cx);
     let delete_post = create_server_action::<DeletePost>(cx);
+
     let submissions = add_post.submissions();
 
     // list of posts is loaded from the server in reaction to changes
     let posts = create_resource(
         cx,
-        move || (add_post.version().get(), delete_post.version().get()),
+        move || {
+            (
+                add_post.version().get(),
+                update_post.version().get(),
+                delete_post.version().get(),
+            )
+        },
         move |_| get_posts(cx),
     );
 
