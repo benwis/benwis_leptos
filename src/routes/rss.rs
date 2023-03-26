@@ -1,6 +1,6 @@
-use leptos::*;
-use crate::functions::post::{get_posts, AddPost,UpdatePost, DeletePost};
+use crate::functions::post::{get_posts, AddPost, DeletePost, UpdatePost};
 use crate::models::Post;
+use leptos::*;
 // export type RssEntry = {
 //     title: string;
 //     link: string;
@@ -9,72 +9,61 @@ use crate::models::Post;
 //     author?: string;
 //     guid?: string;
 //   };
-  
-  pub struct RssEntry{
+
+pub struct RssEntry {
     pub title: String,
     pub link: String,
     pub description: Option<String>,
     pub pub_date: String,
     pub author: String,
-    pub guid: String
-  }
+    pub guid: String,
+}
 
-  impl From<Post> for RssEntry{
-    fn from(post: Post) -> Self{
+impl From<Post> for RssEntry {
+    fn from(post: Post) -> Self {
         let full_url = format!("https://benw.is/posts/{}", post.slug);
-        Self{
+        Self {
             title: post.title,
             link: full_url.clone(),
             description: post.excerpt,
             pub_date: post.created_at_pretty,
             author: post.user.unwrap_or_default().display_name,
-            guid: full_url
+            guid: full_url,
         }
     }
-  }
-//   export function generateRss({
-//     description,
-//     entries,
-//     link,
-//     title,
-//   }: {
-//     title: string;
-//     description: string;
-//     link: string;
-//     entries: RssEntry[];
-    
-//   }): string {
-//     return `<?xml version="1.0" encoding="UTF-8"?>
-//   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-//     <channel>
-//       <title>${title}</title>
-//       <description>${description}</description>
-//       <link>${link}</link>
-//       <language>en-us</language>
-//       <ttl>60</ttl>
-//       <atom:link href="https://benw.is/rss.xml" rel="self" type="application/rss+xml" />
-//       ${entries
-//         .map(
-//           (entry) => `
-//         <item>
-//           <title><![CDATA[${entry.title}]]></title>
-//           <description><![CDATA[${entry.description}]]></description>
-//           <pubDate>${entry.pubDate}</pubDate>
-//           <link>${entry.link}</link>
-//           ${entry.guid ? `<guid isPermaLink="false">${entry.guid}</guid>` : ""}
-//         </item>`
-//         )
-//         .join("")}
-//     </channel>
-//   </rss>`;
-//   }
+}
 
-pub fn generate_rss(cx: Scope, description: String, posts: Vec<Post>, link: String, title: String ){
+impl RssEntry {
+    // Converts an RSSEntry to a String containing the rss item tags
+    pub fn to_item(&self) -> String {
+        format!(
+            r#"
+      <item>
+        <title><![CDATA[{}]]></title>
+        <description><![CDATA[{}]]></description>
+        <pubDate>{}</pubDate>
+        <link>{}</link>
+        <guid isPermaLink="false">{}</guid>
+    </item>
+      "#,
+            self.title,
+            self.description.clone().unwrap_or_default(),
+            self.pub_date,
+            self.guid,
+            self.guid
+        )
+    }
+}
 
-    let entries: Vec<RssEntry> = posts.into_iter().map(|p| p.into()).collect();
+pub fn generate_rss(title: &str, description: &str, link: &str, posts: Vec<Post>) -> String {
+    let rss_entries = posts
+        .into_iter()
+        .map(|p| p.into())
+        .map(|r: RssEntry| r.to_item())
+        .collect::<String>();
 
-     // list of posts is loaded from the server in reaction to changes
-     let rss_shell = r#"
+    format!(
+        r#"
         <xml version="1.0" encoding="UTF-8"/>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
             <channel>
@@ -84,85 +73,47 @@ pub fn generate_rss(cx: Scope, description: String, posts: Vec<Post>, link: Stri
                 <language>"en-us"</language>
                 <ttl>60</ttl>
                 <atom:link href="https://benw.is/rss.xml" rel="self" type="application/rss+xml" />
+                {}
             </channel>
         </rss>   
-     "#;
-     let entries_block: String = posts;
-
-    view!{cx,
-        <xml version="1.0" encoding="UTF-8"/>
-        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-          <channel>
-            <title>{title}</title>
-            <description>{description}</description>
-            <link>{link}</link>
-            <language>"en-us"</language>
-            <ttl>60</ttl>
-            <atom:link href="https://benw.is/rss.xml" rel="self" type="application/rss+xml" />   
-            {entries
-              .map(
-                |entry| {view!{cx,
-              <item>
-                <title><![CDATA[${entry.title}]]></title>
-                <description><![CDATA[${entry.description}]]></description>
-                <pubDate>${entry.pubDate}</pubDate>
-                <link>{entry.link}</link>
-                ${entry.guid ? `<guid isPermaLink="false">${entry.guid}</guid>` : ""}
-              </item>
-            }
-        }
-              )
-            }
-          </channel>
-        </rss>
-    }
-
+     "#,
+        rss_entries
+    )
 }
 
 #[component]
-pub fn Rss(cx: Scope) -> impl IntoView{
+pub fn Rss(cx: Scope) -> impl IntoView {
     let add_post = create_server_multi_action::<AddPost>(cx);
     let update_post = create_server_action::<UpdatePost>(cx);
     let delete_post = create_server_action::<DeletePost>(cx);
 
-    view!{cx,
-        
-     
-  export function generateRss({
-    description,
-    entries,
-    link,
-    title,
-  }: {
-    title: string;
-    description: string;
-    link: string;
-    entries: RssEntry[];
-  }): string {
-    return `
-    <?xml version="1.0" encoding="UTF-8"?>
-  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-      <title>${title}</title>
-      <description>${description}</description>
-      <link>${link}</link>
-      <language>en-us</language>
-      <ttl>60</ttl>
-      <atom:link href="https://benw.is/rss.xml" rel="self" type="application/rss+xml" />
-      ${entries
-        .map(
-          (entry) => `
-        <item>
-          <title><![CDATA[${entry.title}]]></title>
-          <description><![CDATA[${entry.description}]]></description>
-          <pubDate>${entry.pubDate}</pubDate>
-          <link>${entry.link}</link>
-          ${entry.guid ? `<guid isPermaLink="false">${entry.guid}</guid>` : ""}
-        </item>`
-        )
-        .join("")}
-    </channel>
-  </rss>`;
-  }
+    // list of posts is loaded from the server in reaction to changes
+    let posts = create_resource(
+        cx,
+        move || {
+            (
+                add_post.version().get(),
+                update_post.version().get(),
+                delete_post.version().get(),
+            )
+        },
+        move |_| get_posts(cx),
+    );
+
+    view! {cx,
+        <Transition fallback=||view!{cx, "Loading"}>
+        { move || {
+            let posts = { move ||
+              posts.read(cx).map(|post| match post{
+                Ok(p) => p.into_iter().filter(|p| p.published).collect::<Vec<Post>>(),
+                Err(_) => Vec::new(),
+              }).unwrap_or_default()
+          };
+          let rss = generate_rss("benwis Blog", "The potentially misguided ramblings of a Rust developer flailing around on the web","http://benw.is",posts());
+          log!("RSS IS: {rss}");
+          rss.into_view(cx)
+        }
+      }
+      </Transition>
     }
 }

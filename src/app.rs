@@ -1,9 +1,11 @@
-use crate::components::{Nav, NavProps, Footer, FooterProps};
+use crate::components::{Footer, FooterProps, Nav, NavProps};
 use crate::error_template::*;
 use crate::providers::{provide_auth, provide_color_scheme, AuthContext};
 use crate::routes::auth::{Join, JoinProps, Login, LoginProps, Logout, LogoutProps};
 use crate::routes::blog::*;
-use crate::routes::{Index, IndexProps, About, AboutProps, Portfolio, PortfolioProps};
+use crate::routes::{
+    About, AboutProps, Index, IndexProps, Portfolio, PortfolioProps, Rss, RssProps,
+};
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -106,6 +108,12 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                                 <h1>"Settings"</h1>
                                 <Logout action=auth_context.logout/>
                             }
+                        }
+                    />
+                    <Route
+                        path="rss"
+                        view=move |cx| {
+                            view! { cx, <Rss/> }
                         }
                     />
                 </Routes>
