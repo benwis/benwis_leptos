@@ -6,20 +6,19 @@ CREATE TABLE IF NOT EXISTS posts (
   content    TEXT NOT NULL,
   tags       TEXT,
   slug       TEXT NOT NULL,
-  published  BOOLEAN DEFAULT FALSE NOT NULL,
-  preview    BOOLEAN DEFAULT FALSE NOT NULL,
+  published  INTEGER DEFAULT 0 NOT NULL,
+  preview    INTEGER DEFAULT 0 NOT NULL,
   hero       TEXT,
-  publish_date TIMESTAMP,
+  publish_date INTEGER,
   links      TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,  
-
+  created_at INTEGER DEFAULT(unixepoch()) NOT NULL,
+  updated_at INTEGER DEFAULT(unixepoch()) NOT NULL,  
   FOREIGN KEY (user_id) REFERENCES users (id)
-);
+)STRICT;
 
-CREATE TRIGGER Trg_PostUpdated
+CREATE TRIGGER Trg_Post_Updated
 AFTER UPDATE ON posts
 FOR EACH ROW
 BEGIN
-    UPDATE posts SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END
+    UPDATE posts SET updated_at = unixepoch() WHERE id = OLD.id;
+END;

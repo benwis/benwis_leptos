@@ -85,6 +85,7 @@ pub async fn login(
 pub async fn signup(
     cx: Scope,
     username: String,
+    display_name: String,
     password: String,
     password_confirmation: String,
     remember: Option<String>,
@@ -100,8 +101,9 @@ pub async fn signup(
 
     let password_hashed = hash(password, DEFAULT_COST).unwrap();
 
-    sqlx::query("INSERT INTO users (username, password) VALUES (?,?)")
+    sqlx::query("INSERT INTO users (username, display_name, password) VALUES (?,?, ?)")
         .bind(username.clone())
+        .bind(display_name.clone())
         .bind(password_hashed)
         .execute(&pool)
         .await

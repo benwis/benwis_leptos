@@ -7,3 +7,5 @@ pub mod about;
 pub use about::*;
 pub mod portfolio;
 pub use portfolio::*;
+pub mod rss;
+pub use rss::*;

@@ -6,6 +6,7 @@ cfg_if! {
 if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use femark::HTMLOutput;
+    use chrono::naive::NaiveDateTime;
 
     #[derive(sqlx::FromRow, Clone)]
     pub struct SqlPost{
@@ -15,8 +16,8 @@ if #[cfg(feature = "ssr")] {
      slug: String,
      excerpt: Option<String>,
      content: String,
-     created_at: String,
-     updated_at: String,
+     created_at: i64,
+     updated_at: i64,
      published: bool,
      preview: bool,
      links: Option<String>,
@@ -27,18 +28,21 @@ if #[cfg(feature = "ssr")] {
     impl SqlPost {
         pub async fn into_post(self, pool: &SqlitePool) -> Post {
 
-            let HTMLOutput{content, toc} = femark::process_markdown_to_html(self.content).unwrap_or_default();
+            let HTMLOutput{content, toc} = femark::process_markdown_to_html(self.content.clone()).unwrap_or_default();
             Post {
                 id: self.id,
                 user: User::get(self.user_id, pool).await,
                 title: self.title,
                 slug: self.slug,
                 created_at: self.created_at,
+                created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
                 published: self.published,
                 excerpt: self.excerpt,
-                content,
+                content: self.content,
+                html: content,
                 toc,
                 updated_at: self.updated_at,
+                updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
                 links: self.links,
@@ -57,9 +61,12 @@ pub struct Post {
     pub slug: String,
     pub excerpt: Option<String>,
     pub content: String,
+    pub html: String,
     pub toc: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
+    pub created_at: i64,
+    pub created_at_pretty: String,
+    pub updated_at: i64,
+    pub updated_at_pretty: String,
     pub published: bool,
     pub preview: bool,
     pub links: Option<String>,

@@ -68,63 +68,63 @@ pub fn EditPostForm(cx: Scope, post: post::Post) -> impl IntoView {
                 />
             </p>
             <p>
-                <label>
-                    "Post Slug:"
-                    <input
-                        type="text"
-                        name="slug"
-                        class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                        value={post.slug}
-                    />
-                </label>
+                <label>"Post Slug:"</label>
+                <input
+                    type="text"
+                    name="slug"
+                    class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                    value={post.slug}
+                />
             </p>
             <p>
-                <label>
-                    "Hero:"
-                    <input
-                        type="text"
-                        name="hero"
-                        class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                        value={post.hero}
-                    />
-                </label>
+                <label>"Hero:"</label>
+                <input
+                    type="text"
+                    name="hero"
+                    class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                    value={post.hero}
+                />
             </p>
             <p>
-                <label>
-                    "Published:"
-                    <select
-                        name="published"
-                        class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                        value={post.published}
-                    >
-                        <option value="false">"False"</option>
-                        <option value="true">"True"</option>
-                    </select>
-                </label>
+                <label>"Published:"</label>
+                <select
+                    name="published"
+                    class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                >
+                    <option value="false" selected={post.published.to_string()}>
+                        "False"
+                    </option>
+                    <option value="true" selected={post.published.to_string()}>
+                        "True"
+                    </option>
+                </select>
             </p>
             <p>
-                <label>
-                    "Preview:"
-                    <select
-                        name="preview"
-                        class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                        value={post.preview}
-                    >
-                        <option value="false">"False"</option>
-                        <option value="true">"True"</option>
-                    </select>
-                </label>
+                <label>"Preview:"</label>
+                <select
+                    name="preview"
+                    class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                >
+                    <option value="false" selected={post.preview.to_string()}>
+                        "False"
+                    </option>
+                    <option value="true" selected={post.preview.to_string()}>
+                        "True"
+                    </option>
+                </select>
             </p>
             <p>
-                <label>
-                    "Excerpt:"
-                    <textarea id="excerpt" rows={5} name="excerpt" value={post.excerpt}></textarea>
-                </label>
+                <label>"Excerpt:"</label>
+                <textarea id="excerpt" rows={5} name="excerpt" class="w-full text-black">
+                    {post.excerpt}
+                </textarea>
             </p>
             <p>
                 <label for="content">"Content:"</label>
                 <br/>
-                <textarea id="content" rows={20} name="content" value={post.content}></textarea>
+                <textarea id="content" rows={20} name="content" class="w-full text-black">
+                    {post.content}
+                </textarea>
             </p>
             <p class="text-right flex w-full justify-between">
                 <button
