@@ -7,7 +7,12 @@ use cfg_if::cfg_if;
 pub struct User {
     pub id: i64,
     pub username: String,
+    pub display_name: String,
     pub password: String,
+    pub created_at: i64,
+    pub created_at_pretty: String,
+    pub updated_at:i64,
+    pub updated_at_pretty: String,
     pub permissions: HashSet<String>,
 }
 
@@ -18,8 +23,13 @@ impl Default for User {
         Self {
             id: -1,
             username: "Guest".into(),
+            created_at: 0,
+            created_at_pretty: "".to_string(),
+            updated_at: 0,
+            updated_at_pretty: "".to_string(),
             password: "".into(),
             permissions,
+            display_name: "Guest".into(),
         }
     }
 }
@@ -27,13 +37,17 @@ cfg_if! {
     if #[cfg(feature = "ssr")] {
         use sqlx::SqlitePool;
         use crate::functions::auth::SqlPermissionTokens;
+        use chrono::naive::NaiveDateTime;
 
 
     #[derive(sqlx::FromRow, Clone)]
     pub struct SqlUser {
         pub id: i64,
-        pub username: String,
+        pub username: String, 
+        pub display_name: String,
         pub password: String,
+        pub created_at: i64,
+        pub updated_at: i64,
     }
 
     impl SqlUser {
@@ -41,7 +55,13 @@ cfg_if! {
             User {
                 id: self.id,
                 username: self.username,
+                display_name: self.display_name,
                 password: self.password,
+                created_at: self.created_at,
+                created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
+                updated_at: self.updated_at,
+                updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
+
                 permissions: if let Some(user_perms) = sql_user_perms {
                     user_perms
                         .into_iter()

@@ -98,9 +98,7 @@ pub async fn update_post(
     cx: Scope,
     slug: String,
     title: String,
-    author: String,
     hero: String,
-    created_at: String,
     excerpt: String,
     content: String,
     published: String,
@@ -108,11 +106,13 @@ pub async fn update_post(
 ) -> Result<Result<bool, BenwisAppError>, ServerFnError> {
     let pool = pool(cx)?;
 
-    let post = sqlx::query("UPDATE posts SET title=?, author=? hero=?, created_at=?, excerpt=?, content=?,published=?,preview=? WHERE slug=?")
+    let published = published.parse::<bool>().unwrap();
+    let preview = preview.parse::<bool>().unwrap();
+
+
+    let post = sqlx::query("UPDATE posts SET title=?, hero=?, excerpt=?, content=?,published=?,preview=? WHERE slug=?")
         .bind(title)
-        .bind(author)
         .bind(hero)
-        .bind(created_at)
         .bind(excerpt)
         .bind(content)
         .bind(published)

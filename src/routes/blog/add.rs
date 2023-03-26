@@ -22,59 +22,49 @@ pub fn AddPost(cx: Scope) -> impl IntoView{
                         />
                     </p>
                     <p>
-                        <label>
-                            "Post Slug:"
-                            <input
-                                type="text"
-                                name="slug"
-                                class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                            />
-                        </label>
+                        <label>"Post Slug:"</label>
+                        <input
+                            type="text"
+                            name="slug"
+                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                        />
                     </p>
                     <p>
-                        <label>
-                            "Hero:"
-                            <input
-                                type="text"
-                                name="hero"
-                                class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                            />
-                        </label>
+                        <label>"Hero:"</label>
+                        <input
+                            type="text"
+                            name="hero"
+                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                        />
                     </p>
                     <p>
-                        <label>
-                            "Published:"
-                            <select
-                                name="published"
-                                class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                            >
-                                <option value="false">"False"</option>
-                                <option value="true">"True"</option>
-                            </select>
-                        </label>
+                        <label>"Published:"</label>
+                        <select
+                            name="published"
+                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                        >
+                            <option value="false">"False"</option>
+                            <option value="true">"True"</option>
+                        </select>
                     </p>
                     <p>
-                        <label>
-                            "Preview:"
-                            <select
-                                name="preview"
-                                class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
-                            >
-                                <option value="false">"False"</option>
-                                <option value="true">"True"</option>
-                            </select>
-                        </label>
+                        <label>"Preview:"</label>
+                        <select
+                            name="preview"
+                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                        >
+                            <option value="false">"False"</option>
+                            <option value="true">"True"</option>
+                        </select>
                     </p>
                     <p>
-                        <label>
-                            "Excerpt:"
-                            <textarea
-                                id="excerpt"
-                                rows={5}
-                                name="excerpt"
-                                class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white font-mono"
-                            ></textarea>
-                        </label>
+                        <label>"Excerpt:"</label>
+                        <textarea
+                            id="excerpt"
+                            rows={5}
+                            name="excerpt"
+                            class="w-full text-black"
+                        ></textarea>
                     </p>
                     <p>
                         <label for="content">"Content:"</label>
@@ -82,8 +72,8 @@ pub fn AddPost(cx: Scope) -> impl IntoView{
                         <textarea
                             id="content"
                             rows={20}
+                            class="w-full text-black"
                             name="content"
-                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white font-mono"
                         ></textarea>
                     </p>
                     <p class="text-right flex w-full justify-between">
@@ -91,7 +81,7 @@ pub fn AddPost(cx: Scope) -> impl IntoView{
                             type="submit"
                             class="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400 disabled:bg-blue-300"
                         >
-                            "Edit Post"
+                            "Add Post"
                         </button>
                     </p>
                 </ActionForm>

@@ -40,6 +40,10 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                     } else {
                                         posts
                                             .into_iter()
+                                            .filter(|post| {
+                                                log!("{}", post.published);
+                                                post.published
+                                            })
                                             .map(move |post| {
                                                 view! { cx,
                                                     <section>
@@ -53,7 +57,7 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                                         {post.title}
                                                                     </h4>
                                                                     <p class=" text-left text-gray-500 dark:text-gray-400 md:mb-0 md:text-right">
-                                                                        {post.created_at}
+                                                                        {post.created_at_pretty}
                                                                     </p>
                                                                 </div>
                                                                 <p class="text-gray-500">{post.excerpt}</p>

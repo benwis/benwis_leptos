@@ -73,7 +73,7 @@ pub fn Index(cx: Scope) -> impl IntoView{
                                                     posts
                                                         .into_iter()
                                                         .map(move |post| {
-                                                            view! { cx, <FeatureCard href={post.slug} title={post.title} date={post.created_at.to_string()}/> }
+                                                            view! { cx, <FeatureCard href={post.slug} title={post.title} date={post.created_at_pretty}/> }
                                                                 .into_view(cx)
                                                         })
                                                         .collect::<Vec<_>>()
@@ -89,7 +89,7 @@ pub fn Index(cx: Scope) -> impl IntoView{
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 
-                                        transition-all dark:text-gray-400 dark:hover:text-gray-200"
+                                                                                                                        transition-all dark:text-gray-400 dark:hover:text-gray-200"
                     to="posts"
                 >
                     "See more posts"
