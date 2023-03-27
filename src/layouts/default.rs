@@ -19,7 +19,7 @@ pub fn Default(cx: Scope, children: Children) -> impl IntoView{
         }/>
         <Body class="h-screen bg-white dark:bg-gray-900 max-w-5xl mx-auto flex flex-col"/>
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
-        <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
+        <Stylesheet id="leptos" href="styles/output.css"/>
         <Nav/>
         <main class="mx-auto flex w-full flex-col items-center justify-center border-gray-200 px-4 pb-16 md:pt-4 dark:border-gray-900 sm:px-8">
             {children(cx)}

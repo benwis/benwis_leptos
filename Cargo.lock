@@ -902,6 +902,8 @@ dependencies = [
 [[package]]
 name = "femark"
 version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "83ffa26f4395a5b79271ca2ced8ace4a619c32058fe97678ffbf50794a38b331"
 dependencies = [
  "eyre",
  "once_cell",

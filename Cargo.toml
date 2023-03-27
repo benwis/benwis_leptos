@@ -50,7 +50,7 @@ async-trait = { version = "0.1.67", optional = true }
 miette = "5.6.0"
 axum-extra = { version = "0.7.1", features = ["cookie"] }
 web-sys = { version = "0.3.61", features = ["HtmlDocument"] }
-femark = { path="../femark", optional = true }
+femark = { version="0.1.3", optional = true }
 slug = "0.1.4"
 chrono = {version="0.4.24", optional=true}
 
@@ -73,7 +73,7 @@ site-root = "target/site"
 # Defaults to pkg
 site-pkg-dir = "pkg"
 # [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
-style-file = "./styles/output.css"
+# style-file = "./styles/output.css"
 # [Optional] Files in the asset-dir will be copied to the site-root directory
 assets-dir = "public"
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.

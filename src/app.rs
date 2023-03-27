@@ -30,119 +30,105 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                                 <ErrorBoundary fallback=|cx, errors| {
                                     view! { cx, <ErrorTemplate errors=errors/> }
                                 }>
-                                    <Index/>
+                                <   Outlet/>
                                 </ErrorBoundary>
-                            </Default>
+                            </Default>   
                         }
                     }
-                />
-                <Route
+                >
+                    <Route path="" view=move |cx|{
+                        view!{cx,
+                            <Index/>
+                        }
+                    }/>
+                    <Route
                     path="signup"
                     view=move |cx| {
                         view! { cx,
-                            <Default>
                                 <Join action=auth_context.signup/>
-                            </Default>
                         }
                     }
-                />
-                <Route
-                    path="about"
+                    />
+                    <Route
+                        path="about"
+                        view=move |cx| {
+                            view! { cx,
+                                    <About/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="portfolio"
+                        view=move |cx| {
+                            view! { cx,
+                                    <Portfolio/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="posts"
+                        view=move |cx| {
+                            view! { cx,
+                                    <Blog/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="posts/add"
+                        view=move |cx| {
+                            view! { cx,
+                                    <AddPost/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="posts/:slug"
+                        view=move |cx| {
+                            view! { cx,
+                                    <Post/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="posts/:slug/edit"
+                        view=move |cx| {
+                            view! { cx,
+                                    <EditPost/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="login"
+                        view=move |cx| {
+                            view! { cx,
+                                    <Login action=auth_context.login/>
+                            }
+                        }
+                    />
+                    <Route
+                        path="logout"
+                        view=move |cx| {
+                            view! { cx,
+                                    <Logout action=auth_context.logout/>
+                            }
+                        }
+                    />
+                    <Route
+                    path="nedry"
                     view=move |cx| {
                         view! { cx,
-                            <Default>
-                                <About/>
-                            </Default>
+                                <Nedry/>
                         }
                     }
-                />
-                <Route
-                    path="portfolio"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <Portfolio/>
-                            </Default>
-                        }
-                    }
-                />
-                <Route
-                    path="posts"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <Blog/>
-                            </Default>
-                        }
-                    }
-                />
-                <Route
-                    path="posts/add"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <AddPost/>
-                            </Default>
-                        }
-                    }
-                />
-                <Route
-                    path="posts/:slug"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <Post/>
-                            </Default>
-                        }
-                    }
-                />
-                <Route
-                    path="posts/:slug/edit"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <EditPost/>
-                            </Default>
-                        }
-                    }
-                />
-                <Route
-                    path="login"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <Login action=auth_context.login/>
-                            </Default>
-                        }
-                    }
-                />
-                <Route
-                    path="logout"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <Logout action=auth_context.logout/>
-                            </Default>
-                        }
-                    }
-                />
+                    />
+                </Route>
                 <Route
                     path="/rss.xml"
                     view=move |cx| {
                         view! { cx, <Rss/> }
                     }
                     ssr=SsrMode::Async
-                />
-                <Route
-                    path="nedry"
-                    view=move |cx| {
-                        view! { cx,
-                            <Default>
-                                <Nedry/>
-                            </Default>
-                        }
-                    }
-                />
+                />    
             </Routes>
         </Router>
     }
