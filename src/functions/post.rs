@@ -4,8 +4,9 @@ use leptos::*;
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
-    use crate::functions::pool;
+    use crate::functions::{pool, auth};
     use slug::slugify;
+    use leptos_axum::redirect;
 }}
 
 #[server(AddPost, "/api")]
@@ -16,8 +17,15 @@ pub async fn add_post(
     excerpt: String,
     content: String,
 ) -> Result<(), ServerFnError> {
-    let user = super::user::get_user(cx).await?;
+    
     let pool = pool(cx)?;
+    let auth = auth(cx)?;
+
+    // Redirect all non logged in users to Nedry!
+    if auth.is_anonymous(){
+        redirect(cx, "/nedry")
+    }
+    let user = super::user::get_user(cx).await?;
     let slug = match slug.is_empty() {
         true => slugify(&title),
         false => slug,
@@ -105,6 +113,12 @@ pub async fn update_post(
     preview: String,
 ) -> Result<Result<bool, BenwisAppError>, ServerFnError> {
     let pool = pool(cx)?;
+    let auth = auth(cx)?;
+
+    // Redirect all non logged in users to Nedry!
+    if auth.is_anonymous(){
+        redirect(cx, "/nedry")
+    }
 
     let published = published.parse::<bool>().unwrap();
     let preview = preview.parse::<bool>().unwrap();
@@ -131,6 +145,12 @@ pub async fn update_post(
 #[server(DeletePost, "/api")]
 pub async fn delete_post(cx: Scope, id: u16) -> Result<(), ServerFnError> {
     let pool = pool(cx)?;
+    let auth = auth(cx)?;
+
+        // Redirect all non logged in users to Nedry!
+        if auth.is_anonymous(){
+            redirect(cx, "/nedry")
+        }
 
     sqlx::query("DELETE FROM posts WHERE id = $1")
         .bind(id)

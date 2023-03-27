@@ -1,4 +1,4 @@
-use crate::functions::post::{get_posts, AddPost, DeletePost, UpdatePost};
+use crate::{functions::post::{get_posts, AddPost, DeletePost, UpdatePost}, providers::AuthContext};
 use leptos::*;
 use leptos_router::*;
 
@@ -22,6 +22,8 @@ pub fn Blog(cx: Scope) -> impl IntoView {
         },
         move |_| get_posts(cx),
     );
+
+    let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContext");
 
     view! { cx,
         <Transition fallback=move || {
@@ -53,6 +55,7 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                 post.published
                                             })
                                             .map(move |post| {
+                                                let post_slug: StoredValue<String> = store_value(cx, post.slug.clone());
                                                 view! { cx,
                                                     <section>
                                                         <a
@@ -71,10 +74,27 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                                 <p class="text-gray-500">{post.excerpt}</p>
                                                             </li>
                                                         </a>
-                                                        <ActionForm action=delete_post>
-                                                            <input type="hidden" name="id" value={post.id}/>
-                                                            <input type="submit" value="X"/>
-                                                        </ActionForm>
+                                                        <Transition fallback=move ||()>
+                                                            {move || {
+                                                                let user = move || match auth_context.user.read(cx) {
+                                                                    Some(Ok(Some(user))) => Some(user),
+                                                                    Some(Ok(None)) => None,
+                                                                    Some(Err(_)) => None,
+                                                                    None => None,
+                                                                };
+                                                                view! { cx,
+                                                                    <Show when=move || user().is_some() fallback=|_|()>
+                                                            <A href={format!("{}/edit",post_slug.get_value())}>"Edit Post"</A>
+                                                            <ActionForm action=delete_post>
+                                                                <input type="hidden" name="id" value={post.id}/>
+                                                                <input type="submit" value="Delete Post"/>
+                                                            </ActionForm>
+                                                            </Show>
+                                            
+                                                                }
+                                                            }
+                                                        }
+                                                        </Transition>
                                                     </section>
                                                 }
                                                     .into_any()

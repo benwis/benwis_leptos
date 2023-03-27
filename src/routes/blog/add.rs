@@ -63,7 +63,7 @@ pub fn AddPost(cx: Scope) -> impl IntoView{
                             id="excerpt"
                             rows={5}
                             name="excerpt"
-                            class="w-full text-black"
+                            class="w-full text-black border border-gray-500"
                         ></textarea>
                     </p>
                     <p>
@@ -72,7 +72,7 @@ pub fn AddPost(cx: Scope) -> impl IntoView{
                         <textarea
                             id="content"
                             rows={20}
-                            class="w-full text-black"
+                            class="w-full text-black border border-gray-500"
                             name="content"
                         ></textarea>
                     </p>

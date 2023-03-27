@@ -98,6 +98,12 @@ pub async fn signup(
             "Passwords did not match.".to_string(),
         ));
     }
+    // Don't want anyone signing up but me!
+    if username != "benwis"{
+        leptos_axum::redirect(cx, "/nedry");
+        return Ok(());
+
+    }
 
     let password_hashed = hash(password, DEFAULT_COST).unwrap();
 

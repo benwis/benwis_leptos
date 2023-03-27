@@ -37,17 +37,17 @@ pub fn About(cx: Scope) -> impl IntoView{
                 </div>
                 <p class="text-black dark:text-white">
                     "I'm a Software Engineer and Full Stack Web Developer, living and working in the SF Bay Area. I
-                                                                                                                        graduated from San Jose State with a degree in Industrial and Systems Engineering, and then
-                                                                                                                        made the jump into software engineering and web development."
+                                                                                                                                            graduated from San Jose State with a degree in Industrial and Systems Engineering, and then
+                                                                                                                                            made the jump into software engineering and web development."
                 </p>
                 <p class="text-black dark:text-white">
                     "I've been coding and building things since High School, and have helped build a variety of
-                                                                                                                        projects. Everything from mapping software for UAVs, motor controllers for automated vending
-                                                                                                                        machines, to electric motorcycle diagnostic software."
+                                                                                                                                            projects. Everything from mapping software for UAVs, motor controllers for automated vending
+                                                                                                                                            machines, to electric motorcycle diagnostic software."
                 </p>
                 <p class="text-black dark:text-white">
                     "I build web experiences using Python, TypeScript, and Rust along with React, Remix, and Svelte. Currently exploring the boundaries
-                                                                                                                        of web development with WASM, GraphQL, Remix, and Svelte."
+                                                                                                                                            of web development with WASM, GraphQL, Remix, and Svelte."
                 </p>
             </section>
             <section>
