@@ -31,24 +31,24 @@ pub fn Join(cx: Scope, action: Action<Signup, Result<(), ServerFnError>>) -> imp
                         </div>
                     </div>
                     <div>
-                    <label
-                        for="email"
-                        class="block text-sm font-medium text-gray-700 dark:text-white"
-                    >
-                        "Diplayed Name"
-                    </label>
-                    <div class="mt-1">
-                        <input
-                            id="display_name"
-                            required
-                            name="display_name"
-                            type="text"
-                            autoComplete="dipslay_name"
-                            aria-describedby="display_name-error"
-                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
-                        />
+                        <label
+                            for="email"
+                            class="block text-sm font-medium text-gray-700 dark:text-white"
+                        >
+                            "Diplayed Name"
+                        </label>
+                        <div class="mt-1">
+                            <input
+                                id="display_name"
+                                required
+                                name="display_name"
+                                type="text"
+                                autoComplete="dipslay_name"
+                                aria-describedby="display_name-error"
+                                class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                            />
+                        </div>
                     </div>
-                </div>
                     <div>
                         <label
                             for="password"

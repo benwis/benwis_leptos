@@ -100,20 +100,30 @@ pub fn Rss(cx: Scope) -> impl IntoView {
         move |_| get_posts(cx),
     );
 
-    view! {cx,
-        <Transition fallback=||view!{cx, "Loading"}>
-        { move || {
-            let posts = { move ||
-              posts.read(cx).map(|post| match post{
-                Ok(p) => p.into_iter().filter(|p| p.published).collect::<Vec<Post>>(),
-                Err(_) => Vec::new(),
-              }).unwrap_or_default()
-          };
-          let rss = generate_rss("benwis Blog", "The potentially misguided ramblings of a Rust developer flailing around on the web","http://benw.is",posts());
-          log!("RSS IS: {rss}");
-          rss.into_view(cx)
-        }
-      }
-      </Transition>
+    view! { cx,
+        <Transition fallback=|| {
+            view! { cx, "Loading" }
+        }>
+            {move || {
+                let posts = {
+                    move || {
+                        posts
+                            .read(cx)
+                            .map(|post| match post {
+                                Ok(p) => p.into_iter().filter(|p| p.published).collect::<Vec<Post>>(),
+                                Err(_) => Vec::new(),
+                            })
+                            .unwrap_or_default()
+                    }
+                };
+                let rss = generate_rss(
+                    "benwis Blog",
+                    "The potentially misguided ramblings of a Rust developer flailing around on the web",
+                    "http://benw.is",
+                    posts(),
+                );
+                rss.into_view(cx)
+            }}
+        </Transition>
     }
 }

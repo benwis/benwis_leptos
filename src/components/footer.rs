@@ -1,6 +1,7 @@
 use leptos::*;
 
-pub struct FooterLink<'a> {
+pub struct FooterLink<'a>
+{
     name: &'a str,
     href: &'a str,
     icon: &'a str,
@@ -72,7 +73,7 @@ pub fn Footer(cx: Scope) -> impl IntoView{
                                     class="text-gray-400 dark:text-white hover:text-gray-500"
                                 >
                                     <span class="sr-only">{link.name}</span>
-                                    {link.icon}
+                                    <div inner_html={link.icon}/>
                                 </a>
                             }
                         })
@@ -80,7 +81,8 @@ pub fn Footer(cx: Scope) -> impl IntoView{
                 </div>
                 <div class="mt-8 md:mt-0 md:order-1">
                     <p class="text-center text-base text-gray-400 dark:text-white">
-                        "© 2022 Ben Wishovich"
+                        "© 2022 Ben Wishovich | Built with "
+                        <a href="https://github.com/leptos-rs/leptos">"Leptos"</a>
                     </p>
                 </div>
             </div>

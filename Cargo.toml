@@ -19,12 +19,18 @@ leptos = { git="https://github.com/leptos-rs/leptos", default-features = false, 
 leptos_meta = { git="https://github.com/leptos-rs/leptos", default-features = false }
 leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true }
 leptos_router = {  git="https://github.com/leptos-rs/leptos", default-features = false }
+# leptos = { path="../leptos/leptos", default-features = false, features = [
+# 	"serde",
+# ] }
+# leptos_meta = { path="../leptos/meta", default-features = false }
+# leptos_axum = { path="../leptos/integrations/axum", optional = true }
+# leptos_router = {  path="../leptos/router", default-features = false }
 log = "0.4.17"
 simple_logger = "4.1.0"
 serde = { version = "1.0.158", features = ["derive"] }
 axum = { version = "0.6.11", optional = true }
 tower = { version = "0.4.13", optional = true }
-tower-http = { version = "0.4.0", features = ["compression-gzip", "fs"] }
+tower-http = { version = "0.4.0", features = ["compression-gzip", "fs"], optional=true }
 tokio = { version = "1.26.0", features = ["full"], optional = true }
 http = "0.2.9"
 sqlx = { version = "0.6.2", features = [
@@ -52,7 +58,7 @@ chrono = {version="0.4.24", optional=true}
 default = ["csr"]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = ["dep:axum", "dep:tower", "dep:tokio", "dep:axum_sessions_auth", "dep:axum_database_sessions", "dep:async-trait", "dep:sqlx", "dep:bcrypt", "dep:femark", "dep:rand", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
+ssr = ["dep:axum", "dep:tower", "dep:tokio","dep:tower-http", "dep:axum_sessions_auth", "dep:axum_database_sessions", "dep:async-trait", "dep:sqlx", "dep:bcrypt", "dep:femark", "dep:rand", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
 
 [package.metadata.cargo-all-features]
 denylist = ["axum", "tower", "tower-http", "tokio", "sqlx", "leptos_axum", "femark", "chrono"]
