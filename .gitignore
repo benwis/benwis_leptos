@@ -16,3 +16,4 @@ playwright/.cache/
 /.sass-cache/
 /.direnv/
 .env
+result

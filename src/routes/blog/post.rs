@@ -66,8 +66,7 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
                     "Back to Posts"
                 </a>
                 <Transition fallback=|| ()>
-                    {
-                        let edit_button = move || {
+                    {move || {
                             match auth_context.user.read(cx) {
                                 Some(Ok(user)) => {
                                     view! { cx,
@@ -82,14 +81,12 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
                                 Some(Err(_)) => ().into_view(cx),
                                 None => ().into_view(cx),
                             }
-                        };
-                        edit_button.into_view(cx)
+                        }
                     }
                 </Transition>
             </div>
             {
-                let post = match post.preview || post.published {
-                    true => {
+                (post.preview || post.published).then(|| {
                         view! { cx,
                             <h1 class="mb-4 text-3xl text-black dark:text-white md:text-5xl">{post.title}</h1>
                             <div class="dark:text-white text-black mb-2">{post.created_at_pretty}</div>
@@ -106,11 +103,7 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
                                 inner_html={post.html}
                             ></section>
                         }
-                            .into_view(cx)
-                    }
-                    false => ().into_view(cx),
-                };
-                post.into_view(cx)
+                })
             }
         </section>
     }

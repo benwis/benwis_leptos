@@ -1,0 +1,4 @@
+# fly.toml file generated for benwis-leptos on 2023-03-27T13:41:44-07:00
+
+app = "benwis-leptos"
+primary_region = "sjc"
