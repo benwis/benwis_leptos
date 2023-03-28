@@ -5,11 +5,30 @@ cfg_if! {
 if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use axum_sessions_auth::{SessionSqlitePool, Authentication, HasPermission};
-    use bcrypt::{hash, verify, DEFAULT_COST};
-    use crate::functions::{pool, auth};
+    use argon2::{
+        password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+        Argon2,
+    };    use crate::functions::{pool, auth};
     pub type AuthSession = axum_sessions_auth::AuthSession<User, i64, SessionSqlitePool, SqlitePool>;
     use async_trait::async_trait;
     use crate::models::User;
+    use crate::errors::BenwisAppError;
+    use rand_core::OsRng;
+
+    /// Hash Argon2 password
+    pub fn hash_password(password: &[u8]) -> Result<String, BenwisAppError> {
+        let argon2 = Argon2::default();
+        let salt = SaltString::generate(&mut OsRng);
+        let password_hash = argon2.hash_password(password, salt.as_ref())?.to_string();
+        Ok(password_hash)
+    }
+    /// Verify Password
+    pub fn verify_password(password: String, password2: String) -> Result<(), BenwisAppError> {
+        let argon2 = Argon2::default();
+        // Verify password against PHC string
+        let parsed_hash = PasswordHash::new(&password)?;
+        Ok(argon2.verify_password(password2.as_bytes(), &parsed_hash)?)
+    }
 
     #[derive(sqlx::FromRow, Clone)]
     pub struct SqlPermissionTokens {
@@ -68,14 +87,14 @@ pub async fn login(
         .ok_or("User does not exist.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    match verify(password, &user.password).map_err(|e| ServerFnError::ServerError(e.to_string()))? {
-        true => {
+    match verify_password(user.password, password).map_err(|e| ServerFnError::ServerError(e.to_string())) {
+        Ok(_) => {
             auth.login_user(user.id);
             auth.remember_user(remember.is_some());
             leptos_axum::redirect(cx, "/");
             Ok(())
         }
-        false => Err(ServerFnError::ServerError(
+        Err(_) => Err(ServerFnError::ServerError(
             "Password does not match.".to_string(),
         )),
     }
@@ -105,7 +124,7 @@ pub async fn signup(
 
     }
 
-    let password_hashed = hash(password, DEFAULT_COST).unwrap();
+    let password_hashed = hash_password(password.as_bytes()).unwrap();
 
     sqlx::query("INSERT INTO users (username, display_name, password) VALUES (?,?, ?)")
         .bind(username.clone())

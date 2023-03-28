@@ -12,12 +12,12 @@ pub fn AddPost(cx: Scope) -> impl IntoView {
         <Meta name="description" content="Add a post"/>
         <Meta property="og:description" content="Add a post"/>
 
-        <div class="flex min-h-full flex-col justify-center">
-            <div class="mx-auto w-full max-w-md px-8">
+        <div class="flex min-h-full w-full flex-col justify-center">
+            <div class="mx-auto w-full px-8">
                 <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "Add Post"
                 </h1>
-                <ActionForm action=add_post class="text-black dark:text-white">
+                <ActionForm action=add_post class="w-full text-black dark:text-white">
                     <p>
                         <label>"Post Title:"</label>
                         <input

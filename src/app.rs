@@ -103,13 +103,13 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         }
                     />
                 </Route>
-                <Route
-                    path="/rss.xml"
-                    view=move |cx| {
-                        view! { cx, <Rss/> }
-                    }
-                    ssr=SsrMode::Async
-                />
+            //     <Route
+            //         path="/rss.xml"
+            //         view=move |cx| {
+            //             view! { cx, <Rss/> }
+            //         }
+            //         ssr=SsrMode::Async
+            //     />
             </Routes>
         </Router>
     }

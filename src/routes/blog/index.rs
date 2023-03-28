@@ -45,7 +45,9 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                         .to_string() } </ pre > } .into_any()
                                     ]
                                 }
-                                Ok(posts) => {
+                                Ok(mut posts) => {
+                                    // Reverse the order of the posts
+                                    posts.sort_by(|a, b| b.created_at.partial_cmp(&a.created_at).unwrap());
                                     if posts.is_empty() {
                                         vec![
                                             view! { cx, < p class = "text-black dark:text-white" >

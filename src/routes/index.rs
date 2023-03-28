@@ -1,18 +1,19 @@
 use crate::components::{FeatureCard, FeatureCardProps};
-use crate::functions::post::{get_posts, AddPost, DeletePost};
+use crate::functions::post::{get_some_posts, AddPost, DeletePost, UpdatePost};
 use leptos::*;
 use leptos_meta::*;
 
 #[component]
 pub fn Index(cx: Scope) -> impl IntoView {
     let add_post = create_server_multi_action::<AddPost>(cx);
+    let update_post = create_server_action::<UpdatePost>(cx);
     let delete_post = create_server_action::<DeletePost>(cx);
 
     // list of posts is loaded from the server in reaction to changes
     let posts = create_resource(
         cx,
-        move || (add_post.version().get(), delete_post.version().get()),
-        move |_| get_posts(cx),
+        move || (add_post.version().get(), update_post.version().get(), delete_post.version().get()),
+        move |_| get_some_posts(cx),
     );
 
     view! { cx,
@@ -94,9 +95,8 @@ pub fn Index(cx: Scope) -> impl IntoView {
                     </Transition>
                 </div>
                 <a
-                    class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600
-                                                                                                                                                                transition-all dark:text-gray-400 dark:hover:text-gray-200"
-                    to="posts"
+                    class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"
+                    href="posts"   
                 >
                     "See more posts"
                     <svg

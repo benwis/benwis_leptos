@@ -11,7 +11,11 @@ pub enum BenwisAppError {
     InternalServerError,
     #[error("SqlxError: {0}")]
     SqlxError(String),
+    #[error("Argon2Error: {0}")]
+    Argon2Error(String),
 }
+
+
 
 impl BenwisAppError {
     pub fn status_code(&self) -> StatusCode {
@@ -19,6 +23,7 @@ impl BenwisAppError {
             BenwisAppError::NotFound => StatusCode::NOT_FOUND,
             BenwisAppError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             BenwisAppError::SqlxError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            BenwisAppError::Argon2Error(_) => StatusCode::BAD_REQUEST,
         }
     }
 }
@@ -28,6 +33,11 @@ cfg_if! {
         impl From<sqlx::Error> for BenwisAppError {
             fn from(value: sqlx::Error) -> Self {
                 Self::SqlxError(value.to_string())
+            }
+        }
+        impl From<argon2::password_hash::Error> for BenwisAppError {
+            fn from(error: argon2::password_hash::Error) -> Self {
+                Self::Argon2Error(error.to_string())
             }
         }
     }

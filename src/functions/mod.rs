@@ -27,6 +27,7 @@ cfg_if! {
         pub fn register_server_functions() {
             _ = post::AddPost::register();
             _ = post::GetPosts::register();
+            _ = post::GetSomePosts::register();
             _ = post::GetPost::register();
             _ = post::UpdatePost::register();
             _ = post::DeletePost::register();
