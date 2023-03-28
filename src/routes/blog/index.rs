@@ -1,5 +1,9 @@
-use crate::{functions::post::{get_posts, AddPost, DeletePost, UpdatePost}, providers::AuthContext};
+use crate::{
+    functions::post::{get_posts, AddPost, DeletePost, UpdatePost},
+    providers::AuthContext,
+};
 use leptos::*;
+use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
@@ -61,6 +65,12 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                 );
                                                 view! { cx,
                                                     <section>
+                                                    <Meta property="og:title" content="benwis Blog"/>
+                                                    <Meta name="title" content="benwis Blog"/>
+                                                    <Title text="benwis Blog"/>
+                                                    <Meta name="description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
+                                                    <Meta property="og:description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
+                                                    <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
                                                         <a
                                                             href=format!("/posts/{}", post.slug)
                                                             class="no-underline hover:underline hover:decoration-yellow-400"

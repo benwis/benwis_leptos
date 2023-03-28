@@ -2,6 +2,7 @@ use crate::functions::post::{get_post, UpdatePost};
 use crate::models::post;
 use crate::routes::blog::PostParams;
 use leptos::*;
+use leptos_meta::*;
 use leptos_router::*;
 #[component]
 pub fn EditPost(cx: Scope) -> impl IntoView {
@@ -54,9 +55,12 @@ pub fn EditPost(cx: Scope) -> impl IntoView {
 
 #[component]
 pub fn EditPostForm(cx: Scope, post: post::Post) -> impl IntoView {
-
     let update_post = create_server_action::<UpdatePost>(cx);
     view! { cx,
+        <Meta property="og:title" content="Edit Post"/>
+        <Title text="Edit Post"/>
+        <Meta name="description" content="Edit a Post"/>
+        <Meta property="og:description" content="Edit a Post"/>
         <ActionForm action=update_post class="text-black dark:text-white">
             <p>
                 <label>"Post Title:"</label>

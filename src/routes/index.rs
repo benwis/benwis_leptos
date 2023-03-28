@@ -1,21 +1,27 @@
-use leptos::*;
-use crate::functions::post::{get_posts, AddPost, DeletePost};
 use crate::components::{FeatureCard, FeatureCardProps};
+use crate::functions::post::{get_posts, AddPost, DeletePost};
+use leptos::*;
+use leptos_meta::*;
 
 #[component]
-pub fn Index(cx: Scope) -> impl IntoView{
-
+pub fn Index(cx: Scope) -> impl IntoView {
     let add_post = create_server_multi_action::<AddPost>(cx);
     let delete_post = create_server_action::<DeletePost>(cx);
 
-     // list of posts is loaded from the server in reaction to changes
-     let posts = create_resource(
+    // list of posts is loaded from the server in reaction to changes
+    let posts = create_resource(
         cx,
         move || (add_post.version().get(), delete_post.version().get()),
         move |_| get_posts(cx),
     );
 
     view! { cx,
+        <Meta name="og:title" content="benwis"/>
+        <Meta name="title" content="benwis"/>
+        <Meta name="description" content="Ben Wishovich's personal website"/>
+        <Meta name="og:description" content="Ben Wishovich's personal website"/>
+        <Meta name="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+
         <div class="flex w-9/12 flex-col-reverse items-start sm:flex-row">
             <div class="flex flex-col pt-20 mx-auto">
                 <h1 class="mb-3 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
@@ -88,7 +94,7 @@ pub fn Index(cx: Scope) -> impl IntoView{
                     </Transition>
                 </div>
                 <a
-                    class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 
+                    class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600
                                                                                                                                                                 transition-all dark:text-gray-400 dark:hover:text-gray-200"
                     to="posts"
                 >

@@ -1,10 +1,19 @@
-use leptos::*;
-use leptos_router::*;
 use crate::functions;
+use leptos::*;
+use leptos_meta::*;
+use leptos_router::*;
 
 #[component]
-pub fn Login(cx: Scope, action: Action<functions::auth::Login, Result<(), ServerFnError>>) -> impl IntoView {
+pub fn Login(
+    cx: Scope,
+    action: Action<functions::auth::Login, Result<(), ServerFnError>>,
+) -> impl IntoView {
     view! { cx,
+        <Meta property="og:title" content="Login"/>
+        <Title text="Login"/>
+        <Meta name="description" content="Login to the site"/>
+        <Meta property="og:description" content="Login to the site"/>
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
         <div class="flex min-h-full flex-col justify-center">
             <div class="mx-auto w-full max-w-md px-8">
                 <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">

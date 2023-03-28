@@ -1,9 +1,17 @@
-use leptos::*;
 use crate::components::{PortfolioCard, PortfolioCardProps};
+use leptos::*;
+use leptos_meta::*;
 
 #[component]
-pub fn Portfolio(cx: Scope) -> impl IntoView{
+pub fn Portfolio(cx: Scope) -> impl IntoView {
     view! { cx,
+
+        <Meta property="og:title" content="My Portfolio"/>
+        <Title text="My Portfolio"/>
+        <Meta name="description" content="A collection of things I've built or helped build."/>
+        <Meta property="og:description" content="A collection of things I've built or helped build."/>
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+
         <article class="mx-auto mb-16 flex w-full max-w-2xl flex-col items-start justify-center px-4 sm:px-8">
             <h1 class="mb-2 text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl ">
                 "Portfolio"
