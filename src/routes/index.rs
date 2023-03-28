@@ -16,11 +16,11 @@ pub fn Index(cx: Scope) -> impl IntoView {
     );
 
     view! { cx,
-        <Meta name="og:title" content="benwis"/>
+        <Meta property="og:title" content="benwis"/>
         <Meta name="title" content="benwis"/>
         <Meta name="description" content="Ben Wishovich's personal website"/>
-        <Meta name="og:description" content="Ben Wishovich's personal website"/>
-        <Meta name="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+        <Meta property="og:description" content="Ben Wishovich's personal website"/>
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
 
         <div class="flex w-9/12 flex-col-reverse items-start sm:flex-row">
             <div class="flex flex-col pt-20 mx-auto">
