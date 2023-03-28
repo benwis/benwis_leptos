@@ -19,6 +19,7 @@ if #[cfg(feature = "ssr")] {
     pub async fn file_and_error_handler(uri: Uri, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<Body>) -> AxumResponse {
         let options = &*options;
         let root = options.site_root.clone();
+        println!("ROOT IS: {root}");
         let res = get_static_file(uri.clone(), &root).await.unwrap();
 
         if res.status() == StatusCode::OK {

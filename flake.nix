@@ -54,8 +54,10 @@
           # Only keeps markdown files
           protoFilter = path: _type: builtins.match ".*proto$" path != null;
           sqlxFilter = path: _type: builtins.match ".*json$" path != null;
+          sqlFilter = path: _type: builtins.match ".*sql$" path != null;
+          cssFilter = path: _type: builtins.match ".*css$" path != null;
           protoOrCargo = path: type:
-            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type);
+            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (cssFilter path type);
           # other attributes omitted
 
           # Include more types of files in our bundle
@@ -132,12 +134,14 @@
             maintainers = with maintainers; [benwis];
           };
       };
+          flyConfig = ./fly.toml;
+
           # Deploy the image to Fly with our own bash script
           flyDeploy = pkgs.writeShellScriptBin "flyDeploy" ''
             OUT_PATH=$(nix build --print-out-paths .#container)
             HASH=$(echo $OUT_PATH | grep -Po "(?<=store\/)(.*?)(?=-)")
             ${pkgs.skopeo}/bin/skopeo --insecure-policy --debug copy docker-archive:"$OUT_PATH" docker://registry.fly.io/$FLY_PROJECT_NAME:$HASH --dest-creds x:"$FLY_AUTH_TOKEN" --format v2s2
-            ${pkgs.flyctl}/bin/flyctl deploy -i registry.fly.io/$FLY_PROJECT_NAME:$HASH --remote-only
+            ${pkgs.flyctl}/bin/flyctl deploy -i registry.fly.io/$FLY_PROJECT_NAME:$HASH -c ${flyConfig} --remote-only
           '';
         in
         {
@@ -201,13 +205,13 @@
             copyToRoot = pkgs.buildEnv {
               name = "image-root";
               paths = [ pkgs.cacert ./.  ];
-              pathsToLink = [ "/bin" "/configuration" "/keys" "/migrations" "App.db" ];
+              pathsToLink = [ "/bin" "/db" "/migrations" ];
             };
             config = {
-              Env = [ "PATH=${benwis_leptos}/bin" "APP_ENVIRONMENT=production" ];
+              Env = [ "PATH=${benwis_leptos}/bin" "APP_ENVIRONMENT=production" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
-                "8080/tcp" = { };
+                "3000/tcp" = { };
               };
 
               Cmd = [ "${benwis_leptos}/bin/benwis_leptos" ];

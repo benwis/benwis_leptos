@@ -30,96 +30,77 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                                 <ErrorBoundary fallback=|cx, errors| {
                                     view! { cx, <ErrorTemplate errors=errors/> }
                                 }>
-                                <   Outlet/>
+                                    <Outlet/>
                                 </ErrorBoundary>
-                            </Default>   
+                            </Default>
                         }
                     }
                 >
-                    <Route path="" view=move |cx|{
-                        view!{cx,
-                            <Index/>
-                        }
-                    }/>
                     <Route
-                    path="signup"
-                    view=move |cx| {
-                        view! { cx,
-                                <Join action=auth_context.signup/>
+                        path=""
+                        view=move |cx| {
+                            view! { cx, <Index/> }
                         }
-                    }
+                    />
+                    <Route
+                        path="signup"
+                        view=move |cx| {
+                            view! { cx, <Join action=auth_context.signup/> }
+                        }
                     />
                     <Route
                         path="about"
                         view=move |cx| {
-                            view! { cx,
-                                    <About/>
-                            }
+                            view! { cx, <About/> }
                         }
                     />
                     <Route
                         path="portfolio"
                         view=move |cx| {
-                            view! { cx,
-                                    <Portfolio/>
-                            }
+                            view! { cx, <Portfolio/> }
                         }
                     />
                     <Route
                         path="posts"
                         view=move |cx| {
-                            view! { cx,
-                                    <Blog/>
-                            }
+                            view! { cx, <Blog/> }
                         }
                     />
                     <Route
                         path="posts/add"
                         view=move |cx| {
-                            view! { cx,
-                                    <AddPost/>
-                            }
+                            view! { cx, <AddPost/> }
                         }
                     />
                     <Route
                         path="posts/:slug"
                         view=move |cx| {
-                            view! { cx,
-                                    <Post/>
-                            }
+                            view! { cx, <Post/> }
                         }
                     />
                     <Route
                         path="posts/:slug/edit"
                         view=move |cx| {
-                            view! { cx,
-                                    <EditPost/>
-                            }
+                            view! { cx, <EditPost/> }
                         }
                     />
                     <Route
                         path="login"
                         view=move |cx| {
-                            view! { cx,
-                                    <Login action=auth_context.login/>
-                            }
+                            view! { cx, <Login action=auth_context.login/> }
                         }
                     />
                     <Route
                         path="logout"
                         view=move |cx| {
-                            view! { cx,
-                                    <Logout action=auth_context.logout/>
-                            }
+                            view! { cx, <Logout action=auth_context.logout/> }
                         }
                     />
                     <Route
-                    path="nedry"
-                    view=move |cx| {
-                        view! { cx,
-                                <Nedry/>
+                        path="nedry"
+                        view=move |cx| {
+                            view! { cx, <Nedry/> }
                         }
-                    }
                     />
                 </Route>
                 <Route
@@ -128,7 +109,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         view! { cx, <Rss/> }
                     }
                     ssr=SsrMode::Async
-                />    
+                />
             </Routes>
         </Router>
     }

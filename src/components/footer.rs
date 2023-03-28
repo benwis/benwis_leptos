@@ -73,7 +73,7 @@ pub fn Footer(cx: Scope) -> impl IntoView{
                                     class="text-gray-400 dark:text-white hover:text-gray-500"
                                 >
                                     <span class="sr-only">{link.name}</span>
-                                    <div inner_html={link.icon}/>
+                                    <div inner_html={link.icon}></div>
                                 </a>
                             }
                         })
