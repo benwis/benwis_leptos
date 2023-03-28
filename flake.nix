@@ -56,8 +56,14 @@
           sqlxFilter = path: _type: builtins.match ".*json$" path != null;
           sqlFilter = path: _type: builtins.match ".*sql$" path != null;
           cssFilter = path: _type: builtins.match ".*css$" path != null;
+          ttfFilter = path: _type: builtins.match ".*ttf$" path != null;
+          woff2Filter = path: _type: builtins.match ".*woff2$" path != null;
+          webpFilter = path: _type: builtins.match ".*webp$" path != null;
+          jpegFilter = path: _type: builtins.match ".*jpeg$" path != null;
+          pngFilter = path: _type: builtins.match ".*png$" path != null;
+          icoFilter = path: _type: builtins.match ".*ico$" path != null;
           protoOrCargo = path: type:
-            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (cssFilter path type);
+            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
           # other attributes omitted
 
           # Include more types of files in our bundle
