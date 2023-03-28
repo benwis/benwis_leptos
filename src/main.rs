@@ -51,7 +51,7 @@ if #[cfg(feature = "ssr")] {
         simple_logger::init_with_level(log::Level::Info).expect("couldn't initialize logging");
 
         let pool = SqlitePoolOptions::new()
-            .connect("sqlite:App.db")
+            .connect("sqlite:db/App.db")
             .await
             .expect("Could not make pool.");
 

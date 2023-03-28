@@ -115,14 +115,24 @@ pub fn EditPostForm(cx: Scope, post: post::Post) -> impl IntoView {
             </p>
             <p>
                 <label>"Excerpt:"</label>
-                <textarea id="excerpt" rows={5} name="excerpt" class="w-full text-black border border-gray-500">
+                <textarea
+                    id="excerpt"
+                    rows={5}
+                    name="excerpt"
+                    class="w-full text-black border border-gray-500"
+                >
                     {post.excerpt}
                 </textarea>
             </p>
             <p>
                 <label for="content">"Content:"</label>
                 <br/>
-                <textarea id="content" rows={20} name="content" class="w-full text-black border border-gray-500">
+                <textarea
+                    id="content"
+                    rows={20}
+                    name="content"
+                    class="w-full text-black border border-gray-500"
+                >
                     {post.content}
                 </textarea>
             </p>
