@@ -2,6 +2,7 @@ use crate::functions::post::get_post;
 use crate::models::post;
 use crate::providers::AuthContext;
 use leptos::*;
+use leptos_meta::*;
 use leptos_router::*;
 
 #[derive(Params, PartialEq, Clone, Debug)]
@@ -87,7 +88,21 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
             {(post.preview || post.published)
                 .then(|| {
                     view! { cx,
-                        <h1 class="mb-4 text-3xl text-black dark:text-white md:text-5xl">{post.title}</h1>
+                        <Meta property="og:title" content={post.title.clone()}/>
+                        <Meta property="og:description" content={post.excerpt.clone().unwrap_or_default()}/>
+                        <Meta property="og:site_name" content="benw.is"/>
+                        <Meta property="og:locale" content="en-us"/>
+                        <Meta property="og:type" content="article"/>
+                        <Meta property="og:url" content={post.excerpt.clone().unwrap_or_default()}/>
+                        <Meta name="twitter:title" content={post.title.clone()}/>
+                        <Meta name="twitter:site" content="@iambenwis"/>
+                        <Title text={post.title.clone()} />
+                        <Meta name="twitter:card" content="summary"/>
+                        <Meta name="twitter:image" content="https://benwis.imgix.net/ben_catcarbon.jpeg"/>
+                        <Meta name="twitter:description" content={post.excerpt.clone().unwrap_or_default()}/>
+                        <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>
+
+                        <h1 class="mb-4 text-3xl text-black dark:text-white md:text-5xl">{post.title.clone()}</h1>
                         <div class="dark:text-white text-black mb-2">{post.created_at_pretty}</div>
                         <div class="-mx-4 my-2 flex h-1 w-[100vw] bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 sm:mx-0 sm:w-full"></div>
                         <section class="dark:bg-gray-800 p-4 mt-4 table-of-contents-parent">

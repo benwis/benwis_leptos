@@ -1,8 +1,15 @@
 use leptos::*;
+use leptos_meta::*;
 
 #[component]
-pub fn About(cx: Scope) -> impl IntoView{
+pub fn About(cx: Scope) -> impl IntoView {
     view! { cx,
+        <Meta property="og:title" content="About Me"/>
+        <Title text="About Me"/>
+        <Meta name="description" content="A page describing me"/>
+        <Meta property="og:description" content="A page describing me"/>
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+
         <div class="mx-auto grid max-w-2xl grid-cols-1 items-start justify-center gap-y-20 border-gray-200 px-4 pb-16 dark:border-gray-900 sm:px-8 md:grid-cols-2 md:gap-x-20">
             <section>
                 <div>
