@@ -17,7 +17,7 @@ pub fn Index(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <Meta property="og:title" content="benwis"/>
-        <Meta name="title" content="benwis"/>
+        <Title text="benwis"/>
         <Meta name="description" content="Ben Wishovich's personal website"/>
         <Meta property="og:description" content="Ben Wishovich's personal website"/>
         <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>

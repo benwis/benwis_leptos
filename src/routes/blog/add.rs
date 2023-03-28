@@ -7,10 +7,10 @@ pub fn AddPost(cx: Scope) -> impl IntoView {
     let add_post = create_server_action::<AddPost>(cx);
 
     view! { cx,
-        <Meta property="og:title" content="Ah-Ah-Ah You didn't say the magic word!"/>
-        <Title text="Ah-Ah-Ah You didn't say the magic word!"/>
-        <Meta name="description" content="Ah-Ah-Ah You didn't say the magic word!"/>
-        <Meta property="og:description" content="Ah-Ah-Ah You didn't say the magic word!"/>
+        <Meta property="og:title" content="Add Post"/>
+        <Title text="Add Post"/>
+        <Meta name="description" content="Add a post"/>
+        <Meta property="og:description" content="Add a post"/>
 
         <div class="flex min-h-full flex-col justify-center">
             <div class="mx-auto w-full max-w-md px-8">
