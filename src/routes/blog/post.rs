@@ -66,6 +66,7 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
                 <a href="/posts" class="dark:text-white">
                     "Back to Posts"
                 </a>
+                <div>{post.preview} {post.published}</div>
                 <Transition fallback=|| ()>
                     {move || {
                         match auth_context.user.read(cx) {

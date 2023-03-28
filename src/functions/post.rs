@@ -16,6 +16,8 @@ pub async fn add_post(
     slug: String,
     excerpt: String,
     content: String,
+    published: String,
+    preview: String,
 ) -> Result<(), ServerFnError> {
     
     let pool = pool(cx)?;
@@ -25,6 +27,10 @@ pub async fn add_post(
     if auth.is_anonymous(){
         redirect(cx, "/nedry")
     }
+
+    let published = published.parse::<bool>().unwrap();
+    let preview = preview.parse::<bool>().unwrap();
+
     let user = super::user::get_user(cx).await?;
     let slug = match slug.is_empty() {
         true => slugify(&title),
@@ -37,13 +43,15 @@ pub async fn add_post(
     };
 
     match sqlx::query(
-        "INSERT INTO posts (title, slug, user_id, excerpt, content) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO posts (title, slug, user_id, excerpt, content, published, preview) VALUES (?, ?, ?, ?, ?, ?, ?)",
     )
     .bind(title)
     .bind(slug)
     .bind(id)
     .bind(excerpt)
     .bind(content)
+    .bind(published)
+    .bind(preview)
     .execute(&pool)
     .await
     {
@@ -68,8 +76,36 @@ pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
         posts.push(row);
     }
 
-    // why can't we just have async closures?
-    // let mut rows: Vec<post> = rows.iter().map(|t| async { t }).collect();
+    let mut converted_posts = Vec::with_capacity(posts.len());
+
+    for t in posts {
+        let post = t.into_post(&pool).await;
+        converted_posts.push(post);
+    }
+
+    let mut posts: Vec<Post> = converted_posts;
+    
+    // Reverse the order of the posts
+    posts.sort_unstable_by(|a, b| b.created_at.partial_cmp(&a.created_at).unwrap());
+
+    Ok(posts)
+}
+
+#[server(GetSomePosts, "/api")]
+pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
+    use futures::TryStreamExt;
+    let pool = pool(cx)?;
+
+    let mut posts = Vec::new();
+    let mut rows = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts ORDER by created_at DESC limit 3").fetch(&pool);
+
+    while let Some(row) = rows
+        .try_next()
+        .await
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
+    {
+        posts.push(row);
+    }
 
     let mut converted_posts = Vec::with_capacity(posts.len());
 
@@ -78,7 +114,10 @@ pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
         converted_posts.push(post);
     }
 
-    let posts: Vec<Post> = converted_posts;
+    let mut posts: Vec<Post> = converted_posts;
+    
+    // Reverse the order of the posts
+    posts.sort_unstable_by(|a, b| b.created_at.partial_cmp(&a.created_at).unwrap());
 
     Ok(posts)
 }
