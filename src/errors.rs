@@ -15,8 +15,6 @@ pub enum BenwisAppError {
     Argon2Error(String),
 }
 
-
-
 impl BenwisAppError {
     pub fn status_code(&self) -> StatusCode {
         match self {
