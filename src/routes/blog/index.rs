@@ -31,7 +31,6 @@ pub fn Blog(cx: Scope) -> impl IntoView {
 
     view! { cx,
         <Meta property="og:title" content="benwis Blog"/>
-        <Meta name="title" content="benwis Blog"/>
         <Title text="benwis Blog"/>
         <Meta name="description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
         <Meta property="og:description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>

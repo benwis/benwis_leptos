@@ -77,6 +77,7 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                         view=move |cx| {
                             view! { cx, <Post/> }
                         }
+                        ssr=SsrMode::Async
                     />
                     <Route
                         path="posts/:slug/edit"
