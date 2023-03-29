@@ -1,6 +1,6 @@
 use crate::functions::auth::{Login, Logout, Signup};
-use crate::functions::user::get_user;
-use crate::models::user::User;
+use crate::functions::user::get_safe_user;
+use crate::models::user::SafeUser;
 use leptos::*;
 
 #[derive(Clone)]
@@ -8,7 +8,7 @@ pub struct AuthContext {
     pub login: Action<Login, Result<(), ServerFnError>>,
     pub logout: Action<Logout, Result<(), ServerFnError>>,
     pub signup: Action<Signup, Result<(), ServerFnError>>,
-    pub user: Resource<(usize, usize, usize), Result<Option<User>, ServerFnError>>,
+    pub user: Resource<(usize, usize, usize), Result<Option<SafeUser>, ServerFnError>>,
 }
 /// Get the current user and place it in Context
 pub fn provide_auth(cx: Scope) {
@@ -25,21 +25,9 @@ pub fn provide_auth(cx: Scope) {
                 logout.version().get(),
             )
         },
-        move |_| get_user(cx),
+        move |_| get_safe_user(cx),
     );
 
-    // let user = Signal::derive(cx, move || {
-    //     {
-    //         {
-    //             user_resource.read(cx).map(|user| match user {
-    //                 Err(_) => None,
-    //                 Ok(None) => None,
-    //                 Ok(Some(user)) => Some(user),
-    //             })
-    //         }
-    //     }
-    //     .unwrap_or(None)
-    // });
     provide_context(
         cx,
         AuthContext {
