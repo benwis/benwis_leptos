@@ -43,6 +43,15 @@ pub fn AddPost(cx: Scope) -> impl IntoView {
                         />
                     </p>
                     <p>
+                        <label>"Created At:"</label>
+                        <input
+                            type="text"
+                            name="created_at_pretty"
+                            placeholder="1970-01-01 00:00:00"
+                            class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                        />
+                    </p>
+                    <p>
                         <label>"Published:"</label>
                         <select
                             name="published"

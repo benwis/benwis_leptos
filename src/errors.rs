@@ -13,6 +13,8 @@ pub enum BenwisAppError {
     SqlxError(String),
     #[error("Argon2Error: {0}")]
     Argon2Error(String),
+    #[error("Invalid Date/Time")]
+    InvalidDateTime,
 }
 
 impl BenwisAppError {
@@ -22,6 +24,7 @@ impl BenwisAppError {
             BenwisAppError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             BenwisAppError::SqlxError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             BenwisAppError::Argon2Error(_) => StatusCode::BAD_REQUEST,
+            BenwisAppError::InvalidDateTime => StatusCode::BAD_REQUEST,
         }
     }
 }

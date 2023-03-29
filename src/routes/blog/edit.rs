@@ -21,29 +21,26 @@ pub fn EditPost(cx: Scope) -> impl IntoView {
             view! { cx, <p>"Loading..."</p> }
         }>
             {
-                let post = move || post.read(cx).map(|p| match p {
+                 move || post.read(cx).map(|p| match p {
                     Ok(Ok(Some(post))) => {
                         view! { cx,
-                            <main>
                                 <EditPostForm post={post}/>
-                            </main>
                         }
-                            .into_any()
+                            .into_view(cx)
                     }
                     Ok(Ok(None)) => {
                         view! { cx, <p>"Post Not Found"</p> }
-                            .into_any()
+                            .into_view(cx)
                     }
                     Ok(Err(_)) => {
                         view! { cx, <p>"Server Error"</p> }
-                            .into_any()
+                            .into_view(cx)
                     }
                     Err(_) => {
                         view! { cx, <p>"Server Fn Error"</p> }
-                            .into_any()
+                            .into_view(cx)
                     }
-                });
-                view! { cx, <main>{post}</main> }
+                })
             }
         </Transition>
     }
@@ -57,7 +54,7 @@ pub fn EditPostForm(cx: Scope, post: post::Post) -> impl IntoView {
         <Title text="Edit Post"/>
         <Meta name="description" content="Edit a Post"/>
         <Meta property="og:description" content="Edit a Post"/>
-        <ActionForm action=update_post class="text-black dark:text-white">
+        <ActionForm action=update_post class="text-black dark:text-white w-full">
             <p>
                 <label>"Post Title:"</label>
                 <input
@@ -85,6 +82,16 @@ pub fn EditPostForm(cx: Scope, post: post::Post) -> impl IntoView {
                     value={post.hero}
                 />
             </p>
+            <p>
+            <label>"Created At:"</label>
+            <input
+                type="text"
+                name="created_at_pretty"
+                placeholder="1970-01-01 00:00:00"
+                class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
+                value={post.created_at_pretty}
+            />
+        </p>
             <p>
                 <label>"Published:"</label>
                 <select
