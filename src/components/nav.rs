@@ -29,11 +29,12 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                 <DarkModeToggle/>
                 <Transition fallback=move || ()>
                     {move || {
-                        let user = move || auth_context.user.read(cx).map(|u| match u {
-                            Ok(Some(user)) => Some(user),
-                            Ok(None) => None,
-                            Err(_) => None,
-                        });
+                        let user = move || match auth_context.user.read(cx) {
+                            Some(Ok(Some(user))) => Some(user),
+                            Some(Ok(None)) => None,
+                            Some(Err(_)) => None,
+                            None => None,
+                        };
                         view! { cx,
                             <Show
                                 when=move || user().is_some()
