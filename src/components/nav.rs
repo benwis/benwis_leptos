@@ -1,12 +1,12 @@
 use leptos::*;
 
-use crate::providers::AuthContext;
 use crate::components::{DarkModeToggle, DarkModeToggleProps};
+use crate::providers::AuthContext;
 
 #[component]
-pub fn Nav(cx: Scope) -> impl IntoView{
+pub fn Nav(cx: Scope) -> impl IntoView {
     let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContext");
-    
+
     view! { cx,
         <nav class="top-nav bg-white dark:bg-gray-900 text-gray-700 dark:text-white">
             <div class="text-2xl">
@@ -29,12 +29,11 @@ pub fn Nav(cx: Scope) -> impl IntoView{
                 <DarkModeToggle/>
                 <Transition fallback=move || ()>
                     {move || {
-                        let user = move || match auth_context.user.read(cx) {
-                            Some(Ok(Some(user))) => Some(user),
-                            Some(Ok(None)) => None,
-                            Some(Err(_)) => None,
-                            None => None,
-                        };
+                        let user = move || auth_context.user.read(cx).map(|u| match u {
+                            Ok(Some(user)) => Some(user),
+                            Ok(None) => None,
+                            Err(_) => None,
+                        });
                         view! { cx,
                             <Show
                                 when=move || user().is_some()

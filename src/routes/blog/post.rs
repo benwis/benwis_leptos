@@ -16,10 +16,6 @@ pub fn Post(cx: Scope) -> impl IntoView {
     let post = create_resource(
         cx,
         move || params().map(|params| params.slug).ok().unwrap(),
-        // any of the following would work (they're identical)
-        // move |id| async move { get_contact(id).await }
-        // move |id| get_contact(id),
-        // get_contact
         move |slug| get_post(cx, slug),
     );
 
@@ -27,30 +23,24 @@ pub fn Post(cx: Scope) -> impl IntoView {
         <Transition fallback=move || {
             view! { cx, <p>"Loading..."</p> }
         }>
-            {
-                let post = move || match post.read(cx) {
-                    Some(Ok(Ok(Some(post)))) => {
-                        view! { cx, <PostContent post={post}/> }
-                            .into_view(cx)
-                    }
-                    Some(Ok(Ok(None))) => {
-                        view! { cx, <p>"Post Not Found"</p> }
-                            .into_view(cx)
-                    }
-                    Some(Ok(Err(_))) => {
-                        view! { cx, <p>"Server Error"</p> }
-                            .into_view(cx)
-                    }
-                    Some(Err(_)) => {
-                        view! { cx, <p>"Server Fn Error"</p> }
-                            .into_view(cx)
-                    }
-                    None => {
-                        view! { cx, <h1>"Loading..."</h1> }
-                            .into_view(cx)
-                    }
-                };
-                post.into_view(cx)
+            { move || post.read(cx).map(|p|{ match p {
+                Ok(Ok(Some(post))) => {
+                    view! { cx, <PostContent post={post}/> }
+                        .into_view(cx)
+                }
+                Ok(Ok(None)) => {
+                    view! { cx, <p>"Post Not Found"</p> }
+                        .into_view(cx)
+                }
+                Ok(Err(_)) => {
+                    view! { cx, <p>"Server Error"</p> }
+                        .into_view(cx)
+                }
+                Err(_) => {
+                    view! { cx, <p>"Server Fn Error"</p> }
+                        .into_view(cx)
+                }
+            }})
             }
         </Transition>
     }

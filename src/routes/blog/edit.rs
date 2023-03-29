@@ -21,8 +21,8 @@ pub fn EditPost(cx: Scope) -> impl IntoView {
             view! { cx, <p>"Loading..."</p> }
         }>
             {
-                let post = move || match post.read(cx) {
-                    Some(Ok(Ok(Some(post)))) => {
+                let post = move || post.read(cx).map(|p| match p {
+                    Ok(Ok(Some(post))) => {
                         view! { cx,
                             <main>
                                 <EditPostForm post={post}/>
@@ -30,23 +30,19 @@ pub fn EditPost(cx: Scope) -> impl IntoView {
                         }
                             .into_any()
                     }
-                    Some(Ok(Ok(None))) => {
+                    Ok(Ok(None)) => {
                         view! { cx, <p>"Post Not Found"</p> }
                             .into_any()
                     }
-                    Some(Ok(Err(_))) => {
+                    Ok(Err(_)) => {
                         view! { cx, <p>"Server Error"</p> }
                             .into_any()
                     }
-                    Some(Err(_)) => {
+                    Err(_) => {
                         view! { cx, <p>"Server Fn Error"</p> }
                             .into_any()
                     }
-                    None => {
-                        view! { cx, <h1>"Loading..."</h1> }
-                            .into_any()
-                    }
-                };
+                });
                 view! { cx, <main>{post}</main> }
             }
         </Transition>
