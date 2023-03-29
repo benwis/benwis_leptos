@@ -67,11 +67,6 @@ if #[cfg(feature = "ssr")] {
 }
 }
 
-#[server(Foo, "/api")]
-pub async fn foo() -> Result<String, ServerFnError> {
-    Ok(String::from("Bar!"))
-}
-
 #[server(Login, "/api")]
 pub async fn login(
     cx: Scope,
@@ -87,7 +82,9 @@ pub async fn login(
         .ok_or("User does not exist.")
         .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
 
-    match verify_password(user.password, password).map_err(|e| ServerFnError::ServerError(e.to_string())) {
+    match verify_password(user.password, password)
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))
+    {
         Ok(_) => {
             auth.login_user(user.id);
             auth.remember_user(remember.is_some());
@@ -118,10 +115,9 @@ pub async fn signup(
         ));
     }
     // Don't want anyone signing up but me!
-    if username != "benwis"{
+    if username != "benwis" {
         leptos_axum::redirect(cx, "/nedry");
         return Ok(());
-
     }
 
     let password_hashed = hash_password(password.as_bytes()).unwrap();

@@ -35,6 +35,7 @@ cfg_if! {
             _ = auth::Logout::register();
             _ = auth::Signup::register();
             _ = user::GetUser::register();
+            _ = user::GetSafeUser::register();
             _ = dark_mode::ToggleDarkMode::register();
         }
 }}
