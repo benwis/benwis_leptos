@@ -30,6 +30,12 @@ pub fn Blog(cx: Scope) -> impl IntoView {
     let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContext");
 
     view! { cx,
+        <Meta property="og:title" content="benwis Blog"/>
+        <Meta name="title" content="benwis Blog"/>
+        <Title text="benwis Blog"/>
+        <Meta name="description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
+        <Meta property="og:description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
         <Transition fallback=move || {
             view! { cx, <p>"Loading..."</p> }
         }>
@@ -57,7 +63,6 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                         posts
                                             .into_iter()
                                             .filter(|post| {
-                                                log!("{}", post.published);
                                                 post.published
                                             })
                                             .map(move |post| {
@@ -67,12 +72,6 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                 );
                                                 view! { cx,
                                                     <section>
-                                                    <Meta property="og:title" content="benwis Blog"/>
-                                                    <Meta name="title" content="benwis Blog"/>
-                                                    <Title text="benwis Blog"/>
-                                                    <Meta name="description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
-                                                    <Meta property="og:description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
-                                                    <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
                                                         <a
                                                             href=format!("/posts/{}", post.slug)
                                                             class="no-underline hover:underline hover:decoration-yellow-400"
