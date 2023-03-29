@@ -1,4 +1,4 @@
-use crate::models::User;
+use crate::models::SafeUser;
 use cfg_if::cfg_if;
 use serde::{Deserialize, Serialize};
 
@@ -31,7 +31,7 @@ if #[cfg(feature = "ssr")] {
             let HTMLOutput{content, toc} = femark::process_markdown_to_html(self.content.clone()).unwrap_or_default();
             Post {
                 id: self.id,
-                user: User::get(self.user_id, pool).await,
+                user: SafeUser::get(self.user_id, pool).await,
                 title: self.title,
                 slug: self.slug,
                 created_at: self.created_at,
@@ -56,7 +56,7 @@ if #[cfg(feature = "ssr")] {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Post {
     pub id: u32,
-    pub user: Option<User>,
+    pub user: Option<SafeUser>,
     pub title: String,
     pub slug: String,
     pub excerpt: Option<String>,
