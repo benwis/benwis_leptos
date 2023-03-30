@@ -51,7 +51,7 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
     let auth_context = use_context::<AuthContext>(cx).expect("Failed to get Auth Context");
 
     view! { cx,
-        <section class="px-4 max-w-5xl">
+        <section class="px-4 w-full">
             <div class="flex justify-between w-full">
                 <a href="/posts" class="dark:text-white">
                     "Back to Posts"
@@ -101,7 +101,7 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
                             ></div>
                         </section>
                         <section
-                            class="text-black prose lg:prose-xl dark:prose-invert dark:text-white text-base mt-8"
+                            class="text-black mx-auto prose lg:prose-xl dark:prose-invert dark:text-white text-base mt-8"
                             inner_html={post.html}
                         ></section>
                     }
