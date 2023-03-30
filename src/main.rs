@@ -1,4 +1,5 @@
 use cfg_if::cfg_if;
+use leptos_router::SsrMode;
 
 // boilerplate to run in different modes
 cfg_if! {
