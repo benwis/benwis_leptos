@@ -13,7 +13,7 @@ pub enum BenwisAppError {
     SqlxError(String),
     #[error("Argon2Error: {0}")]
     Argon2Error(String),
-    #[error("Invalid Date/Time")]
+    #[error("Invalid Date or Time")]
     InvalidDateTime,
 }
 
