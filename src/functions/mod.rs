@@ -24,6 +24,7 @@ cfg_if! {
                 .ok_or("Auth session missing.")
                 .map_err(|e| ServerFnError::ServerError(e.to_string()))
         }
+        
         pub fn register_server_functions() {
             _ = post::AddPost::register();
             _ = post::GetPosts::register();
