@@ -114,3 +114,10 @@ lib-features = ["hydrate"]
 #
 # Optional. Defaults to false.
 lib-default-features = false
+
+[profile.release]
+lto = true
+panic = "abort"
+opt-level = 'z'
+strip = true
+codegen-units = 1

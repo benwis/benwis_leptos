@@ -110,6 +110,7 @@
             inherit cargoArtifacts;
             # ALL CAPITAL derivations will get forwarded to mkDerivation and will set the env var during build
             SQLX_OFFLINE = "true";
+            LEPTOS_BIN_TARGET_TRIPLE = "x86_64-unknown-linux-gnu"; # Adding this allows -Zbuild-std to work and shave 100kb off the WASM
             APP_ENVIRONMENT = "production";
           });
           cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
