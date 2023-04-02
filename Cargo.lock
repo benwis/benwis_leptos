@@ -1512,8 +1512,7 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "leptos"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "cfg-if",
  "leptos_config",
@@ -1528,8 +1527,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_axum"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "axum",
  "futures 0.3.27",
@@ -1545,8 +1543,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_config"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "config",
  "fs",
@@ -1558,8 +1555,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_dom"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "async-recursion",
  "cfg-if",
@@ -1585,8 +1581,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_hot_reload"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "anyhow",
  "camino",
@@ -1602,8 +1597,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_integration_utils"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "futures 0.3.27",
  "leptos",
@@ -1614,8 +1608,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_macro"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "attribute-derive",
  "cfg-if",
@@ -1623,7 +1616,6 @@ dependencies = [
  "html-escape",
  "itertools",
  "leptos_hot_reload",
- "once_cell",
  "prettyplease",
  "proc-macro-error",
  "proc-macro2",
@@ -1636,8 +1628,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_meta"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "cfg-if",
  "leptos",
@@ -1648,8 +1639,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_reactive"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "base64 0.21.0",
  "cfg-if",
@@ -1671,8 +1661,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_router"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "cfg-if",
  "common_macros",
@@ -1696,8 +1685,7 @@ dependencies = [
 
 [[package]]
 name = "leptos_server"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "lazy_static",
  "leptos_reactive",
@@ -2606,8 +2594,7 @@ dependencies = [
 
 [[package]]
 name = "server_fn"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "ciborium",
  "const_format",
@@ -2628,8 +2615,7 @@ dependencies = [
 
 [[package]]
 name = "server_fn_macro"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "const_format",
  "proc-macro-error",
@@ -2642,8 +2628,7 @@ dependencies = [
 
 [[package]]
 name = "server_fn_macro_default"
-version = "0.2.4"
-source = "git+https://github.com/benwis/leptos?branch=deferred-resources#57a91d13afea86654020f5add8c5c313a08b03f9"
+version = "0.2.5"
 dependencies = [
  "server_fn_macro",
  "syn 1.0.109",

@@ -1,37 +1,5 @@
 {
   "nodes": {
-    "advisory-db": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1679746730,
-        "narHash": "sha256-2/d4jljo1KreM+gSeIwfjlW+SgtRyAKxWpiyRhyZBPg=",
-        "owner": "rustsec",
-        "repo": "advisory-db",
-        "rev": "719587479aa1814df822a3a4dd4067cd4b37a8ab",
-        "type": "github"
-      },
-      "original": {
-        "owner": "rustsec",
-        "repo": "advisory-db",
-        "type": "github"
-      }
-    },
-    "cargo-leptos": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1680094968,
-        "narHash": "sha256-LWi+KxvtIPP67vNe1Edf7AT8y4nKJ6jawTJtSEpt+4I=",
-        "owner": "benwis",
-        "repo": "cargo-leptos",
-        "rev": "6512bd2dc891fead2b7ff7f08d26b89789be7682",
-        "type": "github"
-      },
-      "original": {
-        "owner": "benwis",
-        "repo": "cargo-leptos",
-        "type": "github"
-      }
-    },
     "crane": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -119,8 +87,6 @@
     },
     "root": {
       "inputs": {
-        "advisory-db": "advisory-db",
-        "cargo-leptos": "cargo-leptos",
         "crane": "crane",
         "flake-utils": "flake-utils_2",
         "nixpkgs": "nixpkgs",
