@@ -1,7 +1,7 @@
 # fly.toml file generated for benwis-leptos on 2023-03-27T17:22:55-07:00
 
 app = "benwis-leptos"
-primary_region = "sjc"
+# primary_region = "sjc"
 
 [[services]]
   internal_port = 3000
