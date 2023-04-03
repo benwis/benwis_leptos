@@ -13,7 +13,7 @@ pub struct PostParams {
 #[component]
 pub fn Post(cx: Scope) -> impl IntoView {
     let params = use_params::<PostParams>(cx);
-    let post = create_deferred_resource(
+    let post = create_blocking_resource(
         cx,
         move || params().map(|params| params.slug).ok().unwrap(),
         move |slug| get_post(cx, slug),
