@@ -115,9 +115,27 @@ lib-features = ["hydrate"]
 # Optional. Defaults to false.
 lib-default-features = false
 
+
+# The profile to use for the bin target when compiling for release
+#
+# Optional. Defaults to "release".
+bin-profile-release = "release"
+
+# The profile to use for the lib target when compiling for release
+#
+# Optional. Defaults to "release".
+lib-profile-release = "release-wasm-size"
+
+
 [profile.release]
 lto = true
-panic = "abort"
+opt-level = 3
+panic = "unwind"
+
+[profile.release-wasm-size]
+inherits = "release"
+lto = true
+# panic = "abort"
 opt-level = 'z'
 strip = true
 codegen-units = 1

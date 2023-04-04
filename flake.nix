@@ -138,7 +138,7 @@
             ];
           };
 
-            buildPhaseCargoCommand = "cargo leptos build --release";
+            buildPhaseCargoCommand = "cargo leptos build --release -vvv";
             installPhaseCommand = ''
             mkdir -p $out/bin
             cp target/server/x86_64-unknown-linux-gnu/release/benwis_leptos $out/bin/
@@ -151,6 +151,8 @@
             # ALL CAPITAL derivations will get forwarded to mkDerivation and will set the env var during build
             SQLX_OFFLINE = "true";
             LEPTOS_BIN_TARGET_TRIPLE = "x86_64-unknown-linux-gnu"; # Adding this allows -Zbuild-std to work and shave 100kb off the WASM
+            LEPTOS_BIN_PROFILE_RELEASE = "release";
+            LEPTOS_LIB_PROFILE_RELEASE ="release-wasm-size";
             APP_ENVIRONMENT = "production";
           });
           
@@ -284,6 +286,8 @@
               pkg-config
               binaryen
               nodejs
+              hey
+              drill
               nodePackages.tailwindcss
               cargo-leptos
               protobuf
