@@ -73,6 +73,7 @@
 
         benwis_leptos = craneLib.buildPackage {
           inherit src;
+          pname = "benwis_leptos";
 
           cargoVendorDir = craneLib.vendorMultipleCargoDeps {
             inherit (craneLib.findCargoFiles src) cargoConfigs;
@@ -91,9 +92,9 @@
             ];
           };
 
-          cargoExtraArgs = "-Z build-std --target x86_64-unknown-linux-gnu";
+          #cargoExtraArgs = "-Z build-std --target x86_64-unknown-linux-gnu";
 
-          buildPhaseCargoCommand = "cargo leptos --manifest-path=./Cargo.toml build --release -vv";
+          buildPhaseCargoCommand = "cargo leptos --manifest-path=./Cargo.toml build  --release -vv";
           installPhaseCommand = ''
           mkdir -p $out/bin
           cp target/server/release/benwis_leptos $out/bin/
@@ -131,7 +132,7 @@
             #    "leptos-0.2.5" = "sha256-Q+EfyHvOJFnsbmptWwRGzconTwGFM22/XqLPPr5tK/I=";
             #  };
             #};
-            cargoHash="sha256-iE55W3NPYw/8l/z28ahLXn4aITrS+eqrv7TdV/Dmxks=";
+            cargoHash="sha256-e6aXerO5uuUpJo2m9d5as/jh1S7sKvq3qss72Lr6iHs=";
 
             nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
