@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "advisory-db": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1680555384,
+        "narHash": "sha256-28eEfXPIdVBkDxFUIMW8Pwi+rngZTEpAuTaXVb0w84g=",
+        "owner": "rustsec",
+        "repo": "advisory-db",
+        "rev": "b0e918536db307c229653fab86636ef9d504c816",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rustsec",
+        "repo": "advisory-db",
+        "type": "github"
+      }
+    },
     "cargo-leptos": {
       "flake": false,
       "locked": {
@@ -103,6 +119,7 @@
     },
     "root": {
       "inputs": {
+        "advisory-db": "advisory-db",
         "cargo-leptos": "cargo-leptos",
         "crane": "crane",
         "flake-utils": "flake-utils_2",

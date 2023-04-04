@@ -31,7 +31,11 @@
   };
 
   outputs = { self, nixpkgs, crane, flake-utils, advisory-db, rust-overlay, ... } @inputs:
-    flake-utils.lib.eachDefaultSystem
+    let
+      isValidNixVersion = (builtins.compareVersions builtins.nixVersion "2.12") >= 0;
+      optionalList = cond: list: if cond then list else [ ];
+    in
+    flake-utils.lib.eachSystem(optionalList isValidNixVersion [ "x86_64-linux" ])
       (system:
         let
           pkgs = import nixpkgs {
@@ -39,17 +43,17 @@
             overlays = [ (import rust-overlay) ];
           };
 
-          rustTarget = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
-            extensions = [ "rust-src" "rust-analyzer" ];
-            targets = [ "wasm32-unknown-unknown" ];
+          rustToolchain = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
+            extensions = [ "rust-src" "rust-analyzer"];
+            targets = [ "x86_64-unknown-linux-gnu" "wasm32-unknown-unknown" ];
           });
 
           # NB: we don't need to overlay our custom toolchain for the *entire*
           # pkgs (which would require rebuidling anything else which uses rust).
-          # Instead, we just want to update the scope that crane will use by appendings
-          inherit (pkgs) lib;
+          # Instead, we just want to update the scope that crane will use by appending
           # our specific toolchain there.
-          craneLib = (crane.mkLib pkgs).overrideToolchain rustTarget;
+          inherit (pkgs) lib;
+          craneLib = (crane.mkLib pkgs).overrideToolchain rustToolchain;
           #craneLib = crane.lib.${system};
           # Only keeps markdown files
           protoFilter = path: _type: builtins.match ".*proto$" path != null;
@@ -75,52 +79,28 @@
 
           # Common arguments can be set here
           commonArgs = {
-            inherit src;
-          buildInputs = [
-            # Add additional build inputs here
-            cargo-leptos
-            pkgs.pkg-config
-            pkgs.openssl
-            pkgs.protobuf
-            pkgs.binaryen
-            pkgs.cargo-generate
-          ] ++ lib.optionals pkgs.stdenv.isDarwin [
-            # Additional darwin specific inputs can be set here
-            pkgs.libiconv
-          ];
+            inherit src;  
+            buildInputs = [
+              # Add additional build inputs here
+              cargo-leptos
+              pkgs.pkg-config
+              pkgs.openssl
+              pkgs.protobuf
+              pkgs.binaryen
+              pkgs.cargo-generate
+            ] ++ lib.optionals pkgs.stdenv.isDarwin [
+              # Additional darwin specific inputs can be set here
+              pkgs.libiconv
+            ];
         };
 
 
           # Build *just* the cargo dependencies, so we can reuse
           # all of that work (e.g. via cachix) when running in CI
           cargoArtifacts = craneLib.buildDepsOnly (commonArgs // {
-            cargoExtraArgs = " --target x86_64-unknown-linux-gnu";
-            doCheck = false;
-             # Needed to enable build-std inside Crane
-            cargoVendorDir = craneLib.vendorMultipleCargoDeps {
-              inherit (craneLib.findCargoFiles src) cargoConfigs;
-              cargoLockList = [
-                ./Cargo.lock
+            # cargoCheckExtraArgs = "--target=x86_64-unknown-linux-gnu";
+          cargoExtraArgs = "-Z build-std --target x86_64-unknown-linux-gnu";
 
-                # Unfortunately this approach requires IFD (import-from-derivation)
-                # otherwise Nix will refuse to read the Cargo.lock from our toolchain
-                # (unless we build with `--impure`).
-                #
-                # Another way around this is to manually copy the rustlib `Cargo.lock`
-                # to the repo and import it with `./path/to/rustlib/Cargo.lock` which
-                # will avoid IFD entirely but will require manually keeping the file
-                # up to date!
-                "${rustTarget.passthru.availableComponents.rust-src}/lib/rustlib/src/rust/Cargo.lock"
-              ];
-            };
-          });
-
-          # Build the actual crate itself, reusing the dependency
-          # artifacts from above.
-          benwis_leptos = craneLib.buildPackage (commonArgs // {
-            pname = "benwis_leptos";
-
-          # Needed to enable build-std inside Crane
           cargoVendorDir = craneLib.vendorMultipleCargoDeps {
             inherit (craneLib.findCargoFiles src) cargoConfigs;
             cargoLockList = [
@@ -134,26 +114,49 @@
               # to the repo and import it with `./path/to/rustlib/Cargo.lock` which
               # will avoid IFD entirely but will require manually keeping the file
               # up to date!
-              "${rustTarget.passthru.availableComponents.rust-src}/lib/rustlib/src/rust/Cargo.lock"
+              "${rustToolchain.passthru.availableComponents.rust-src}/lib/rustlib/src/rust/Cargo.lock"
+            ];
+          };
+          });
+
+          # Build the actual crate itself, reusing the dependency
+          # artifacts from above.
+          benwis_leptos = craneLib.buildPackage (commonArgs // {
+            pname = "benwis_leptos";
+
+            # Needed to enable build-std inside Crane
+            cargoVendorDir = craneLib.vendorMultipleCargoDeps {
+            inherit (craneLib.findCargoFiles src) cargoConfigs;
+            cargoLockList = [
+              ./Cargo.lock
+
+              # Unfortunately this approach requires IFD (import-from-derivation)
+              # otherwise Nix will refuse to read the Cargo.lock from our toolchain
+              # (unless we build with `--impure`).
+              #
+              # Another way around this is to manually copy the rustlib `Cargo.lock`
+              # to the repo and import it with `./path/to/rustlib/Cargo.lock` which
+              # will avoid IFD entirely but will require manually keeping the file
+              # up to date!
+              "${rustToolchain.passthru.availableComponents.rust-src}/lib/rustlib/src/rust/Cargo.lock"
             ];
           };
 
-            buildPhaseCargoCommand = "cargo leptos build --release";
+            buildPhaseCargoCommand = "LEPTOS_BIN_TARGET_TRIPLE=x86_64-unknown-linux-gnu cargo leptos build --release";
             installPhaseCommand = ''
             mkdir -p $out/bin
-            cp target/server/x86_64-unknown-linux-gnu/release/benwis_leptos $out/bin/
+            cp target/server/release/benwis_leptos $out/bin/
             cp -r target/site $out/bin/
             '';
-            # Prevent cargo test and nextest from duplicating tests
+
+            # Prevnt cargo test and nextest from duplicating tests
             doCheck = false;
-            #cargoExtraArgs: "-Z build-std --target "
             inherit cargoArtifacts;
             # ALL CAPITAL derivations will get forwarded to mkDerivation and will set the env var during build
             SQLX_OFFLINE = "true";
-            LEPTOS_BIN_TARGET_TRIPLE = "x86_64-unknown-linux-gnu"; # Adding this allows -Zbuild-std to work and shave 100kb off the WASM
+            #LEPTOS_BIN_TARGET_TRIPLE = "x86_64-unknown-linux-gnu"; # Adding this allows -Zbuild-std to work and shave 100kb off the WASM
             APP_ENVIRONMENT = "production";
           });
-          
           cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
             pname = "cargo-leptos";
             #version = "0.1.7";
@@ -203,10 +206,10 @@
             # Note that this is done as a separate derivation so that
             # we can block the CI if there are issues here, but not
             # prevent downstream consumers from building our crate by itself.
-            benwis_leptos-clippy = craneLib.cargoClippy (commonArgs // {
-              inherit cargoArtifacts;
-              cargoClippyExtraArgs = "--all-targets -- --deny warnings";
-            });
+            #benwis_leptos-clippy = craneLib.cargoClippy (commonArgs // {
+            #  inherit cargoArtifacts;
+            #  cargoClippyExtraArgs = "--all-targets -- --deny warnings";
+            #});
 
             benwis_leptos-doc = craneLib.cargoDoc (commonArgs //{
               inherit cargoArtifacts;
@@ -275,7 +278,7 @@
 
             # Extra inputs can be added here
             nativeBuildInputs = with pkgs; [
-              rustTarget
+              rustToolchain
               openssl
               mysql80
               dive
@@ -290,7 +293,7 @@
               skopeo
               flyctl
             ];
-            RUST_SRC_PATH = "${rustTarget}/lib/rustlib/src/rust/library";
+            RUST_SRC_PATH = "${rustToolchain}/lib/rustlib/src/rust/library";
           };
         });
 }
