@@ -55,6 +55,10 @@ if #[cfg(feature = "ssr")] {
             .await
             .expect("Could not make pool.");
 
+        let parallelism = std::thread::available_parallelism().unwrap().get();
+        log!("PARALLELISM: {parallelism}");
+
+
         // Auth section
         let session_config = SessionConfig::default().with_table_name("axum_sessions");
         let auth_config = AuthConfig::<i64>::default();

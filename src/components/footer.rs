@@ -81,7 +81,7 @@ pub fn Footer(cx: Scope) -> impl IntoView {
                     <p class="text-center text-base text-gray-400 dark:text-white">
                         "© 2022 Ben Wishovich | Built with "
                         <a href="https://github.com/leptos-rs/leptos">"Leptos"</a>
-                        <span>" | v1"</span>
+                        <span>" | v2"</span>
                     </p>
                 </div>
             </div>
