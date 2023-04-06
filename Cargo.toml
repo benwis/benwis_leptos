@@ -14,12 +14,12 @@ rand_core = { version = "0.6.4", features = ["std"], optional=true }
 console_error_panic_hook = "0.1.7"
 futures = "0.3.27"
 cfg-if = "1.0.0"
-leptos = { git="https://github.com/leptos-rs/leptos", default-features = false, features = [
+leptos = { git="https://github.com/akarras/leptos", branch="axum-local-pools", default-features = false, features = [
 	"serde",
 ] }
-leptos_meta = { git="https://github.com/leptos-rs/leptos", default-features = false }
-leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true }
-leptos_router = {  git="https://github.com/leptos-rs/leptos", default-features = false }
+leptos_meta = { git="https://github.com/akarras/leptos", branch="axum-local-pools", default-features = false }
+leptos_axum = { git="https://github.com/akarras/leptos", branch="axum-local-pools", optional = true }
+leptos_router = {  git="https://github.com/akarras/leptos", branch="axum-local-pools", default-features = false }
 # leptos = { git="https://github.com/benwis/leptos", branch="deferred-resources", default-features = false, features = [
 # 	"serde",
 # ] }
