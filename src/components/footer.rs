@@ -1,7 +1,6 @@
 use leptos::*;
 
-pub struct FooterLink<'a>
-{
+pub struct FooterLink<'a> {
     name: &'a str,
     href: &'a str,
     icon: &'a str,
@@ -9,8 +8,7 @@ pub struct FooterLink<'a>
 }
 
 #[component]
-pub fn Footer(cx: Scope) -> impl IntoView{
-
+pub fn Footer(cx: Scope) -> impl IntoView {
     let mut navigation: Vec<FooterLink> = Vec::new();
 
     navigation.push(FooterLink{
@@ -57,7 +55,7 @@ pub fn Footer(cx: Scope) -> impl IntoView{
         "#,
         rel: None
     });
-   
+
     view! { cx,
         <footer class="bg-white dark:bg-gray-900 mt-auto">
             <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
@@ -83,6 +81,7 @@ pub fn Footer(cx: Scope) -> impl IntoView{
                     <p class="text-center text-base text-gray-400 dark:text-white">
                         "© 2022 Ben Wishovich | Built with "
                         <a href="https://github.com/leptos-rs/leptos">"Leptos"</a>
+                        <span>" | v1"</span>
                     </p>
                 </div>
             </div>
