@@ -6,7 +6,7 @@ if #[cfg(feature = "ssr")] {
     use axum::{
         response::{Response, IntoResponse},
         routing::{post, get},
-        extract::{Path, Extension},
+        extract::{Path, Extension, RawQuery},
         http::{Request, header::HeaderMap},
         body::Body as AxumBody,
         Router,
@@ -25,11 +25,11 @@ if #[cfg(feature = "ssr")] {
     use tower_http::{compression::CompressionLayer};
 
 
-    async fn server_fn_handler(Extension(pool): Extension<SqlitePool>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
+    async fn server_fn_handler(Extension(pool): Extension<SqlitePool>, query: RawQuery, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
 
         log!("{:?}", path);
 
-        handle_server_fns_with_context(path, headers, move |cx| {
+        handle_server_fns_with_context(path, headers, query, move |cx| {
             provide_context(cx, auth_session.clone());
             provide_context(cx, pool.clone());
         }, request).await
