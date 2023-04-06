@@ -25,7 +25,5 @@ ENV LEPTOS_OUTPUT_NAME="benwis_leptos"
 ENV APP_ENVIRONMENT="production"
 ENV LEPTOS_SITE_ADDR="0.0.0.0:3000"
 ENV LEPTOS_SITE_ROOT="site"
-RUN ls -l /app
 EXPOSE 3000
-RUN ldd --version
 CMD ["/app/benwis_leptos"]

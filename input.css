@@ -10,12 +10,12 @@
 
 }
 
-@font-face {
+/* @font-face {
 	font-family: 'Neue Plak Regular';
 	 src: url('/fonts/Neue Plak Regular.ttf') format('truetype');
 	 font-display: swap;
 
-}
+} */
 @font-face {
 	font-family: 'Neue Plak Black';
 	src: url('/fonts/Neue Plak Black.ttf') format('truetype');
@@ -54,11 +54,11 @@ pre {
 		src: url('/fonts/1296355/af582cef-2f0c-494d-862f-b06b8e7b1cbf.woff2') format('woff2'),
 			url('/fonts/1296355/c2f49a93-383b-49dd-af5e-da77947b413c.woff') format('woff');
 	}
-	@font-face {
+	/* @font-face {
 		font-family: 'Sonic W03 X Bd';
 		src: url('/fonts/1296684/aa1dda82-4674-45e4-8d10-c22f386e980a.woff2') format('woff2'),
 			url('/fonts/1296684/cab43791-79e0-4d9d-b680-9d36fb8082cf.woff') format('woff');
-	}
+	} */
 	.brand {
 		font-family: 'Horizon W03 Rg';
 	}
