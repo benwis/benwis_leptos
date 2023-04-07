@@ -7,8 +7,9 @@ if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use femark::HTMLOutput;
     use chrono::naive::NaiveDateTime;
+    use tracing::span::Span;
 
-    #[derive(sqlx::FromRow, Clone)]
+    #[derive(sqlx::FromRow, Debug, Clone)]
     pub struct SqlPost{
      id: u32,
      user_id: i64,
@@ -26,8 +27,8 @@ if #[cfg(feature = "ssr")] {
     }
 
     impl SqlPost {
+        #[tracing::instrument(level = "info", fields(error))]
         pub async fn into_post(self, pool: &SqlitePool) -> Post {
-
             let HTMLOutput{content, toc} = femark::process_markdown_to_html(self.content.clone()).unwrap_or_default();
             Post {
                 id: self.id,

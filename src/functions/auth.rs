@@ -30,7 +30,7 @@ if #[cfg(feature = "ssr")] {
         Ok(argon2.verify_password(password2.as_bytes(), &parsed_hash)?)
     }
 
-    #[derive(sqlx::FromRow, Clone)]
+    #[derive(sqlx::FromRow,Debug, Clone)]
     pub struct SqlPermissionTokens {
         pub token: String,
     }
