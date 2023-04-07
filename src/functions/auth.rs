@@ -67,6 +67,7 @@ if #[cfg(feature = "ssr")] {
 }
 }
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(Login, "/api")]
 pub async fn login(
     cx: Scope,
@@ -97,6 +98,7 @@ pub async fn login(
     }
 }
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(Signup, "/api")]
 pub async fn signup(
     cx: Scope,
@@ -143,6 +145,7 @@ pub async fn signup(
     Ok(())
 }
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(Logout, "/api")]
 pub async fn logout(cx: Scope) -> Result<(), ServerFnError> {
     let auth = auth(cx)?;

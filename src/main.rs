@@ -28,7 +28,7 @@ if #[cfg(feature = "ssr")] {
     use crate::models::User;
     use tower_http::{compression::CompressionLayer};
 
-
+    #[tracing::instrument(level = "info", fields(error))]
     async fn server_fn_handler(Extension(pool): Extension<SqlitePool>, query: RawQuery, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, request: Request<AxumBody>) -> impl IntoResponse {
 
         log!("{:?}", path);
@@ -39,6 +39,7 @@ if #[cfg(feature = "ssr")] {
         }, request).await
     }
 
+    #[tracing::instrument(level = "info", fields(error))]
     async fn leptos_routes_handler(Extension(pool): Extension<SqlitePool>, auth_session: AuthSession, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<AxumBody>) -> Response{
             let handler = leptos_axum::render_app_to_stream_with_context((*options).clone(),
             move |cx| {

@@ -10,6 +10,7 @@ if #[cfg(feature = "ssr")] {
     use chrono::{NaiveDateTime, prelude::*};
 }}
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(AddPost, "/api")]
 pub async fn add_post(
     cx: Scope,
@@ -70,6 +71,7 @@ pub async fn add_post(
     }
 }
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(GetPosts, "/api")]
 pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
@@ -101,6 +103,7 @@ pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     Ok(posts)
 }
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(GetSomePosts, "/api")]
 pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
@@ -133,6 +136,43 @@ pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
 
     Ok(posts)
 }
+
+#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[server(GetSomePostsMeta, "/api")]
+pub async fn get_some_posts_meta(cx: Scope) -> Result<Vec<PostMeta>, ServerFnError> {
+    use futures::TryStreamExt;
+    let pool = pool(cx)?;
+
+    let mut posts = Vec::new();
+    let mut rows =
+        sqlx::query_as::<_, SqlPost>("SELECT * FROM posts ORDER by created_at DESC limit 3")
+            .fetch(&pool);
+
+    while let Some(row) = rows
+        .try_next()
+        .await
+        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
+    {
+        posts.push(row);
+    }
+
+    let mut converted_posts = Vec::with_capacity(posts.len());
+
+    for t in posts {
+        let post = t.into_post_meta(&pool).await;
+        converted_posts.push(post);
+    }
+
+    let mut posts: Vec<PostMeta> = converted_posts;
+
+    // Reverse the order of the posts
+    posts.sort_unstable_by(|a, b| b.created_at.partial_cmp(&a.created_at).unwrap());
+
+    Ok(posts)
+}
+
+
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(GetPost, "/api")]
 pub async fn get_post(
     cx: Scope,
@@ -152,6 +192,8 @@ pub async fn get_post(
     .map_err(|e| e.into());
     Ok(post)
 }
+
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(UpdatePost, "/api")]
 pub async fn update_post(
     cx: Scope,
@@ -197,6 +239,7 @@ pub async fn update_post(
     Ok(res)
 }
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(DeletePost, "/api")]
 pub async fn delete_post(cx: Scope, id: u16) -> Result<(), ServerFnError> {
     let pool = pool(cx)?;

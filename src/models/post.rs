@@ -7,7 +7,6 @@ if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use femark::HTMLOutput;
     use chrono::naive::NaiveDateTime;
-    use tracing::span::Span;
 
     #[derive(sqlx::FromRow, Debug, Clone)]
     pub struct SqlPost{
@@ -50,6 +49,25 @@ if #[cfg(feature = "ssr")] {
                 tags: self.tags,
             }
         }
+        #[tracing::instrument(level = "info", fields(error))]
+        pub async fn into_post_meta(self, pool: &SqlitePool) -> PostMeta {
+            PostMeta {
+                id: self.id,
+                user: SafeUser::get(self.user_id, pool).await,
+                title: self.title,
+                slug: self.slug,
+                created_at: self.created_at,
+                created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
+                published: self.published,
+                excerpt: self.excerpt,
+                updated_at: self.updated_at,
+                updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
+                preview: self.preview,
+                hero: self.hero,
+                links: self.links,
+                tags: self.tags,
+            }
+        }
     }
 }
 }
@@ -64,6 +82,24 @@ pub struct Post {
     pub content: String,
     pub html: String,
     pub toc: Option<String>,
+    pub created_at: i64,
+    pub created_at_pretty: String,
+    pub updated_at: i64,
+    pub updated_at_pretty: String,
+    pub published: bool,
+    pub preview: bool,
+    pub links: Option<String>,
+    pub hero: Option<String>,
+    pub tags: String,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub struct PostMeta {
+    pub id: u32,
+    pub user: Option<SafeUser>,
+    pub title: String,
+    pub slug: String,
+    pub excerpt: Option<String>,
     pub created_at: i64,
     pub created_at_pretty: String,
     pub updated_at: i64,
