@@ -145,7 +145,7 @@ pub async fn get_some_posts_meta(cx: Scope) -> Result<Vec<PostMeta>, ServerFnErr
 
     let mut posts = Vec::new();
     let mut rows =
-        sqlx::query_as::<_, SqlPost>("SELECT * FROM posts ORDER by created_at DESC limit 3")
+        sqlx::query_as::<_, SqlPostMeta>("SELECT id, user_id, title, slug, excerpt, created_at, updated_at, published, preview, links, hero, tags FROM posts ORDER by created_at DESC limit 3")
             .fetch(&pool);
 
     while let Some(row) = rows
