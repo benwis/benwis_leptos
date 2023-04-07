@@ -70,9 +70,10 @@ if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use crate::functions::auth::SqlPermissionTokens;
     use chrono::naive::NaiveDateTime;
+    use tracing::span::Span;
 
 
-#[derive(sqlx::FromRow, Clone)]
+#[derive(sqlx::FromRow, Debug, Clone)]
 pub struct SqlUser {
     pub id: i64,
     pub username: String,
@@ -83,6 +84,7 @@ pub struct SqlUser {
 }
 
 impl SqlUser {
+    #[tracing::instrument(level = "info", fields(error))]
     pub fn into_user(self, sql_user_perms: Option<Vec<SqlPermissionTokens>>) -> User {
         User {
             id: self.id,
@@ -107,6 +109,7 @@ impl SqlUser {
 }
 
     impl User {
+        #[tracing::instrument(level = "info", fields(error))]
         pub async fn get(id: i64, pool: &SqlitePool) -> Option<Self> {
             let sqluser = sqlx::query_as::<_, SqlUser>("SELECT * FROM users WHERE id = ?")
                 .bind(id)
@@ -126,6 +129,7 @@ impl SqlUser {
             Some(sqluser.into_user(Some(sql_user_perms)))
         }
 
+        #[tracing::instrument(level = "info", fields(error))]
         pub async fn get_from_username(name: String, pool: &SqlitePool) -> Option<Self> {
             let sqluser = sqlx::query_as::<_, SqlUser>("SELECT * FROM users WHERE username = ?")
                 .bind(name)
@@ -146,6 +150,7 @@ impl SqlUser {
         }
     }
     impl SafeUser {
+        #[tracing::instrument(level = "info", fields(error))]
         pub async fn get(id: i64, pool: &SqlitePool) -> Option<Self> {
             let sqluser = sqlx::query_as::<_, SqlUser>("SELECT * FROM users WHERE id = ?")
                 .bind(id)

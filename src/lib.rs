@@ -3,6 +3,7 @@ use cfg_if::cfg_if;
 pub mod app;
 pub mod routes;
 pub use routes::*;
+pub mod telemetry;
 pub mod components;
 pub mod error_template;
 pub mod errors;

@@ -2,6 +2,7 @@ use crate::functions::auth;
 use crate::models::{SafeUser, User};
 use leptos::*;
 
+#[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(GetUser, "/api")]
 /// Get the current user if it exists by checking the user's session against the DB
 pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
@@ -10,6 +11,7 @@ pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
     Ok(auth.current_user)
 }
 
+#[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(GetSafeUser, "/api")]
 /// Get the current user if it exists by checking the user's session against the DB
 pub async fn get_safe_user(cx: Scope) -> Result<Option<SafeUser>, ServerFnError> {
