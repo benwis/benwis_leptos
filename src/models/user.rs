@@ -70,7 +70,6 @@ if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use crate::functions::auth::SqlPermissionTokens;
     use chrono::naive::NaiveDateTime;
-    use tracing::span::Span;
 
 
 #[derive(sqlx::FromRow, Debug, Clone)]

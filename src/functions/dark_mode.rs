@@ -1,5 +1,6 @@
 use leptos::*;
 
+#[tracing::instrument(level = "info", fields(error), ret,err)]
 #[server(ToggleDarkMode, "/api")]
 pub async fn toggle_dark_mode(cx: Scope, prefers_dark: bool) -> Result<bool, ServerFnError> {
     use axum::http::{header::SET_COOKIE, HeaderMap, HeaderValue};

@@ -1,5 +1,5 @@
 use crate::components::{FeatureCard, FeatureCardProps};
-use crate::functions::post::{get_some_posts, AddPost, DeletePost, UpdatePost};
+use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
 use leptos::*;
 use leptos_meta::*;
 
@@ -10,10 +10,10 @@ pub fn Index(cx: Scope) -> impl IntoView {
     let delete_post = create_server_action::<DeletePost>(cx);
 
     // list of posts is loaded from the server in reaction to changes
-    let posts = create_resource(
+    let posts_meta = create_resource(
         cx,
         move || (add_post.version().get(), update_post.version().get(), delete_post.version().get()),
-        move |_| get_some_posts(cx),
+        move |_| get_some_posts_meta(cx),
     );
 
     view! { cx,
@@ -59,28 +59,28 @@ pub fn Index(cx: Scope) -> impl IntoView {
                         view! { cx, <p>"Loading..."</p> }
                     }>
                         {move || {
-                            let posts = {
+                            let posts_meta = {
                                 move || {
-                                    posts
+                                    posts_meta
                                         .read(cx)
-                                        .map(move |posts| match posts {
+                                        .map(move |posts_meta| match posts_meta {
                                             Err(e) => {
                                                 vec![
                                                     view! { cx, < pre class = "error" > "Server Error: " { e
                                                     .to_string() } </ pre > } .into_view(cx)
                                                 ]
                                             }
-                                            Ok(posts) => {
-                                                if posts.is_empty() {
+                                            Ok(posts_meta) => {
+                                                if posts_meta.is_empty() {
                                                     vec![
                                                         view! { cx, < p class = "text-black dark:text-white" >
                                                         "No posts were found." </ p > } .into_view(cx)
                                                     ]
                                                 } else {
-                                                    posts
+                                                    posts_meta
                                                         .into_iter()
-                                                        .map(move |post| {
-                                                            view! { cx, <FeatureCard href={post.slug} title={post.title} date={post.created_at_pretty}/> }
+                                                        .map(move |post_meta| {
+                                                            view! { cx, <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
                                                                 .into_view(cx)
                                                         })
                                                         .collect::<Vec<_>>()
@@ -90,7 +90,7 @@ pub fn Index(cx: Scope) -> impl IntoView {
                                         .unwrap_or_default()
                                 }
                             };
-                            posts.into_view(cx)
+                            posts_meta.into_view(cx)
                         }}
                     </Transition>
                 </div>

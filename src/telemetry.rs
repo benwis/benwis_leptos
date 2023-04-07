@@ -11,11 +11,11 @@ cfg_if! {
         // };
 
 use anyhow::Result;
-use opentelemetry::sdk::{
-    trace::{self, RandomIdGenerator, Sampler},
-    Resource,
-};
-use opentelemetry::KeyValue;
+// use opentelemetry::sdk::{
+//     trace::{self, RandomIdGenerator, Sampler},
+//     Resource,
+// };
+// use opentelemetry::KeyValue;
 use opentelemetry_otlp::ExportConfig;
 
 use opentelemetry_otlp::WithExportConfig;
