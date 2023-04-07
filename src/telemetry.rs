@@ -164,13 +164,14 @@ where
         print!("RUST_LOG not set! Defaulting to {}: {:#?}", e, env_filter);
         EnvFilter::new(env_filter)
     });
-    let formatting_layer = BunyanFormattingLayer::new(name, sink);
+    let _formatting_layer = BunyanFormattingLayer::new(name, sink);
 
     Registry::default()
         .with(env_filter)
         .with(telemetry_layer) // publish to honeycomb backend
         .with(JsonStorageLayer)
-        .with(formatting_layer)
+        .with(tracing_logfmt::layer())
+        // .with(formatting_layer)
 }
 pub fn get_subscriber<Sink>(
     name: String,
