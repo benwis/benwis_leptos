@@ -16,6 +16,7 @@ if #[cfg(feature = "ssr")] {
     use crate::error_template::{ErrorTemplate, ErrorTemplateProps};
     use crate::errors::BenwisAppError;
 
+    #[tracing::instrument(level = "info", fields(error))]
     pub async fn file_and_error_handler(uri: Uri, Extension(options): Extension<Arc<LeptosOptions>>, req: Request<Body>) -> AxumResponse {
         let options = &*options;
         let root = options.site_root.clone();
@@ -30,7 +31,7 @@ if #[cfg(feature = "ssr")] {
             handler(req).await.into_response()
         }
     }
-
+    #[tracing::instrument(level = "info", fields(error))]
     async fn get_static_file(uri: Uri, root: &str) -> Result<Response<BoxBody>, (StatusCode, String)> {
         let req = Request::builder().uri(uri.clone()).body(Body::empty()).unwrap();
         // `ServeDir` implements `tower::Service` so we can call it with `tower::ServiceExt::oneshot`
