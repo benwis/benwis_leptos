@@ -1594,7 +1594,6 @@ dependencies = [
  "serde_json",
  "tokio",
  "tokio-util",
- "tracing",
 ]
 
 [[package]]
@@ -1678,7 +1677,6 @@ dependencies = [
  "server_fn_macro",
  "syn 1.0.109",
  "syn-rsx",
- "tracing",
  "uuid",
 ]
 
@@ -1749,7 +1747,6 @@ dependencies = [
  "serde",
  "server_fn",
  "thiserror",
- "tracing",
 ]
 
 [[package]]
