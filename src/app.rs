@@ -23,6 +23,12 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
         <Router>
             <Routes>
                 <Route
+                path="minimal"
+                view=move |cx| {
+                    view! { cx, <Index/> }
+                }
+            />
+                <Route
                     path=""
                     view=|cx| {
                         view! { cx,
