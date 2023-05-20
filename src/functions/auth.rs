@@ -88,6 +88,7 @@ pub async fn login(
     {
         Ok(_) => {
             auth.login_user(user.id);
+            auth.session.set_store(true);
             auth.remember_user(remember.is_some());
             leptos_axum::redirect(cx, "/");
             Ok(())
@@ -149,8 +150,8 @@ pub async fn signup(
 #[server(Logout, "/api")]
 pub async fn logout(cx: Scope) -> Result<(), ServerFnError> {
     let auth = auth(cx)?;
-
     auth.logout_user();
+    auth.session.set_store(false);
     leptos_axum::redirect(cx, "/");
 
     Ok(())
