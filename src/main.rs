@@ -93,7 +93,7 @@ if #[cfg(feature = "ssr")] {
         }
 
         // Auth section
-        let session_config = SessionConfig::default().with_table_name("axum_sessions");
+        let session_config = SessionConfig::default().with_table_name("axum_sessions").with_mode(SessionMode::Storable);
         let auth_config = AuthConfig::<i64>::default();
         let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config);
         session_store.initiate().await.unwrap();
