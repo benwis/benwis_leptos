@@ -4,12 +4,12 @@ use leptos::*;
 cfg_if! {
 if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
-    use axum_sessions_auth::{SessionSqlitePool, Authentication, HasPermission};
+    use axum_session_auth::{SessionSqlitePool, Authentication, HasPermission};
     use argon2::{
         password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
         Argon2,
     };    use crate::functions::{pool, auth};
-    pub type AuthSession = axum_sessions_auth::AuthSession<User, i64, SessionSqlitePool, SqlitePool>;
+    pub type AuthSession = axum_session_auth::AuthSession<User, i64, SessionSqlitePool, SqlitePool>;
     use async_trait::async_trait;
     use crate::models::User;
     use crate::errors::BenwisAppError;
@@ -67,7 +67,7 @@ if #[cfg(feature = "ssr")] {
 }
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(Login, "/api")]
 pub async fn login(
     cx: Scope,
@@ -99,7 +99,7 @@ pub async fn login(
     }
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(Signup, "/api")]
 pub async fn signup(
     cx: Scope,
@@ -146,7 +146,7 @@ pub async fn signup(
     Ok(())
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(Logout, "/api")]
 pub async fn logout(cx: Scope) -> Result<(), ServerFnError> {
     let auth = auth(cx)?;

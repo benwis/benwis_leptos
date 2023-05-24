@@ -40,10 +40,10 @@ sqlx = { version = "0.6.2", features = [
 ], optional = true }
 thiserror = "1.0.40"
 wasm-bindgen = "0.2.84"
-axum_sessions_auth = { version = "7.0.0", features = [
+axum_session_auth = { version = "0.2.1", features = [
 	"sqlite-rustls",
 ], optional = true }
-axum_database_sessions = { version = "7.0.0", features = [
+axum_session = { version = "0.2.3", features = [
 	"sqlite-rustls",
 ], optional = true }
 argon2 = {version="0.4.1", optional = true }
@@ -75,7 +75,7 @@ tracing-logfmt = {version="0.3.1", optional=true}
 default = ["csr"]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = ["dep:axum", "dep:hyper", "dep:tower","dep:tracing-logfmt", "dep:hyper-tls", "dep:tokio-native-tls", "dep:native-tls", "dep:dotenvy", "dep:tracing-futures", "dep:tracing-subscriber", "dep:tracing-bunyan-formatter", "dep:tracing-log", "dep:opentelemetry", "dep:opentelemetry-otlp", "dep:tracing-opentelemetry", "dep:tonic", "dep:tokio", "dep:tower-http", "dep:axum_sessions_auth", "dep:axum_database_sessions", "dep:async-trait", "dep:sqlx", "dep:argon2", "dep:femark", "dep:rand", "dep:rand_core", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
+ssr = ["dep:axum", "dep:hyper", "dep:tower","dep:tracing-logfmt", "dep:hyper-tls", "dep:tokio-native-tls", "dep:native-tls", "dep:dotenvy", "dep:tracing-futures", "dep:tracing-subscriber", "dep:tracing-bunyan-formatter", "dep:tracing-log", "dep:opentelemetry", "dep:opentelemetry-otlp", "dep:tracing-opentelemetry", "dep:tonic", "dep:tokio", "dep:tower-http", "dep:axum_session_auth", "dep:axum_session", "dep:async-trait", "dep:sqlx", "dep:argon2", "dep:femark", "dep:rand", "dep:rand_core", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
 
 [package.metadata.cargo-all-features]
 denylist = ["axum", "tower", "tower-http", "tokio", "sqlx", "leptos_axum", "femark", "chrono", "argon2","rand", "rand_core"]
