@@ -21,8 +21,8 @@ if #[cfg(feature = "ssr")] {
     use leptos::{log, view, provide_context, LeptosOptions, get_configuration};
     use std::{sync::Arc, env};
     use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
-    use axum_database_sessions::{SessionConfig, SessionLayer, SessionStore};
-    use axum_sessions_auth::{AuthSessionLayer, AuthConfig, SessionSqlitePool};
+    use axum_session::{SessionConfig, SessionLayer, SessionStore};
+    use axum_session_auth::{AuthSessionLayer, AuthConfig, SessionSqlitePool};
     use crate::functions::auth::{AuthSession};
     use crate::app::*;
     use crate::models::User;
@@ -66,10 +66,10 @@ if #[cfg(feature = "ssr")] {
         let parallelism = std::thread::available_parallelism().unwrap().get();
         log!("PARALLELISM: {parallelism}");
 
-        let tracing_conf = TracingSettings{ 
-            honeycomb_team: Some("6yem4uKpKZQBMObm755EdA".to_string()), 
-            honeycomb_dataset: Some("benwis_leptos".to_string()), 
-            honeycomb_service_name: Some("benwis_leptos".to_string()) 
+        let tracing_conf = TracingSettings{
+            honeycomb_team: Some("6yem4uKpKZQBMObm755EdA".to_string()),
+            honeycomb_dataset: Some("benwis_leptos".to_string()),
+            honeycomb_service_name: Some("benwis_leptos".to_string())
         };
 
         // Get telemetry layer
