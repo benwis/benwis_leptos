@@ -11,12 +11,12 @@ cfg_if! {
         // };
 
 use anyhow::Result;
-// use opentelemetry::sdk::{
-//     trace::{self, RandomIdGenerator, Sampler},
-//     Resource,
-// };
-// use opentelemetry::KeyValue;
-//use opentelemetry_otlp::ExportConfig;
+use opentelemetry::sdk::{
+    trace::{self, RandomIdGenerator, Sampler},
+    Resource,
+};
+use opentelemetry::KeyValue;
+use opentelemetry_otlp::ExportConfig;
 
 use opentelemetry_otlp::WithExportConfig;
 use std::future::Future;
@@ -70,53 +70,53 @@ where
                         ),
                     )))
                     .await?;
-            // let export_config = ExportConfig {
-            //     endpoint: "http://localhost:4317".to_string(),
-            //     timeout: Duration::from_secs(3),
-            //     protocol: opentelemetry_otlp::Protocol::Grpc
-            // };
+            let export_config = ExportConfig {
+                endpoint: "http://localhost:4317".to_string(),
+                timeout: Duration::from_secs(3),
+                protocol: opentelemetry_otlp::Protocol::Grpc
+            };
 
-            let exporter = opentelemetry_otlp::new_exporter()
-                .tonic()
-                .with_channel(channel)
-                .with_timeout(Duration::from_secs(3))
-                .with_metadata(map);
+            // let exporter = opentelemetry_otlp::new_exporter()
+            //     .tonic()
+            //     .with_channel(channel)
+            //     .with_timeout(Duration::from_secs(3))
+            //     .with_metadata(map);
 
-            let trace_config = opentelemetry::sdk::trace::config()
-                .with_sampler(opentelemetry::sdk::trace::Sampler::AlwaysOn)
-                // .with_id_generator(opentelemetry::sdk::trace::IdGenerator::default())
-                .with_resource(opentelemetry::sdk::Resource::new(vec![
-                    opentelemetry::KeyValue::new("service.name", honeycomb_service_name.clone()),
-                ]));
-
-            let tracer = opentelemetry_otlp::new_pipeline()
-                .tracing()
-                .with_exporter(exporter)
-                .with_trace_config(trace_config)
-                .install_batch(opentelemetry::runtime::Tokio)?;
+            // let trace_config = opentelemetry::sdk::trace::config()
+            //     .with_sampler(opentelemetry::sdk::trace::Sampler::AlwaysOn)
+            //     // .with_id_generator(opentelemetry::sdk::trace::IdGenerator::default())
+            //     .with_resource(opentelemetry::sdk::Resource::new(vec![
+            //         opentelemetry::KeyValue::new("service.name", honeycomb_service_name.clone()),
+            //     ]));
 
             // let tracer = opentelemetry_otlp::new_pipeline()
             //     .tracing()
-            //     .with_exporter(
-            //         opentelemetry_otlp::new_exporter()
-            //             .tonic()
-            //             .with_endpoint("https://api.honeycomb.io/")
-            //             .with_timeout(Duration::from_secs(3))
-            //             .with_metadata(map),
-            //     )
-            //     .with_trace_config(
-            //         trace::config()
-            //             .with_sampler(Sampler::AlwaysOn)
-            //             .with_id_generator(RandomIdGenerator::default())
-            //             .with_max_events_per_span(64)
-            //             .with_max_attributes_per_span(16)
-            //             .with_max_events_per_span(16)
-            //             .with_resource(Resource::new(vec![KeyValue::new(
-            //                 "service.name",
-            //                 honeycomb_service_name.clone(),
-            //             )])),
-            //     )
+            //     .with_exporter(exporter)
+            //     .with_trace_config(trace_config)
             //     .install_batch(opentelemetry::runtime::Tokio)?;
+
+            let tracer = opentelemetry_otlp::new_pipeline()
+                .tracing()
+                .with_exporter(
+                    opentelemetry_otlp::new_exporter()
+                        .tonic()
+                        .with_endpoint("https://api.honeycomb.io/")
+                        .with_timeout(Duration::from_secs(3))
+                        .with_metadata(map),
+                )
+                .with_trace_config(
+                    trace::config()
+                        .with_sampler(Sampler::AlwaysOn)
+                        .with_id_generator(RandomIdGenerator::default())
+                        .with_max_events_per_span(64)
+                        .with_max_attributes_per_span(16)
+                        .with_max_events_per_span(16)
+                        .with_resource(Resource::new(vec![KeyValue::new(
+                            "service.name",
+                            honeycomb_service_name.clone(),
+                        )])),
+                )
+                .install_batch(opentelemetry::runtime::Tokio)?;
 
             Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
         }
