@@ -17,3 +17,6 @@ playwright/.cache/
 /.direnv/
 .env
 result
+
+#intellij
+.idea
