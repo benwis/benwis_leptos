@@ -13,7 +13,7 @@ if #[cfg(feature = "ssr")] {
     use tower_http::services::ServeDir;
     use std::sync::Arc;
     use leptos::{LeptosOptions, Errors, view};
-    use crate::error_template::{ErrorTemplate, ErrorTemplateProps};
+    use crate::error_template::{ErrorTemplate};
     use crate::errors::BenwisAppError;
 
     #[tracing::instrument(level = "info", fields(error))]

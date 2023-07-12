@@ -1,4 +1,4 @@
-use crate::components::{FeatureCard, FeatureCardProps};
+use crate::components::{FeatureCard};
 use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
 use leptos::*;
 use leptos_meta::*;
