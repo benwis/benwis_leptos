@@ -19,7 +19,7 @@ if #[cfg(feature = "ssr")] {
     pub fn hash_password(password: &[u8]) -> Result<String, BenwisAppError> {
         let argon2 = Argon2::default();
         let salt = SaltString::generate(&mut OsRng);
-        let password_hash = argon2.hash_password(password, salt.as_ref())?.to_string();
+        let password_hash = argon2.hash_password(password, &salt)?.to_string();
         Ok(password_hash)
     }
     /// Verify Password
