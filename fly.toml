@@ -33,3 +33,6 @@ app = "benwis-leptos"
   timeout = "2s"
   tls_skip_verify = false
   headers = { }
+
+  [env]
+  LEPTOS_ENVIRONMENT="prod"
