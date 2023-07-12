@@ -24,19 +24,4 @@ cfg_if! {
                 .ok_or("Auth session missing.")
                 .map_err(|e| ServerFnError::ServerError(e.to_string()))
         }
-        
-        pub fn register_server_functions() {
-            _ = post::AddPost::register();
-            _ = post::GetPosts::register();
-            _ = post::GetSomePosts::register();
-            _ = post::GetPost::register();
-            _ = post::UpdatePost::register();
-            _ = post::DeletePost::register();
-            _ = auth::Login::register();
-            _ = auth::Logout::register();
-            _ = auth::Signup::register();
-            _ = user::GetUser::register();
-            _ = user::GetSafeUser::register();
-            _ = dark_mode::ToggleDarkMode::register();
-        }
 }}
