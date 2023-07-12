@@ -2,7 +2,7 @@ use leptos::*;
 use leptos_meta::*;
 
 use crate::providers::color_scheme::{ColorScheme};
-use crate::components::{Nav, NavProps, Footer, FooterProps};
+use crate::components::{Nav,Footer};
 
 #[component]
 pub fn Default(cx: Scope, children: Children) -> impl IntoView{

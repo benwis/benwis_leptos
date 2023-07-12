@@ -1,10 +1,10 @@
 use crate::error_template::*;
-use crate::layouts::{Default, DefaultProps};
+use crate::layouts::{Default};
 use crate::providers::{provide_auth, provide_color_scheme, AuthContext};
-use crate::routes::auth::{Join, JoinProps, Login, LoginProps, Logout, LogoutProps};
+use crate::routes::auth::{Join, Login, Logout};
 use crate::routes::blog::*;
 use crate::routes::{
-    About, AboutProps, Index, IndexProps, Nedry, NedryProps, Portfolio, PortfolioProps,
+    About, Index, Nedry, Portfolio,
 };
 use leptos::*;
 use leptos_meta::*;

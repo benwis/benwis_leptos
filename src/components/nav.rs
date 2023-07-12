@@ -1,6 +1,6 @@
 use leptos::*;
 
-use crate::components::{DarkModeToggle, DarkModeToggleProps};
+use crate::components::{DarkModeToggle};
 use crate::providers::AuthContext;
 
 #[component]

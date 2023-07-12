@@ -1,6 +1,6 @@
 use crate::providers::ColorScheme;
 use leptos::*;
-use leptos_router::{ActionForm, ActionFormProps};
+use leptos_router::{ActionForm};
 
 #[component]
 pub fn DarkModeToggle(cx: Scope) -> impl IntoView {
