@@ -159,12 +159,12 @@
           cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
             pname = "cargo-leptos";
             #version = "0.1.7";
-            version = "0.1.8.1";
+            version = "0.1.11";
             buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
 
             src = inputs.cargo-leptos; 
 
-            cargoSha256 = "sha256-e6aXerO5uuUpJo2m9d5as/jh1S7sKvq3qss72Lr6iHs=";
+            cargoSha256 = "sha256-KWd22NO5k1wnxbJ9dKyWE0Vm5Up0NOvUGIvA1RYZEsA=";
 
             nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
