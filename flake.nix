@@ -39,11 +39,16 @@
             overlays = [ (import rust-overlay) ];
           };
 
-          rustTarget = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
+          #rustTarget = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
+          #  extensions = [ "rust-src" "rust-analyzer" ];
+          #  targets = [ "wasm32-unknown-unknown" ];
+          #});
+
+
+          rustTarget = pkgs.rust-bin.nightly."2023-06-01".default.override{
             extensions = [ "rust-src" "rust-analyzer" ];
             targets = [ "wasm32-unknown-unknown" ];
-          });
-
+          };
           # NB: we don't need to overlay our custom toolchain for the *entire*
           # pkgs (which would require rebuidling anything else which uses rust).
           # Instead, we just want to update the scope that crane will use by appendings
@@ -164,7 +169,7 @@
 
             src = inputs.cargo-leptos; 
 
-            cargoSha256 = "sha256-KWd22NO5k1wnxbJ9dKyWE0Vm5Up0NOvUGIvA1RYZEsA=";
+            cargoSha256 = "sha256-9lKD9AZ5if/pxurtWNH0V+aUPs4pdEFIJIWbiGgz4cs=";
 
             nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
