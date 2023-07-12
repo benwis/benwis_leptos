@@ -16,7 +16,7 @@ use anyhow::Result;
 //     Resource,
 // };
 // use opentelemetry::KeyValue;
-use opentelemetry_otlp::ExportConfig;
+//use opentelemetry_otlp::ExportConfig;
 
 use opentelemetry_otlp::WithExportConfig;
 use std::future::Future;
@@ -70,11 +70,11 @@ where
                         ),
                     )))
                     .await?;
-            let export_config = ExportConfig {
-                endpoint: "http://localhost:4317".to_string(),
-                timeout: Duration::from_secs(3),
-                protocol: opentelemetry_otlp::Protocol::Grpc
-            };
+            // let export_config = ExportConfig {
+            //     endpoint: "http://localhost:4317".to_string(),
+            //     timeout: Duration::from_secs(3),
+            //     protocol: opentelemetry_otlp::Protocol::Grpc
+            // };
 
             let exporter = opentelemetry_otlp::new_exporter()
                 .tonic()

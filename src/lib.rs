@@ -13,6 +13,7 @@ pub mod functions;
 pub mod models;
 pub mod providers;
 pub mod layouts;
+pub mod state;
 // Needs to be in lib.rs AFAIK because wasm-bindgen needs us to be compiling a lib. I may be wrong.
 cfg_if! {
     if #[cfg(feature = "hydrate")] {
