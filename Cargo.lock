@@ -535,6 +535,7 @@ dependencies = [
  "opentelemetry-otlp",
  "rand",
  "rand_core",
+ "reqwest",
  "serde",
  "simple_logger",
  "slug",
@@ -2627,6 +2628,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "opentelemetry-http"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a819b71d6530c4297b49b3cae2939ab3a8cc1b9f382826a1bc29dd0ca3864906"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "http",
+ "opentelemetry_api",
+ "reqwest",
+]
+
+[[package]]
 name = "opentelemetry-otlp"
 version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2637,8 +2651,10 @@ dependencies = [
  "futures-util",
  "http",
  "opentelemetry",
+ "opentelemetry-http",
  "opentelemetry-proto",
  "prost",
+ "reqwest",
  "thiserror",
  "tokio",
  "tonic",
