@@ -127,8 +127,8 @@ where
                 .with_endpoint("https://api.honeycomb.io/v1/traces")
                 .with_http_client(reqwest::Client::default())
                 .with_headers(HashMap::from([
-                    ("x-honeycomb-dataset".into(), honeycomb_team.parse()?),
-                    ("x-honeycomb-team".into(), honeycomb_dataset.parse()?),
+                    ("x-honeycomb-dataset".into(), honeycomb_dataset.parse()?),
+                    ("x-honeycomb-team".into(), honeycomb_team.parse()?),
                 ]))
                 .with_timeout(std::time::Duration::from_secs(2)),
         ) // Replace with runtime::Tokio if using async main
