@@ -67,7 +67,7 @@ if #[cfg(feature = "ssr")] {
         log!("PARALLELISM: {parallelism}");
 
         let tracing_conf = TracingSettings{
-            honeycomb_team: Some("6yem4uKpKZQBMObm755EdA".to_string()),
+            honeycomb_team: Some("G93VcSQ2fiX0QrSo65YCFA".to_string()),
             honeycomb_dataset: Some("benwis_leptos".to_string()),
             honeycomb_service_name: Some("benwis_leptos".to_string())
         };

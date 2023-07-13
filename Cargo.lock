@@ -533,11 +533,9 @@ dependencies = [
  "native-tls",
  "opentelemetry",
  "opentelemetry-otlp",
- "platform",
  "rand",
  "rand_core",
  "reqwest",
- "rustls-native-certs",
  "serde",
  "simple_logger",
  "slug",
@@ -2928,12 +2926,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "26072860ba924cbfa98ea39c8c19b4dd6a4a25423dbdf219c1eca91aa0cf6964"
 
 [[package]]
-name = "platform"
-version = "1.0.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c8907f8063ca15784b5c4f77116e1c2dd1c042d415cdcfb3225684f2a9ee8bf"
-
-[[package]]
 name = "polyval"
 version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3224,7 +3216,6 @@ dependencies = [
  "percent-encoding",
  "pin-project-lite",
  "rustls 0.21.5",
- "rustls-native-certs",
  "rustls-pemfile",
  "serde",
  "serde_json",
@@ -3413,18 +3404,6 @@ dependencies = [
  "ring",
  "rustls-webpki 0.101.1",
  "sct",
-]
-
-[[package]]
-name = "rustls-native-certs"
-version = "0.6.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a9aace74cb666635c918e9c12bc0d348266037aa8eb599b5cba565709a8dff00"
-dependencies = [
- "openssl-probe",
- "rustls-pemfile",
- "schannel",
- "security-framework",
 ]
 
 [[package]]
