@@ -34,7 +34,7 @@ use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
 pub struct TracingSettings{
     pub honeycomb_team: Option<String>,
     pub honeycomb_dataset: Option<String>,
-    pub honeycomb_service_name: Option<String>      
+    pub honeycomb_service_name: Option<String>
 }
 
 /// Configure Honeycomb tracer
@@ -119,13 +119,20 @@ where
             //     .install_batch(opentelemetry::runtime::Tokio)?;
             //
             // Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
-          let tracer = opentelemetry_otlp::new_pipeline()
+
+        // Configure Reqwest Client to use rustls-platform-verifier
+        let client = reqwest::Client::builder()
+            .use_preconfigured_tls(rustls_platform_verifier::tls_config())
+            .build()
+            .expect("Failed to create Reqwest Client");
+
+        let tracer = opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(
             opentelemetry_otlp::new_exporter()
                 .http()
                 .with_endpoint("https://api.honeycomb.io/v1/traces")
-                .with_http_client(reqwest::Client::default())
+                .with_http_client(client)
                 .with_headers(HashMap::from([
                     ("x-honeycomb-dataset".into(), honeycomb_dataset.parse()?),
                     ("x-honeycomb-team".into(), honeycomb_team.parse()?),

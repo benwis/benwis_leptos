@@ -63,8 +63,8 @@ if #[cfg(feature = "ssr")] {
             .await
             .expect("Could not make pool.");
 
-        let parallelism = std::thread::available_parallelism().unwrap().get();
-        log!("PARALLELISM: {parallelism}");
+        //let parallelism = std::thread::available_parallelism().unwrap().get();
+        //log!("PARALLELISM: {parallelism}");
 
         let tracing_conf = TracingSettings{
             honeycomb_team: Some("G93VcSQ2fiX0QrSo65YCFA".to_string()),
