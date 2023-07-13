@@ -17,7 +17,7 @@ use opentelemetry::sdk::{
 };
 use opentelemetry::KeyValue;
 use opentelemetry_otlp::ExportConfig;
-
+use std::collections::HashMap;
 use opentelemetry_otlp::WithExportConfig;
 use std::future::Future;
 use tokio::task::{spawn, spawn_blocking, JoinHandle};
@@ -54,27 +54,27 @@ where
             map.insert("x-honeycomb-team", honeycomb_team.parse()?);
             map.insert("x-honeycomb-dataset", honeycomb_dataset.parse()?);
 
-            let mut http = hyper::client::HttpConnector::new();
-            http.enforce_http(false);
-
-            let channel =
-                tonic::transport::channel::Channel::from_static("https://api.honeycomb.io/")
-                    .timeout(Duration::from_secs(3))
-                    .connect_with_connector(hyper_tls::HttpsConnector::from((
-                        http,
-                        tokio_native_tls::TlsConnector::from(
-                            native_tls::TlsConnector::builder()
-                                .request_alpns(&["h2"])
-                                .build()
-                                .unwrap(),
-                        ),
-                    )))
-                    .await?;
-            let export_config = ExportConfig {
-                endpoint: "http://localhost:4317".to_string(),
-                timeout: Duration::from_secs(3),
-                protocol: opentelemetry_otlp::Protocol::Grpc
-            };
+            // let mut http = hyper::client::HttpConnector::new();
+            // http.enforce_http(false);
+            //
+            // let channel =
+            //     tonic::transport::channel::Channel::from_static("https://api.honeycomb.io/")
+            //         .timeout(Duration::from_secs(3))
+            //         .connect_with_connector(hyper_tls::HttpsConnector::from((
+            //             http,
+            //             tokio_native_tls::TlsConnector::from(
+            //                 native_tls::TlsConnector::builder()
+            //                     .request_alpns(&["h2"])
+            //                     .build()
+            //                     .unwrap(),
+            //             ),
+            //         )))
+            //         .await?;
+            // let export_config = ExportConfig {
+            //     endpoint: "http://localhost:4317".to_string(),
+            //     timeout: Duration::from_secs(3),
+            //     protocol: opentelemetry_otlp::Protocol::Grpc
+            // };
 
             // let exporter = opentelemetry_otlp::new_exporter()
             //     .tonic()
@@ -95,30 +95,45 @@ where
             //     .with_trace_config(trace_config)
             //     .install_batch(opentelemetry::runtime::Tokio)?;
 
-            let tracer = opentelemetry_otlp::new_pipeline()
-                .tracing()
-                .with_exporter(
-                    opentelemetry_otlp::new_exporter()
-                        .tonic()
-                        .with_endpoint("https://api.honeycomb.io/")
-                        .with_timeout(Duration::from_secs(3))
-                        .with_metadata(map),
-                )
-                .with_trace_config(
-                    trace::config()
-                        .with_sampler(Sampler::AlwaysOn)
-                        .with_id_generator(RandomIdGenerator::default())
-                        .with_max_events_per_span(64)
-                        .with_max_attributes_per_span(16)
-                        .with_max_events_per_span(16)
-                        .with_resource(Resource::new(vec![KeyValue::new(
-                            "service.name",
-                            honeycomb_service_name.clone(),
-                        )])),
-                )
-                .install_batch(opentelemetry::runtime::Tokio)?;
-
-            Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
+            // let tracer = opentelemetry_otlp::new_pipeline()
+            //     .tracing()
+            //     .with_exporter(
+            //         opentelemetry_otlp::new_exporter()
+            //             .tonic()
+            //             .with_endpoint("https://api.honeycomb.io/")
+            //             .with_timeout(Duration::from_secs(3))
+            //             .with_metadata(map),
+            //     )
+            //     .with_trace_config(
+            //         trace::config()
+            //             .with_sampler(Sampler::AlwaysOn)
+            //             .with_id_generator(RandomIdGenerator::default())
+            //             .with_max_events_per_span(64)
+            //             .with_max_attributes_per_span(16)
+            //             .with_max_events_per_span(16)
+            //             .with_resource(Resource::new(vec![KeyValue::new(
+            //                 "service.name",
+            //                 honeycomb_service_name.clone(),
+            //             )])),
+            //     )
+            //     .install_batch(opentelemetry::runtime::Tokio)?;
+            //
+            // Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
+          let tracer = opentelemetry_otlp::new_pipeline()
+        .tracing()
+        .with_exporter(
+            opentelemetry_otlp::new_exporter()
+                .http()
+                .with_endpoint("https://api.honeycomb.io/v1/traces")
+                .with_http_client(reqwest::Client::default())
+                .with_headers(HashMap::from([
+                    ("x-honeycomb-dataset".into(), honeycomb_team.parse()?),
+                    ("x-honeycomb-team".into(), honeycomb_dataset.parse()?),
+                ]))
+                .with_timeout(std::time::Duration::from_secs(2)),
+        ) // Replace with runtime::Tokio if using async main
+        .install_batch(opentelemetry::runtime::Tokio)?;
+        Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
         }
         _ => Ok(None),
     }
