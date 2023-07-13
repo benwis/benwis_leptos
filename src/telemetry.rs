@@ -30,6 +30,7 @@ use tracing_log::LogTracer;
 use tracing_opentelemetry::OpenTelemetryLayer;
 use tracing_subscriber::fmt::MakeWriter;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
+//use std::{fs::File, io::Read};
 
 pub struct TracingSettings{
     pub honeycomb_team: Option<String>,
@@ -121,11 +122,22 @@ where
             // Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
 
         // Configure Reqwest Client to use rustls-platform-verifier
+        //let client = reqwest::Client::builder()
+        //    .use_preconfigured_tls(rustls_platform_verifier::tls_config())
+        //    .build()
+        //    .expect("Failed to create Reqwest Client");
+        //let mut buf = Vec::new();
+        //File::open("certs/Amazon_RSA_2048_M02.pem")?
+        //.read_to_end(&mut buf)?;
+        //let honeycomb_cert = reqwest::tls::Certificate::from_pem(&buf).expect("Failed to load Honeycomb Cert");
+        //let client = reqwest::Client::builder()
+        //.add_root_certificate(honeycomb_cert)
+        //.build()
+        //.expect("Failed to create Reqwest Client");
         let client = reqwest::Client::builder()
-            .use_preconfigured_tls(rustls_platform_verifier::tls_config())
+            .use_rustls_tls()
             .build()
-            .expect("Failed to create Reqwest Client");
-
+            .expect("Failed to build client!");
         let tracer = opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(

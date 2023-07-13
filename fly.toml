@@ -34,5 +34,3 @@ app = "benwis-leptos"
   tls_skip_verify = false
   headers = { }
 
-  [env]
-  LEPTOS_ENVIRONMENT="prod"

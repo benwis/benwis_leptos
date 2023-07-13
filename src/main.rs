@@ -55,6 +55,7 @@ if #[cfg(feature = "ssr")] {
     }
     #[tokio::main]
     async fn main() {
+        log!("BENWIS LEPTOS APP STARTING!");
         // Load .env file if one is present(should only happen in local dev)
         dotenvy::dotenv().ok();
 
@@ -96,7 +97,7 @@ if #[cfg(feature = "ssr")] {
         let session_config = SessionConfig::default().with_table_name("axum_sessions").with_mode(SessionMode::Storable);
         let auth_config = AuthConfig::<i64>::default();
         let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config).await.expect("Failed to get Session!");
-        session_store.initiate().await.unwrap();
+        session_store.initiate().await.expect("Failed to create session store!");
 
         sqlx::migrate!()
             .run(&pool)
@@ -104,7 +105,7 @@ if #[cfg(feature = "ssr")] {
             .expect("could not run SQLx migrations");
 
         // Setting this to None means we'll be using cargo-leptos and its env vars
-        let conf = get_configuration(None).await.unwrap();
+        let conf = get_configuration(None).await.expect("Failed to get config");
         let leptos_options = conf.leptos_options;
         let addr = leptos_options.site_addr;
         let routes = generate_route_list(|cx| view! { cx, <BenwisApp/> }).await;
@@ -131,7 +132,7 @@ if #[cfg(feature = "ssr")] {
         axum::Server::bind(&addr)
             .serve(app.into_make_service())
             .await
-            .unwrap();
+            .expect("Failed to start hyper server");
     }
 }
 
