@@ -67,8 +67,9 @@
           jpegFilter = path: _type: builtins.match ".*jpeg$" path != null;
           pngFilter = path: _type: builtins.match ".*png$" path != null;
           icoFilter = path: _type: builtins.match ".*ico$" path != null;
+          pemFilter = path: _type: builtins.match ".*pem$" path !=null;
           protoOrCargo = path: type:
-            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
+            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (pemFilter path type) ||(cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
           # other attributes omitted
 
           # Include more types of files in our bundle
@@ -196,7 +197,7 @@
             OUT_PATH=$(nix build --print-out-paths .#container)
             HASH=$(echo $OUT_PATH | grep -Po "(?<=store\/)(.*?)(?=-)")
             ${pkgs.skopeo}/bin/skopeo --insecure-policy --debug copy docker-archive:"$OUT_PATH" docker://registry.fly.io/$FLY_PROJECT_NAME:$HASH --dest-creds x:"$FLY_AUTH_TOKEN" --format v2s2
-            ${pkgs.flyctl}/bin/flyctl deploy -i registry.fly.io/$FLY_PROJECT_NAME:$HASH -c ${flyConfig} --remote-only
+            ${pkgs.flyctl}/bin/flyctl deploy -i registry.fly.io/$FLY_PROJECT_NAME:$HASH -c ${flyConfig} --remote-only --strategy immediate
           '';
         in
         {
@@ -263,7 +264,7 @@
               pathsToLink = [ "/bin" "/db" "/migrations" ];
             };
             config = {
-              Env = [ "PATH=${benwis_leptos}/bin" "LEPTOS_ENVIRONMENT=production" "RUST_LOG=tower_http=debug,info" "SSL_CERT_FILE ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
+              Env = [ "PATH=${benwis_leptos}/bin" "LEPTOS_ENVIRONMENT=production" "RUST_LOG=tower_http=trace,info" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
                 "3000/tcp" = { };
@@ -286,6 +287,7 @@
               openssl
               mysql80
               dive
+              dig
               sqlx-cli
               wasm-pack
               pkg-config
