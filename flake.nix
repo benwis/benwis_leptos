@@ -263,7 +263,7 @@
               pathsToLink = [ "/bin" "/db" "/migrations" ];
             };
             config = {
-              Env = [ "PATH=${benwis_leptos}/bin" "APP_ENVIRONMENT=production" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
+              Env = [ "PATH=${benwis_leptos}/bin" "APP_ENVIRONMENT=production" "RUST_LOG=tower_http=debug,info" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
                 "3000/tcp" = { };
