@@ -10,7 +10,7 @@ if #[cfg(feature = "ssr")] {
     use chrono::{NaiveDateTime, prelude::*};
 }}
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(AddPost, "/api")]
 pub async fn add_post(
     cx: Scope,
@@ -71,7 +71,7 @@ pub async fn add_post(
     }
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetPosts, "/api")]
 pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
@@ -103,7 +103,7 @@ pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     Ok(posts)
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error),err)]
 #[server(GetSomePosts, "/api")]
 pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
@@ -137,7 +137,7 @@ pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
     Ok(posts)
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error),err)]
 #[server(GetSomePostsMeta, "/api")]
 pub async fn get_some_posts_meta(cx: Scope) -> Result<Vec<PostMeta>, ServerFnError> {
     use futures::TryStreamExt;
@@ -172,7 +172,7 @@ pub async fn get_some_posts_meta(cx: Scope) -> Result<Vec<PostMeta>, ServerFnErr
 }
 
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error),err)]
 #[server(GetPost, "/api")]
 pub async fn get_post(
     cx: Scope,
@@ -193,7 +193,7 @@ pub async fn get_post(
     Ok(post)
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error),err)]
 #[server(UpdatePost, "/api")]
 pub async fn update_post(
     cx: Scope,
@@ -239,7 +239,7 @@ pub async fn update_post(
     Ok(res)
 }
 
-#[tracing::instrument(level = "info", fields(error), ret,err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(DeletePost, "/api")]
 pub async fn delete_post(cx: Scope, id: u16) -> Result<(), ServerFnError> {
     let pool = pool(cx)?;
