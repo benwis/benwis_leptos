@@ -5,7 +5,8 @@ FROM rustlang/rust:nightly-bullseye as builder
 # RUN echo $PATH
 # RUN cp cargo-binstall /usr/local/cargo/bin 
 # RUN cargo binstall cargo-leptos -y
-RUN cargo install --git https://github.com/akesson/cargo-leptos cargo-leptos
+#RUN cargo install --git https://github.com/akesson/cargo-leptos cargo-leptos
+RUN cargo install --locked cargo-leptos
 RUN rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
 RUN rustup target add wasm32-unknown-unknown
 RUN mkdir -p /app
@@ -22,7 +23,7 @@ COPY --from=builder /app/Cargo.toml /app/
 WORKDIR /app
 ENV RUST_LOG="info"
 ENV LEPTOS_OUTPUT_NAME="benwis_leptos"
-ENV APP_ENVIRONMENT="production"
+ENV LEPTOS_ENVIRONMENT="production"
 ENV LEPTOS_SITE_ADDR="0.0.0.0:3000"
 ENV LEPTOS_SITE_ROOT="site"
 EXPOSE 3000
