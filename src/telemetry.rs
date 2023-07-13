@@ -152,16 +152,17 @@ where
                 .with_timeout(std::time::Duration::from_secs(2)),
         )
 
-                 .with_trace_config
-                     trace::config()
-                         .with_sampler(Sampler::AlwaysOn)
-                         .with_id_generator(RandomIdGenerator::default())
-                         //.with_max_events_per_span(64)
-                         //.with_max_attributes_per_span(16)
-                         .with_resource(Resource::new(vec![KeyValue::new(
-                             "service.name",
-                             honeycomb_service_name.clone(),
-                         )])),
+         .with_trace_config(
+             trace::config()
+                 .with_sampler(Sampler::AlwaysOn)
+                 .with_id_generator(RandomIdGenerator::default())
+                 //.with_max_events_per_span(64)
+                 //.with_max_attributes_per_span(16)
+                 .with_resource(Resource::new(vec![KeyValue::new(
+                     "service.name",
+                     honeycomb_service_name.clone(),
+                 )]))
+        )
         .install_batch(opentelemetry::runtime::Tokio)?;
         Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
         }
