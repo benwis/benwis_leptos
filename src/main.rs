@@ -81,7 +81,7 @@ if #[cfg(feature = "ssr")] {
                 "INFO".into(),
                 std::io::stdout,
             ));
-        } else {
+        } else if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "prod_no_trace" {
             init_subscriber(
                 get_subscriber_with_tracing(
                     "benwis_leptos".into(),
@@ -91,7 +91,13 @@ if #[cfg(feature = "ssr")] {
                 )
                 .await,
             );
-        }
+        } else{
+            init_subscriber(get_subscriber(
+                "benws_leptos".into(),
+                "INFO".into(),
+                std::io::stdout,
+            ));
+            }
 
         // Auth section
         let session_config = SessionConfig::default().with_table_name("axum_sessions").with_mode(SessionMode::Storable);

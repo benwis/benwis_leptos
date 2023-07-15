@@ -159,7 +159,6 @@
             LEPTOS_BIN_TARGET_TRIPLE = "x86_64-unknown-linux-gnu"; # Adding this allows -Zbuild-std to work and shave 100kb off the WASM
             LEPTOS_BIN_PROFILE_RELEASE = "release";
             LEPTOS_LIB_PROFILE_RELEASE ="release-wasm-size";
-            APP_ENVIRONMENT = "production";
           });
           
           cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
@@ -264,7 +263,7 @@
               pathsToLink = [ "/bin" "/db" "/migrations" ];
             };
             config = {
-              Env = [ "PATH=${benwis_leptos}/bin" "LEPTOS_ENVIRONMENT=production" "RUST_LOG=tower_http=trace,info" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
+              Env = [ "PATH=${benwis_leptos}/bin" "LEPTOS_ENVIRONMENT=prod_no_trace" "RUST_LOG=tower_http=trace,info" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
                 "3000/tcp" = { };
