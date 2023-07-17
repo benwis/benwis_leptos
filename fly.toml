@@ -34,3 +34,7 @@ app = "benwis-leptos"
   tls_skip_verify = false
   headers = { }
 
+[mounts]
+source="benwis_leptos_bench"
+destination="/bench"
+

@@ -11,7 +11,7 @@
 
     flake-utils.url = "github:numtide/flake-utils";
     
-    cargo-leptos = {
+    cargo-leptos-git = {
       #url= "github:leptos-rs/cargo-leptos/v1.7";
       url = "github:benwis/cargo-leptos";
       flake = false;
@@ -39,16 +39,16 @@
             overlays = [ (import rust-overlay) ];
           };
 
-          #rustTarget = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
-          #  extensions = [ "rust-src" "rust-analyzer" ];
-          #  targets = [ "wasm32-unknown-unknown" ];
-          #});
-
-
-          rustTarget = pkgs.rust-bin.nightly."2023-06-01".default.override{
+          rustTarget = pkgs.rust-bin.selectLatestNightlyWith (toolchain: toolchain.default.override {
             extensions = [ "rust-src" "rust-analyzer" ];
             targets = [ "wasm32-unknown-unknown" ];
-          };
+          });
+
+
+          #rustTarget = pkgs.rust-bin.nightly."2023-06-01".default.override{
+          #  extensions = [ "rust-src" "rust-analyzer" ];
+          #  targets = [ "wasm32-unknown-unknown" ];
+          #};
           # NB: we don't need to overlay our custom toolchain for the *entire*
           # pkgs (which would require rebuidling anything else which uses rust).
           # Instead, we just want to update the scope that crane will use by appendings
@@ -68,8 +68,9 @@
           pngFilter = path: _type: builtins.match ".*png$" path != null;
           icoFilter = path: _type: builtins.match ".*ico$" path != null;
           pemFilter = path: _type: builtins.match ".*pem$" path !=null;
+          soFilter = path: _type: builtins.match ".*so$" path !=null;
           protoOrCargo = path: type:
-            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (pemFilter path type) ||(cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
+            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (soFilter path type) || (pemFilter path type) ||(cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
           # other attributes omitted
 
           # Include more types of files in our bundle
@@ -84,7 +85,7 @@
             inherit src;
           buildInputs = [
             # Add additional build inputs here
-            cargo-leptos
+            cargo-leptos-git
             pkgs.pkg-config
             pkgs.openssl
             pkgs.protobuf
@@ -161,13 +162,12 @@
             LEPTOS_LIB_PROFILE_RELEASE ="release-wasm-size";
           });
           
-          cargo-leptos = pkgs.rustPlatform.buildRustPackage rec {
+          cargo-leptos-git = pkgs.rustPlatform.buildRustPackage rec {
             pname = "cargo-leptos";
-            #version = "0.1.7";
             version = "0.1.11";
             buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
 
-            src = inputs.cargo-leptos; 
+            src = inputs.cargo-leptos-git;
 
             cargoSha256 = "sha256-9lKD9AZ5if/pxurtWNH0V+aUPs4pdEFIJIWbiGgz4cs=";
 
@@ -255,19 +255,32 @@
           # Create an option to build a docker image from this package 
           packages.container = pkgs.dockerTools.buildImage {
             name = "benwis_leptos";
+            fromImage= pkgs.dockerTools.pullImage{
+                imageName="ubuntu";
+                imageDigest="sha256:0bced47fffa3361afa981854fcabcd4577cd43cebbb808cea2b1f33a3dd7f508";
+                sha256="sha256-M3wyBLKl6FXJWWCPjTp6zxU7PZAttlA6mc/LkcAD1Ts=";
+            };
             #tag = "latest";
             created = "now";
             copyToRoot = pkgs.buildEnv {
-              name = "image-root";
-              paths = [ pkgs.cacert ./.  ];
-              pathsToLink = [ "/bin" "/db" "/migrations" ];
+              name="image-root";
+              paths = [ pkgs.cacert pkgs.bashInteractive pkgs.heaptrack pkgs.gdb pkgs.coreutils pkgs.dockerTools.binSh pkgs.dockerTools.caCertificates  ./.  ];
+              pathsToLink = [ "/bin" "/db" "/migrations /bytehound" ];
             };
             config = {
-              Env = [ "PATH=${benwis_leptos}/bin" "LEPTOS_ENVIRONMENT=prod_no_trace" "RUST_LOG=tower_http=trace,info" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
+              Env = ["LD_PRELOAD=libbytehound.so" "MEMORY_PROFILER_LOG=warn" "MEMORY_PROFILER_LOGFILE=/bench/benwis_leptos-$*.dat" "LEPTOS_ENVIRONMENT=prod_no_trace" "RUST_LOG=warn" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
                 "3000/tcp" = { };
               };
+              runasRoot = ''
+              #!${pkgs.runtimeShell}
+              ${pkgs.dockerTools.shadowSetup}
+              mkdir -p /bench
+              cp /bytehound/libbytehound.so ${benwis_leptos}/bin
+              cp /bytehound/libbytehound.so /lib/x86_64-linux-gnu/
+              chmod u+s /lib/x86_64-linux-gnu/libbytehound.so
+              '';
 
               Cmd = [ "${benwis_leptos}/bin/benwis_leptos" ];
             };
@@ -291,11 +304,14 @@
               wasm-pack
               pkg-config
               binaryen
+              flamegraph
               nodejs
               hey
               drill
               nodePackages.tailwindcss
-              cargo-leptos
+              heaptrack
+              gdb
+              cargo-leptos-git
               protobuf
               skopeo
               flyctl
