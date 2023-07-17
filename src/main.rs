@@ -29,6 +29,10 @@ if #[cfg(feature = "ssr")] {
     use tower_http::{compression::CompressionLayer};
     use benwis_leptos::state::AppState;
 
+    #[cfg(feature = "dhat-heap")]
+    #[global_allocator]
+    static ALLOC: dhat::Alloc = dhat::Alloc;
+
     #[tracing::instrument(level = "info", fields(error))]
     #[axum::debug_handler]
     async fn server_fn_handler(State(app_state): State<AppState>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, raw_query: RawQuery,
@@ -56,6 +60,10 @@ if #[cfg(feature = "ssr")] {
     #[tokio::main]
     async fn main() {
         log!("BENWIS LEPTOS APP STARTING!");
+
+        #[cfg(feature = "dhat-heap")]
+        let profiler = dhat::Profiler::builder().file_name(format!("dhat-heap-{}.json", std::process::id())).build();
+
         // Load .env file if one is present(should only happen in local dev)
         dotenvy::dotenv().ok();
 
@@ -82,15 +90,11 @@ if #[cfg(feature = "ssr")] {
                 std::io::stdout,
             ));
         } else if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "prod_no_trace" {
-            init_subscriber(
-                get_subscriber_with_tracing(
-                    "benwis_leptos".into(),
-                    &tracing_conf,
-                    "INFO".into(),
-                    std::io::stdout,
-                )
-                .await,
-            );
+            init_subscriber(get_subscriber(
+                "benws_leptos".into(),
+                "INFO".into(),
+                std::io::stdout,
+             ));
         } else{
             init_subscriber(get_subscriber(
                 "benws_leptos".into(),
