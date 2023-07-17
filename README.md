@@ -40,3 +40,6 @@ wasm-pack build --target=web --debug --no-default-features --features=hydrate
 ```bash
 cargo run --no-default-features --features=ssr
 ```
+
+Skopeo verify image digest
+`skopeo inspect --format "{{ .Digest }}" "docker://ubuntu:devel"`
