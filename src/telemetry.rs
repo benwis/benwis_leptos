@@ -16,13 +16,11 @@ use opentelemetry::sdk::{
     Resource,
 };
 use opentelemetry::KeyValue;
-use opentelemetry_otlp::ExportConfig;
 use std::collections::HashMap;
 use opentelemetry_otlp::WithExportConfig;
 use std::future::Future;
 use tokio::task::{spawn, spawn_blocking, JoinHandle};
-use tokio::time::Duration;
-use tonic::metadata::*;
+//use tonic::metadata::*;
 use tracing::subscriber::set_global_default;
 use tracing::Subscriber;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
@@ -51,9 +49,9 @@ where
         &conf.honeycomb_service_name,
     ) {
         (Some(honeycomb_team), Some(honeycomb_dataset), Some(honeycomb_service_name)) => {
-            let mut map = MetadataMap::with_capacity(3);
-            map.insert("x-honeycomb-team", honeycomb_team.parse()?);
-            map.insert("x-honeycomb-dataset", honeycomb_dataset.parse()?);
+            //let mut map = MetadataMap::with_capacity(3);
+            //map.insert("x-honeycomb-team", honeycomb_team.parse()?);
+            //map.insert("x-honeycomb-dataset", honeycomb_dataset.parse()?);
 
             // let mut http = hyper::client::HttpConnector::new();
             // http.enforce_http(false);
