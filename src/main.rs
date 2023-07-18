@@ -15,7 +15,7 @@ if #[cfg(feature = "ssr")] {
     use tower_http::trace::TraceLayer;
     use benwis_leptos::*;
     use benwis_leptos::fallback::file_and_error_handler;
-    use benwis_leptos::telemetry::{get_subscriber, get_subscriber_with_tracing, init_subscriber};
+    use benwis_leptos::telemetry::{get_subscriber,get_subscriber_with_tracing, init_subscriber};
 
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
     use leptos::{log, view, provide_context, get_configuration};
@@ -29,9 +29,8 @@ if #[cfg(feature = "ssr")] {
     use tower_http::{compression::CompressionLayer};
     use benwis_leptos::state::AppState;
 
-    #[cfg(feature = "dhat-heap")]
-    #[global_allocator]
-    static ALLOC: dhat::Alloc = dhat::Alloc;
+    #[cfg(not(target_env = "msvc"))]
+    use jemallocator::Jemalloc;
 
     #[tracing::instrument(level = "info", fields(error))]
     #[axum::debug_handler]
@@ -61,8 +60,9 @@ if #[cfg(feature = "ssr")] {
     async fn main() {
         log!("BENWIS LEPTOS APP STARTING!");
 
-        #[cfg(feature = "dhat-heap")]
-        let profiler = dhat::Profiler::builder().file_name(format!("dhat-heap-{}.json", std::process::id())).build();
+        #[cfg(not(target_env = "msvc"))]
+        #[global_allocator]
+        static GLOBAL: Jemalloc = Jemalloc;
 
         // Load .env file if one is present(should only happen in local dev)
         dotenvy::dotenv().ok();
@@ -96,11 +96,14 @@ if #[cfg(feature = "ssr")] {
                 std::io::stdout,
              ));
         } else{
-            init_subscriber(get_subscriber(
-                "benws_leptos".into(),
-                "INFO".into(),
-                std::io::stdout,
-            ));
+            init_subscriber(
+                get_subscriber_with_tracing(
+                    "benwis_leptos".into(),
+                    &tracing_conf,
+                    "INFO".into(),
+                    std::io::stdout,
+                )
+                .await);
             }
 
         // Auth section

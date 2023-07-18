@@ -196,7 +196,7 @@
             OUT_PATH=$(nix build --print-out-paths .#container)
             HASH=$(echo $OUT_PATH | grep -Po "(?<=store\/)(.*?)(?=-)")
             ${pkgs.skopeo}/bin/skopeo --insecure-policy --debug copy docker-archive:"$OUT_PATH" docker://registry.fly.io/$FLY_PROJECT_NAME:$HASH --dest-creds x:"$FLY_AUTH_TOKEN" --format v2s2
-            ${pkgs.flyctl}/bin/flyctl deploy -i registry.fly.io/$FLY_PROJECT_NAME:$HASH -c ${flyConfig}
+            ${pkgs.flyctl}/bin/flyctl deploy -i registry.fly.io/$FLY_PROJECT_NAME:$HASH -c ${flyConfig} --remote-only --strategy immediate
           '';
         in
         {
@@ -256,24 +256,46 @@
           # Create an option to build a docker image from this package 
           packages.container = pkgs.dockerTools.buildImage {
             name = "benwis_leptos";
+            fromImage= pkgs.dockerTools.pullImage{
+                imageName="ubuntu";
+                imageDigest="sha256:266cbca633bcb1356b9be281efe251782d30830cee0c0cf6a3c952a3a655f040";
+                sha256="sha256-hcOTa/pDj0wtaVjLY+2MpColSA8fOfifKN//ydS+CK8=";
+            };
             #tag = "latest";
             created = "now";
             copyToRoot = pkgs.buildEnv {
               name="image-root";
-              paths = [ 
-                  pkgs.cacert
-                  ./.
+              paths = [ pkgs.cacert
+                (pkgs.writeShellScriptBin "runRust" ''
+                    #!${pkgs.runtimeShell}
+                    LD_PRELOAD=libbytehound.so ${benwis_leptos}/bin/benwis_leptos
+                    '')
+                    pkgs.bashInteractive
+                    pkgs.heaptrack
+                    pkgs.glibc_multi
+                    pkgs.gdb
+                    pkgs.coreutils
+                    pkgs.dockerTools.binSh
+                    pkgs.dockerTools.caCertificates
+                    ./.
               ];
               pathsToLink = [ "/bin" "/db" "/migrations /bytehound" ];
             };
             config = {
-              Env = [  "LEPTOS_ENVIRONMENT=prod_no_trace" "RUST_LOG=warn" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
+              Env = [ "LD_LIBRARY_PATH=/bytehound" "MEMORY_PROFILER_LOG=warn" "MEMORY_PROFILER_OUTPUT=/bench/memory-profiling_%e_%t_%p.dat" "LEPTOS_ENVIRONMENT=prod_no_trace" "RUST_LOG=warn" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
                 "3000/tcp" = { };
               };
+              runasRoot = ''
+              #!${pkgs.runtimeShell}
+              ${pkgs.dockerTools.shadowSetup}
+              mkdir -p /bench
+              cp /bytehound/libbytehound.so /lib/x86_64-linux-gnu/
+              chmod u+s /lib/x86_64-linux-gnu/libbytehound.so
+              '';
 
-              Cmd = [ "${benwis_leptos}/bin/benwis_leptos"];
+              Cmd = [ "runRust" ];
             };
 
           };
