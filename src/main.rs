@@ -82,16 +82,16 @@ if #[cfg(feature = "ssr")] {
         };
 
         // Get telemetry layer
-        if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "local" {
+        if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var").to_lowercase() == "local" {
             println!("LOCAL ENVIRONMENT");
             init_subscriber(get_subscriber(
-                "benws_leptos".into(),
+                "benwis_leptos".into(),
                 "INFO".into(),
                 std::io::stdout,
             ));
         } else if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "prod_no_trace" {
             init_subscriber(get_subscriber(
-                "benws_leptos".into(),
+                "benwis_leptos".into(),
                 "INFO".into(),
                 std::io::stdout,
              ));
@@ -102,9 +102,9 @@ if #[cfg(feature = "ssr")] {
                     &tracing_conf,
                     "INFO".into(),
                     std::io::stdout,
-                )
-                .await);
-            }
+                ).await);
+        }
+
 
         // Auth section
         let session_config = SessionConfig::default().with_table_name("axum_sessions").with_mode(SessionMode::Storable);
