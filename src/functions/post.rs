@@ -13,7 +13,7 @@ if #[cfg(feature = "ssr")] {
 #[tracing::instrument(level = "info", fields(error), err)]
 #[server(AddPost, "/api")]
 pub async fn add_post(
-    cx: Scope,
+
     title: String,
     slug: String,
     created_at_pretty: String,
@@ -22,18 +22,18 @@ pub async fn add_post(
     published: String,
     preview: String,
 ) -> Result<(), ServerFnError> {
-    let pool = pool(cx)?;
-    let auth = auth(cx)?;
+    let pool = pool()?;
+    let auth = auth()?;
 
     // Redirect all non logged in users to Nedry!
     if auth.is_anonymous() {
-        redirect(cx, "/nedry")
+        redirect( "/nedry")
     }
 
     let published = published.parse::<bool>().unwrap();
     let preview = preview.parse::<bool>().unwrap();
 
-    let user = super::user::get_user(cx).await?;
+    let user = super::user::get_user().await?;
     let slug = match slug.is_empty() {
         true => slugify(&title),
         false => slug,
@@ -73,9 +73,9 @@ pub async fn add_post(
 
 #[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetPosts, "/api")]
-pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
+pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
-    let pool = pool(cx)?;
+    let pool = pool()?;
 
     let mut posts = Vec::new();
     let mut rows = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts").fetch(&pool);
@@ -105,9 +105,9 @@ pub async fn get_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
 
 #[tracing::instrument(level = "info", fields(error),err)]
 #[server(GetSomePosts, "/api")]
-pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
+pub async fn get_some_posts() -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
-    let pool = pool(cx)?;
+    let pool = pool()?;
 
     let mut posts = Vec::new();
     let mut rows =
@@ -139,9 +139,9 @@ pub async fn get_some_posts(cx: Scope) -> Result<Vec<Post>, ServerFnError> {
 
 #[tracing::instrument(level = "info", fields(error),err)]
 #[server(GetSomePostsMeta, "/api")]
-pub async fn get_some_posts_meta(cx: Scope) -> Result<Vec<PostMeta>, ServerFnError> {
+pub async fn get_some_posts_meta() -> Result<Vec<PostMeta>, ServerFnError> {
     use futures::TryStreamExt;
-    let pool = pool(cx)?;
+    let pool = pool()?;
 
     let mut posts = Vec::new();
     let mut rows =
@@ -175,10 +175,10 @@ pub async fn get_some_posts_meta(cx: Scope) -> Result<Vec<PostMeta>, ServerFnErr
 #[tracing::instrument(level = "info", fields(error),err)]
 #[server(GetPost, "/api")]
 pub async fn get_post(
-    cx: Scope,
+
     slug: String,
 ) -> Result<Result<Option<Post>, BenwisAppError>, ServerFnError> {
-    let pool = pool(cx)?;
+    let pool = pool()?;
 
     let post = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts WHERE slug=?")
         .bind(slug)
@@ -196,7 +196,7 @@ pub async fn get_post(
 #[tracing::instrument(level = "info", fields(error),err)]
 #[server(UpdatePost, "/api")]
 pub async fn update_post(
-    cx: Scope,
+
     slug: String,
     title: String,
     hero: String,
@@ -206,12 +206,12 @@ pub async fn update_post(
     published: String,
     preview: String,
 ) -> Result<Result<bool, BenwisAppError>, ServerFnError> {
-    let pool = pool(cx)?;
-    let auth = auth(cx)?;
+    let pool = pool()?;
+    let auth = auth()?;
 
     // Redirect all non logged in users to Nedry!
     if auth.is_anonymous() {
-        redirect(cx, "/nedry")
+        redirect( "/nedry")
     }
 
     let published = published.parse::<bool>().unwrap();
@@ -241,13 +241,13 @@ pub async fn update_post(
 
 #[tracing::instrument(level = "info", fields(error), err)]
 #[server(DeletePost, "/api")]
-pub async fn delete_post(cx: Scope, id: u16) -> Result<(), ServerFnError> {
-    let pool = pool(cx)?;
-    let auth = auth(cx)?;
+pub async fn delete_post( id: u16) -> Result<(), ServerFnError> {
+    let pool = pool()?;
+    let auth = auth()?;
 
     // Redirect all non logged in users to Nedry!
     if auth.is_anonymous() {
-        redirect(cx, "/nedry")
+        redirect( "/nedry")
     }
 
     sqlx::query("DELETE FROM posts WHERE id = $1")

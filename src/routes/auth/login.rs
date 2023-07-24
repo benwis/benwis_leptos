@@ -5,10 +5,10 @@ use leptos_router::*;
 
 #[component]
 pub fn Login(
-    cx: Scope,
+
     action: Action<functions::auth::Login, Result<(), ServerFnError>>,
 ) -> impl IntoView {
-    view! { cx,
+    view! {
         <Meta property="og:title" content="Login"/>
         <Title text="Login"/>
         <Meta name="description" content="Login to the site"/>

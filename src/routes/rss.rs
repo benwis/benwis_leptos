@@ -82,14 +82,14 @@ pub fn generate_rss(title: &str, description: &str, link: &str, posts: Vec<Post>
 }
 
 #[component]
-pub fn Rss(cx: Scope) -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>(cx);
-    let update_post = create_server_action::<UpdatePost>(cx);
-    let delete_post = create_server_action::<DeletePost>(cx);
+pub fn Rss() -> impl IntoView {
+    let add_post = create_server_multi_action::<AddPost>();
+    let update_post = create_server_action::<UpdatePost>();
+    let delete_post = create_server_action::<DeletePost>();
 
     // list of posts is loaded from the server in reaction to changes
     let posts = create_resource(
-        cx,
+
         move || {
             (
                 add_post.version().get(),
@@ -97,18 +97,18 @@ pub fn Rss(cx: Scope) -> impl IntoView {
                 delete_post.version().get(),
             )
         },
-        move |_| get_posts(cx),
+        move |_| get_posts(),
     );
 
-    view! { cx,
+    view! {
         <Transition fallback=|| {
-            view! { cx, "Loading" }
+            view! {  "Loading" }
         }>
             {move || {
                 let posts = {
                     move || {
                         posts
-                            .read(cx)
+                            .read()
                             .map(|post| match post {
                                 Ok(p) => p.into_iter().filter(|p| p.published).collect::<Vec<Post>>(),
                                 Err(_) => Vec::new(),
@@ -122,7 +122,7 @@ pub fn Rss(cx: Scope) -> impl IntoView {
                     "http://benw.is",
                     posts(),
                 );
-                rss.into_view(cx)
+                rss.into_view()
             }}
         </Transition>
     }

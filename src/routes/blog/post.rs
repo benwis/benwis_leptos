@@ -11,34 +11,34 @@ pub struct PostParams {
 }
 
 #[component]
-pub fn Post(cx: Scope) -> impl IntoView {
-    let params = use_params::<PostParams>(cx);
+pub fn Post() -> impl IntoView {
+    let params = use_params::<PostParams>();
     let post = create_blocking_resource(
-        cx,
+
         move || params().map(|params| params.slug).ok().unwrap(),
-        move |slug| get_post(cx, slug),
+        move |slug| get_post( slug),
     );
 
-    view! { cx,
+    view! {
         <Transition fallback=move || {
-            view! { cx, <p>"Loading..."</p> }
+            view! {  <p>"Loading..."</p> }
         }>
-            { move || post.read(cx).map(|p|{ match p {
+            { move || post.read().map(|p|{ match p {
                 Ok(Ok(Some(post))) => {
-                    view! { cx, <PostContent post={post}/> }
-                        .into_view(cx)
+                    view! {  <PostContent post={post}/> }
+                        .into_view()
                 }
                 Ok(Ok(None)) => {
-                    view! { cx, <p>"Post Not Found"</p> }
-                        .into_view(cx)
+                    view! {  <p>"Post Not Found"</p> }
+                        .into_view()
                 }
                 Ok(Err(_)) => {
-                    view! { cx, <p>"Server Error"</p> }
-                        .into_view(cx)
+                    view! {  <p>"Server Error"</p> }
+                        .into_view()
                 }
                 Err(_) => {
-                    view! { cx, <p>"Server Fn Error"</p> }
-                        .into_view(cx)
+                    view! {  <p>"Server Fn Error"</p> }
+                        .into_view()
                 }
             }})
             }
@@ -47,10 +47,10 @@ pub fn Post(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
-    let auth_context = use_context::<AuthContext>(cx).expect("Failed to get Auth Context");
+pub fn PostContent( post: post::Post) -> impl IntoView {
+    let auth_context = use_context::<AuthContext>().expect("Failed to get Auth Context");
 
-    view! { cx,
+    view! {
         <section class="px-4 w-full">
             <div class="flex justify-between w-full">
                 <a href="/posts" class="dark:text-white">
@@ -70,26 +70,26 @@ pub fn PostContent(cx: Scope, post: post::Post) -> impl IntoView {
                 <Meta name="twitter:description" content={post.excerpt.clone().unwrap_or_default()}/>
                 <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>                <Transition fallback=|| ()>
                     {move || {
-                        match auth_context.user.read(cx) {
+                        match auth_context.user.read() {
                             Some(Ok(user)) => {
-                                view! { cx,
-                                    <Show when=move || user.is_some() fallback=|_| ()>
+                                view! {
+                                    <Show when=move || user.is_some() fallback=|| ()>
                                         <A class="dark:text-white no-underline" href="edit">
                                             "Edit"
                                         </A>
                                     </Show>
                                 }
-                                    .into_view(cx)
+                                    .into_view()
                             }
-                            Some(Err(_)) => ().into_view(cx),
-                            None => ().into_view(cx),
+                            Some(Err(_)) => ().into_view(),
+                            None => ().into_view(),
                         }
                     }}
                 </Transition>
             </div>
             {(post.preview || post.published)
                 .then(|| {
-                    view! { cx,
+                    view! {
                         <h1 class="mb-4 text-3xl text-black dark:text-white md:text-5xl">{post.title.clone()}</h1>
                         <div class="dark:text-white text-black mb-2">{post.created_at_pretty}</div>
                         <div class="-mx-4 my-2 flex h-1 w-[100vw] bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 sm:mx-0 sm:w-full"></div>

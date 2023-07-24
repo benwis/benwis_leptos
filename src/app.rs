@@ -11,30 +11,30 @@ use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
-pub fn BenwisApp(cx: Scope) -> impl IntoView {
+pub fn BenwisApp() -> impl IntoView {
     // Create Actions for the Auth methods and provide the current user
-    provide_auth(cx);
-    let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContezt");
-    _ = provide_color_scheme(cx);
+    provide_auth();
+    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContezt");
+    _ = provide_color_scheme();
 
-    provide_meta_context(cx);
+    provide_meta_context();
 
-    view! { cx,
+    view! {
         <Router>
             <Routes>
                 <Route
                 path="minimal"
-                view=move |cx| {
-                    view! { cx, <Index/> }
+                view=move || {
+                    view! {  <Index/> }
                 }
             />
                 <Route
                     path=""
-                    view=|cx| {
-                        view! { cx,
+                    view=|| {
+                        view! {
                             <Default>
-                                <ErrorBoundary fallback=|cx, errors| {
-                                    view! { cx, <ErrorTemplate errors=errors/> }
+                                <ErrorBoundary fallback=| errors| {
+                                    view! {  <ErrorTemplate errors=errors/> }
                                 }>
                                     <Outlet/>
                                 </ErrorBoundary>
@@ -44,76 +44,76 @@ pub fn BenwisApp(cx: Scope) -> impl IntoView {
                 >
                     <Route
                         path=""
-                        view=move |cx| {
-                            view! { cx, <Index/> }
+                        view=move || {
+                            view! {  <Index/> }
                         }
                     />
                     <Route
                         path="signup"
-                        view=move |cx| {
-                            view! { cx, <Join action=auth_context.signup/> }
+                        view=move || {
+                            view! {  <Join action=auth_context.signup/> }
                         }
                     />
                     <Route
                         path="about"
-                        view=move |cx| {
-                            view! { cx, <About/> }
+                        view=move || {
+                            view! {  <About/> }
                         }
                     />
                     <Route
                         path="portfolio"
-                        view=move |cx| {
-                            view! { cx, <Portfolio/> }
+                        view=move || {
+                            view! {  <Portfolio/> }
                         }
                     />
                     <Route
                         path="posts"
-                        view=move |cx| {
-                            view! { cx, <Blog/> }
+                        view=move || {
+                            view! {  <Blog/> }
                         }
                     />
                     <Route
                         path="posts/add"
-                        view=move |cx| {
-                            view! { cx, <AddPost/> }
+                        view=move || {
+                            view! {  <AddPost/> }
                         }
                     />
                     <Route
                         path="posts/:slug"
-                        view=move |cx| {
-                            view! { cx, <Post/> }
+                        view=move || {
+                            view! {  <Post/> }
                         }
                         ssr=SsrMode::Async
                     />
                     <Route
                         path="posts/:slug/edit"
-                        view=move |cx| {
-                            view! { cx, <EditPost/> }
+                        view=move || {
+                            view! {  <EditPost/> }
                         }
                     />
                     <Route
                         path="login"
-                        view=move |cx| {
-                            view! { cx, <Login action=auth_context.login/> }
+                        view=move || {
+                            view! {  <Login action=auth_context.login/> }
                         }
                     />
                     <Route
                         path="logout"
-                        view=move |cx| {
-                            view! { cx, <Logout action=auth_context.logout/> }
+                        view=move || {
+                            view! {  <Logout action=auth_context.logout/> }
                         }
                     />
                     <Route
                         path="nedry"
-                        view=move |cx| {
-                            view! { cx, <Nedry/> }
+                        view=move || {
+                            view! {  <Nedry/> }
                         }
                     />
                 </Route>
             //     <Route
             //         path="/rss.xml"
-            //         view=move |cx| {
-            //             view! { cx, <Rss/> }
+            //         view=move || {
+            //             view! {  <Rss/> }
             //         }
             //         ssr=SsrMode::Async
             //     />

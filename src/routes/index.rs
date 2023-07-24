@@ -4,19 +4,19 @@ use leptos::*;
 use leptos_meta::*;
 
 #[component]
-pub fn Index(cx: Scope) -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>(cx);
-    let update_post = create_server_action::<UpdatePost>(cx);
-    let delete_post = create_server_action::<DeletePost>(cx);
+pub fn Index() -> impl IntoView {
+    let add_post = create_server_multi_action::<AddPost>();
+    let update_post = create_server_action::<UpdatePost>();
+    let delete_post = create_server_action::<DeletePost>();
 
     // list of posts is loaded from the server in reaction to changes
     let posts_meta = create_resource(
-        cx,
+
         move || (add_post.version().get(), update_post.version().get(), delete_post.version().get()),
-        move |_| get_some_posts_meta(cx),
+        move |_| get_some_posts_meta(),
     );
 
-    view! { cx,
+    view! {
         <Meta property="og:title" content="benwis"/>
         <Title text="benwis"/>
         <Meta name="description" content="Ben Wishovich's personal website"/>
@@ -56,32 +56,32 @@ pub fn Index(cx: Scope) -> impl IntoView {
                 </h3>
                 <div class="flex flex-col gap-6 md:flex-row">
                     <Transition fallback=move || {
-                        view! { cx, <p>"Loading..."</p> }
+                        view! {  <p>"Loading..."</p> }
                     }>
                         {move || {
                             let posts_meta = {
                                 move || {
                                     posts_meta
-                                        .read(cx)
+                                        .read()
                                         .map(move |posts_meta| match posts_meta {
                                             Err(e) => {
                                                 vec![
-                                                    view! { cx, < pre class = "error" > "Server Error: " { e
-                                                    .to_string() } </ pre > } .into_view(cx)
+                                                    view! {  < pre class = "error" > "Server Error: " { e
+                                                    .to_string() } </ pre > } .into_view()
                                                 ]
                                             }
                                             Ok(posts_meta) => {
                                                 if posts_meta.is_empty() {
                                                     vec![
-                                                        view! { cx, < p class = "text-black dark:text-white" >
-                                                        "No posts were found." </ p > } .into_view(cx)
+                                                        view! {  < p class = "text-black dark:text-white" >
+                                                        "No posts were found." </ p > } .into_view()
                                                     ]
                                                 } else {
                                                     posts_meta
                                                         .into_iter()
                                                         .map(move |post_meta| {
-                                                            view! { cx, <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
-                                                                .into_view(cx)
+                                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
+                                                                .into_view()
                                                         })
                                                         .collect::<Vec<_>>()
                                                 }
@@ -90,7 +90,7 @@ pub fn Index(cx: Scope) -> impl IntoView {
                                         .unwrap_or_default()
                                 }
                             };
-                            posts_meta.into_view(cx)
+                            posts_meta.into_view()
                         }}
                     </Transition>
                 </div>

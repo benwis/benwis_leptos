@@ -3,8 +3,8 @@ use leptos::*;
 use leptos_meta::*;
 
 #[component]
-pub fn Portfolio(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn Portfolio() -> impl IntoView {
+    view! {
 
         <Meta property="og:title" content="My Portfolio"/>
         <Title text="My Portfolio"/>

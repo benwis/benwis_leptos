@@ -3,10 +3,10 @@ use leptos::*;
 use leptos_router::{ActionForm};
 
 #[component]
-pub fn DarkModeToggle(cx: Scope) -> impl IntoView {
-    let color_scheme = use_context::<ColorScheme>(cx).expect("Failed to find ColorSchemeProvider");
+pub fn DarkModeToggle() -> impl IntoView {
+    let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorSchemeProvider");
 
-    view! { cx,
+    view! {
         <li class="items-center">
             <ActionForm action=color_scheme.action>
                 <input

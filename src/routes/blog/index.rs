@@ -7,16 +7,16 @@ use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
-pub fn Blog(cx: Scope) -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>(cx);
-    let update_post = create_server_action::<UpdatePost>(cx);
-    let delete_post = create_server_action::<DeletePost>(cx);
+pub fn Blog() -> impl IntoView {
+    let add_post = create_server_multi_action::<AddPost>();
+    let update_post = create_server_action::<UpdatePost>();
+    let delete_post = create_server_action::<DeletePost>();
 
     let submissions = add_post.submissions();
 
     // list of posts is loaded from the server in reaction to changes
     let posts = create_resource(
-        cx,
+
         move || {
             (
                 add_post.version().get(),
@@ -24,29 +24,29 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                 delete_post.version().get(),
             )
         },
-        move |_| get_posts(cx),
+        move |_| get_posts(),
     );
 
-    let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContext");
+    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContext");
 
-    view! { cx,
+    view! {
         <Meta property="og:title" content="benwis Blog"/>
         <Title text="benwis Blog"/>
         <Meta name="description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
         <Meta property="og:description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
         <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
         <Transition fallback=move || {
-            view! { cx, <p>"Loading..."</p> }
+            view! {  <p>"Loading..."</p> }
         }>
             {move || {
                 let existing_posts = {
                     move || {
                         posts
-                            .read(cx)
+                            .read()
                             .map(move |posts| match posts {
                                 Err(e) => {
                                     vec![
-                                        view! { cx, < pre class = "error" > "Server Error: " { e
+                                        view! {  < pre class = "error" > "Server Error: " { e
                                         .to_string() } </ pre > } .into_any()
                                     ]
                                 }
@@ -55,7 +55,7 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                     posts.sort_by(|a, b| b.created_at.partial_cmp(&a.created_at).unwrap());
                                     if posts.is_empty() {
                                         vec![
-                                            view! { cx, < p class = "text-black dark:text-white" >
+                                            view! {  < p class = "text-black dark:text-white" >
                                             "No posts were found." </ p > } .into_any()
                                         ]
                                     } else {
@@ -66,10 +66,10 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                             })
                                             .map(move |post| {
                                                 let post_slug: StoredValue<String> = store_value(
-                                                    cx,
+
                                                     post.slug.clone(),
                                                 );
-                                                view! { cx,
+                                                view! {
                                                     <section>
                                                         <a
                                                             href=format!("/posts/{}", post.slug)
@@ -89,14 +89,14 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                                                         </a>
                                                         <Transition fallback=move || ()>
                                                             {move || {
-                                                                let user = move || match auth_context.user.read(cx) {
+                                                                let user = move || match auth_context.user.read() {
                                                                     Some(Ok(Some(user))) => Some(user),
                                                                     Some(Ok(None)) => None,
                                                                     Some(Err(_)) => None,
                                                                     None => None,
                                                                 };
-                                                                view! { cx,
-                                                                    <Show when=move || user().is_some() fallback=|_| ()>
+                                                                view! {
+                                                                    <Show when=move || user().is_some() fallback=|| ()>
                                                                         <A href={format!("{}/edit", post_slug.get_value())}>"Edit Post"</A>
                                                                         <ActionForm action=delete_post>
                                                                             <input type="hidden" name="id" value={post.id}/>
@@ -123,11 +123,11 @@ pub fn Blog(cx: Scope) -> impl IntoView {
                         .into_iter()
                         .filter(|submission| submission.pending().get())
                         .map(|submission| {
-                            view! { cx, <li class="pending">{move || submission.input.get().map(|data| data.title)}</li> }
+                            view! {  <li class="pending">{move || submission.input.get().map(|data| data.title)}</li> }
                         })
                         .collect::<Vec<_>>()
                 };
-                view! { cx,
+                view! {
                     <div class="dark:text-white w-full max-w-5xl px-12">
                         <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                             "Posts"

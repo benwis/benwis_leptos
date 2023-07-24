@@ -11,13 +11,13 @@ pub struct AuthContext {
     pub user: Resource<(usize, usize, usize), Result<Option<SafeUser>, ServerFnError>>,
 }
 /// Get the current user and place it in Context
-pub fn provide_auth(cx: Scope) {
-    let login = create_server_action::<Login>(cx);
-    let logout = create_server_action::<Logout>(cx);
-    let signup = create_server_action::<Signup>(cx);
+pub fn provide_auth() {
+    let login = create_server_action::<Login>();
+    let logout = create_server_action::<Logout>();
+    let signup = create_server_action::<Signup>();
 
     let user = create_resource(
-        cx,
+
         move || {
             (
                 login.version().get(),
@@ -25,11 +25,11 @@ pub fn provide_auth(cx: Scope) {
                 logout.version().get(),
             )
         },
-        move |_| get_safe_user(cx),
+        move |_| get_safe_user(),
     );
 
     provide_context(
-        cx,
+
         AuthContext {
             user,
             login,

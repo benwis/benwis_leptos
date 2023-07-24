@@ -5,8 +5,8 @@ use leptos::*;
 #[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(GetUser, "/api")]
 /// Get the current user if it exists by checking the user's session against the DB
-pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
-    let auth = auth(cx)?;
+pub async fn get_user() -> Result<Option<User>, ServerFnError> {
+    let auth = auth()?;
 
     Ok(auth.current_user)
 }
@@ -14,8 +14,8 @@ pub async fn get_user(cx: Scope) -> Result<Option<User>, ServerFnError> {
 #[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(GetSafeUser, "/api")]
 /// Get the current user if it exists by checking the user's session against the DB
-pub async fn get_safe_user(cx: Scope) -> Result<Option<SafeUser>, ServerFnError> {
-    let auth = auth(cx)?;
+pub async fn get_safe_user() -> Result<Option<SafeUser>, ServerFnError> {
+    let auth = auth()?;
 
     let safe_user = auth.current_user.map(|u| u.into());
 

@@ -1,8 +1,8 @@
 use leptos::*;
 
 #[component]
-pub fn FeatureCard(cx: Scope, title: String, href: String, date: String) -> impl IntoView{
-    view! { cx,
+pub fn FeatureCard( title: String, href: String, date: String) -> impl IntoView{
+    view! {
         <a
             class="w-full transform rounded-xl bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 p-1 transition-all hover:scale-[1.01] md:w-1/3"
             href=format!("/posts/{href}")

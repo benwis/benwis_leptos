@@ -4,10 +4,10 @@ use crate::components::{DarkModeToggle};
 use crate::providers::AuthContext;
 
 #[component]
-pub fn Nav(cx: Scope) -> impl IntoView {
-    let auth_context = use_context::<AuthContext>(cx).expect("Failed to get AuthContext");
+pub fn Nav() -> impl IntoView {
+    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContext");
 
-    view! { cx,
+    view! {
         <nav class="top-nav bg-white dark:bg-gray-900 text-gray-700 dark:text-white">
             <div class="text-2xl">
                 <a href="/">"BENWIS"</a>
@@ -29,17 +29,17 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                 <DarkModeToggle/>
                 <Transition fallback=move || ()>
                     {move || {
-                        let user = move || match auth_context.user.read(cx) {
+                        let user = move || match auth_context.user.read() {
                             Some(Ok(Some(user))) => Some(user),
                             Some(Ok(None)) => None,
                             Some(Err(_)) => None,
                             None => None,
                         };
-                        view! { cx,
+                        view! {
                             <Show
                                 when=move || user().is_some()
-                                fallback=|cx| {
-                                    view! { cx,
+                                fallback=|| {
+                                    view! {
                                         <li class="items-center">
                                             <a href="/signup">"Signup"</a>
                                         </li>
@@ -50,8 +50,8 @@ pub fn Nav(cx: Scope) -> impl IntoView {
                             </Show>
                             <Show
                                 when=move || user().is_some()
-                                fallback=|cx| {
-                                    view! { cx,
+                                fallback=|| {
+                                    view! {
                                         <li class="items-center">
                                             <a href="/login">"Login"</a>
                                         </li>

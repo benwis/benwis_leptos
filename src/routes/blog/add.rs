@@ -3,10 +3,10 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 #[component]
-pub fn AddPost(cx: Scope) -> impl IntoView {
-    let add_post = create_server_action::<AddPost>(cx);
+pub fn AddPost() -> impl IntoView {
+    let add_post = create_server_action::<AddPost>();
 
-    view! { cx,
+    view! {
         <Meta property="og:title" content="Add Post"/>
         <Title text="Add Post"/>
         <Meta name="description" content="Add a post"/>

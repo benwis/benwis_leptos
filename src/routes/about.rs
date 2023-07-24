@@ -2,8 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 
 #[component]
-pub fn About(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn About() -> impl IntoView {
+    view! {
         <Meta property="og:title" content="About Me"/>
         <Title text="About Me"/>
         <Meta name="description" content="A page describing me"/>

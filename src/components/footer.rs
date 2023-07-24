@@ -8,7 +8,7 @@ pub struct FooterLink<'a> {
 }
 
 #[component]
-pub fn Footer(cx: Scope) -> impl IntoView {
+pub fn Footer() -> impl IntoView {
     let mut navigation: Vec<FooterLink> = Vec::new();
 
     navigation.push(FooterLink{
@@ -56,14 +56,14 @@ pub fn Footer(cx: Scope) -> impl IntoView {
         rel: None
     });
 
-    view! { cx,
+    view! {
         <footer class="bg-white dark:bg-gray-900 mt-auto">
             <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
                 <div class="flex justify-center space-x-6 md:order-2">
                     {navigation
                         .into_iter()
                         .map(|link| {
-                            view! { cx,
+                            view! {
                                 <a
                                     key={link.name}
                                     href={link.href}
