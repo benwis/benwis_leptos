@@ -5,10 +5,10 @@ use crate::providers::color_scheme::{ColorScheme};
 use crate::components::{Nav,Footer};
 
 #[component]
-pub fn Default(cx: Scope, children: Children) -> impl IntoView{
-    let color_scheme = use_context::<ColorScheme>(cx).expect("Failed to find ColorScheme");
+pub fn Default( children: Children) -> impl IntoView{
+    let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorScheme");
 
-    view! { cx,
+    view! {
         <Html class=move || {
             let classes = "h-full";
             let theme = match color_scheme.prefers_dark.get() {
@@ -46,7 +46,7 @@ pub fn Default(cx: Scope, children: Children) -> impl IntoView{
         <Stylesheet id="leptos" href="/styles/output.css"/>
         <Nav/>
         <main class="mx-auto flex w-full flex-col items-center justify-center border-gray-200 px-4 pb-16 md:pt-4 dark:border-gray-900 sm:px-8">
-            {children(cx)}
+            {children()}
         </main>
         <Footer/>
     }

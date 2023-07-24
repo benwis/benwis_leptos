@@ -2,8 +2,8 @@ use leptos::*;
 use leptos_meta::*;
 
 #[component]
-pub fn Nedry(cx: Scope) -> impl IntoView {
-    view! { cx,
+pub fn Nedry() -> impl IntoView {
+    view! {
         <Meta property="og:title" content="Ah-Ah-Ah You didn't say the magic word!"/>
         <Title text="Ah-Ah-Ah You didn't say the magic word!"/>
         <Meta name="description" content="Ah-Ah-Ah You didn't say the magic word!"/>

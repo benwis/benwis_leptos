@@ -5,40 +5,40 @@ use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
 #[component]
-pub fn EditPost(cx: Scope) -> impl IntoView {
-    let params = use_params::<PostParams>(cx);
+pub fn EditPost() -> impl IntoView {
+    let params = use_params::<PostParams>();
     let post = create_resource(
-        cx,
+
         move || params().map(|params| params.slug).ok().unwrap(),
         // any of the following would work (they're identical)
         // move |id| async move { get_contact(id).await }
         // move |id| get_contact(id),
         // get_contact
-        move |slug| get_post(cx, slug),
+        move |slug| get_post( slug),
     );
-    view! { cx,
+    view! {
         <Transition fallback=move || {
-            view! { cx, <p>"Loading..."</p> }
+            view! {  <p>"Loading..."</p> }
         }>
             {
-                 move || post.read(cx).map(|p| match p {
+                 move || post.read().map(|p| match p {
                     Ok(Ok(Some(post))) => {
-                        view! { cx,
+                        view! {
                                 <EditPostForm post={post}/>
                         }
-                            .into_view(cx)
+                            .into_view()
                     }
                     Ok(Ok(None)) => {
-                        view! { cx, <p>"Post Not Found"</p> }
-                            .into_view(cx)
+                        view! {  <p>"Post Not Found"</p> }
+                            .into_view()
                     }
                     Ok(Err(_)) => {
-                        view! { cx, <p>"Server Error"</p> }
-                            .into_view(cx)
+                        view! {  <p>"Server Error"</p> }
+                            .into_view()
                     }
                     Err(_) => {
-                        view! { cx, <p>"Server Fn Error"</p> }
-                            .into_view(cx)
+                        view! {  <p>"Server Fn Error"</p> }
+                            .into_view()
                     }
                 })
             }
@@ -47,9 +47,9 @@ pub fn EditPost(cx: Scope) -> impl IntoView {
 }
 
 #[component]
-pub fn EditPostForm(cx: Scope, post: post::Post) -> impl IntoView {
-    let update_post = create_server_action::<UpdatePost>(cx);
-    view! { cx,
+pub fn EditPostForm( post: post::Post) -> impl IntoView {
+    let update_post = create_server_action::<UpdatePost>();
+    view! {
         <Meta property="og:title" content="Edit Post"/>
         <Title text="Edit Post"/>
         <Meta name="description" content="Edit a Post"/>

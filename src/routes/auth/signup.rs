@@ -4,8 +4,8 @@ use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
-pub fn Join(cx: Scope, action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView {
-    view! { cx,
+pub fn Join( action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView {
+    view! {
         <Meta property="og:title" content="Signup"/>
         <Title text="Signup"/>
         <Meta name="description" content="Signup for the site"/>
