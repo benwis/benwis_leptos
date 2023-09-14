@@ -1,9 +1,9 @@
-use benwis_leptos::telemetry::TracingSettings;
 use cfg_if::cfg_if;
 
 // boilerplate to run in different modes
 cfg_if! {
 if #[cfg(feature = "ssr")] {
+    use benwis_leptos::telemetry::TracingSettings;
     use axum::{
         response::{Response, IntoResponse},
         routing::{post, get},
@@ -33,7 +33,6 @@ if #[cfg(feature = "ssr")] {
     use jemallocator::Jemalloc;
 
     #[tracing::instrument(level = "info", fields(error))]
-    #[axum::debug_handler]
     async fn server_fn_handler(State(app_state): State<AppState>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, raw_query: RawQuery,
     request: Request<AxumBody>) -> impl IntoResponse {
 
@@ -45,7 +44,6 @@ if #[cfg(feature = "ssr")] {
         }, request).await
     }
     #[tracing::instrument(level = "info", fields(error))]
-    #[axum::debug_handler]
  async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
             let handler = leptos_axum::render_app_to_stream_with_context(app_state.leptos_options.clone(),
             move || {
@@ -59,7 +57,6 @@ if #[cfg(feature = "ssr")] {
     #[tokio::main]
     async fn main() {
         log!("BENWIS LEPTOS APP STARTING!");
-
         #[cfg(not(target_env = "msvc"))]
         #[global_allocator]
         static GLOBAL: Jemalloc = Jemalloc;
