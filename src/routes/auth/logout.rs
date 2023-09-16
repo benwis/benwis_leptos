@@ -4,10 +4,7 @@ use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
-pub fn Logout(
-
-    action: Action<functions::auth::Logout, Result<(), ServerFnError>>,
-) -> impl IntoView {
+pub fn Logout(action: Action<functions::auth::Logout, Result<(), ServerFnError>>) -> impl IntoView {
     _ = &action.dispatch(functions::auth::Logout {});
 
     view! {  <Meta property="og:title" content="Logout"/>

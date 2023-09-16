@@ -28,8 +28,8 @@ if #[cfg(feature = "ssr")] {
     impl SqlPost {
         #[tracing::instrument(level = "info", fields(error))]
         pub async fn into_post(self, pool: &SqlitePool) -> Post {
-                println!("STARTING CONVERSION");
-            let HTMLOutput{content, toc} = femark::process_markdown_to_html(self.content.clone()).unwrap_or_default();
+                println!("STARTING CONVERSION: {:#?}", self.content);
+            let HTMLOutput{content, toc} = femark::process_markdown_to_html(&self.content).unwrap_or_default();
                 println!("Content: {:#?}",content);
             Post {
                 id: self.id,

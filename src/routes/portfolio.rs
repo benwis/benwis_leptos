@@ -1,4 +1,4 @@
-use crate::components::{PortfolioCard};
+use crate::components::PortfolioCard;
 use leptos::*;
 use leptos_meta::*;
 

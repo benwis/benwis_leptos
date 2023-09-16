@@ -17,7 +17,6 @@ pub fn provide_auth() {
     let signup = create_server_action::<Signup>();
 
     let user = create_resource(
-
         move || {
             (
                 login.version().get(),
@@ -28,13 +27,10 @@ pub fn provide_auth() {
         move |_| get_safe_user(),
     );
 
-    provide_context(
-
-        AuthContext {
-            user,
-            login,
-            logout,
-            signup,
-        },
-    )
+    provide_context(AuthContext {
+        user,
+        login,
+        logout,
+        signup,
+    })
 }

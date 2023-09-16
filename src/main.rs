@@ -72,10 +72,25 @@ if #[cfg(feature = "ssr")] {
         //let parallelism = std::thread::available_parallelism().unwrap().get();
         //log!("PARALLELISM: {parallelism}");
 
+        let honeycomb_team = match std::env::var("HONEYCOMB_TEAM"){
+            Ok(t) => Some(t),
+            Err(_) => None,
+        };
+
+        let honeycomb_dataset = match std::env::var("HONEYCOMB_DATASET"){
+            Ok(t) => Some(t),
+            Err(_) => None,
+        };
+
+        let honeycomb_service_name = match std::env::var("HONEYCOMB_SERVICE_NAME"){
+        Ok(t) => Some(t),
+        Err(_) => None,
+        };
+
         let tracing_conf = TracingSettings{
-            honeycomb_team: Some("G93VcSQ2fiX0QrSo65YCFA".to_string()),
-            honeycomb_dataset: Some("benwis_leptos".to_string()),
-            honeycomb_service_name: Some("benwis_leptos".to_string())
+            honeycomb_team,
+            honeycomb_dataset,
+            honeycomb_service_name,
         };
 
         // Get telemetry layer
@@ -102,12 +117,10 @@ if #[cfg(feature = "ssr")] {
                 ).await);
         }
 
-
         // Auth section
         let session_config = SessionConfig::default().with_table_name("axum_sessions").with_mode(SessionMode::Storable);
         let auth_config = AuthConfig::<i64>::default();
         let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config).await.expect("Failed to get Session!");
-        session_store.initiate().await.expect("Failed to create session store!");
 
         sqlx::migrate!()
             .run(&pool)

@@ -57,14 +57,11 @@ pub fn provide_color_scheme() -> Signal<bool> {
             _ => initial,
         }
     };
-    let prefers_dark = Signal::derive( prefers_dark_fn);
+    let prefers_dark = Signal::derive(prefers_dark_fn);
 
-    provide_context(
-
-        ColorScheme {
-            action: toggle_dark_mode_action,
-            prefers_dark,
-        },
-    );
+    provide_context(ColorScheme {
+        action: toggle_dark_mode_action,
+        prefers_dark,
+    });
     prefers_dark
 }

@@ -13,7 +13,6 @@ if #[cfg(feature = "ssr")] {
 #[tracing::instrument(level = "info", fields(error), err)]
 #[server(AddPost, "/api")]
 pub async fn add_post(
-
     title: String,
     slug: String,
     created_at_pretty: String,
@@ -27,7 +26,7 @@ pub async fn add_post(
 
     // Redirect all non logged in users to Nedry!
     if auth.is_anonymous() {
-        redirect( "/nedry")
+        redirect("/nedry")
     }
 
     let published = published.parse::<bool>().unwrap();
@@ -103,7 +102,7 @@ pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
     Ok(posts)
 }
 
-#[tracing::instrument(level = "info", fields(error),err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetSomePosts, "/api")]
 pub async fn get_some_posts() -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
@@ -137,7 +136,7 @@ pub async fn get_some_posts() -> Result<Vec<Post>, ServerFnError> {
     Ok(posts)
 }
 
-#[tracing::instrument(level = "info", fields(error),err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetSomePostsMeta, "/api")]
 pub async fn get_some_posts_meta() -> Result<Vec<PostMeta>, ServerFnError> {
     use futures::TryStreamExt;
@@ -171,13 +170,9 @@ pub async fn get_some_posts_meta() -> Result<Vec<PostMeta>, ServerFnError> {
     Ok(posts)
 }
 
-
-#[tracing::instrument(level = "info", fields(error),err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(GetPost, "/api")]
-pub async fn get_post(
-
-    slug: String,
-) -> Result<Result<Option<Post>, BenwisAppError>, ServerFnError> {
+pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppError>, ServerFnError> {
     let pool = pool()?;
 
     let post = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts WHERE slug=?")
@@ -193,10 +188,9 @@ pub async fn get_post(
     Ok(post)
 }
 
-#[tracing::instrument(level = "info", fields(error),err)]
+#[tracing::instrument(level = "info", fields(error), err)]
 #[server(UpdatePost, "/api")]
 pub async fn update_post(
-
     slug: String,
     title: String,
     hero: String,
@@ -211,7 +205,7 @@ pub async fn update_post(
 
     // Redirect all non logged in users to Nedry!
     if auth.is_anonymous() {
-        redirect( "/nedry")
+        redirect("/nedry")
     }
 
     let published = published.parse::<bool>().unwrap();
@@ -241,13 +235,13 @@ pub async fn update_post(
 
 #[tracing::instrument(level = "info", fields(error), err)]
 #[server(DeletePost, "/api")]
-pub async fn delete_post( id: u16) -> Result<(), ServerFnError> {
+pub async fn delete_post(id: u16) -> Result<(), ServerFnError> {
     let pool = pool()?;
     let auth = auth()?;
 
     // Redirect all non logged in users to Nedry!
     if auth.is_anonymous() {
-        redirect( "/nedry")
+        redirect("/nedry")
     }
 
     sqlx::query("DELETE FROM posts WHERE id = $1")

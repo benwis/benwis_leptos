@@ -8,13 +8,12 @@ use leptos_router::*;
 pub fn EditPost() -> impl IntoView {
     let params = use_params::<PostParams>();
     let post = create_resource(
-
         move || params().map(|params| params.slug).ok().unwrap(),
         // any of the following would work (they're identical)
         // move |id| async move { get_contact(id).await }
         // move |id| get_contact(id),
         // get_contact
-        move |slug| get_post( slug),
+        move |slug| get_post(slug),
     );
     view! {
         <Transition fallback=move || {
@@ -47,7 +46,7 @@ pub fn EditPost() -> impl IntoView {
 }
 
 #[component]
-pub fn EditPostForm( post: post::Post) -> impl IntoView {
+pub fn EditPostForm(post: post::Post) -> impl IntoView {
     let update_post = create_server_action::<UpdatePost>();
     view! {
         <Meta property="og:title" content="Edit Post"/>
