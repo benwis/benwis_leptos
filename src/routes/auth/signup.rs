@@ -4,7 +4,7 @@ use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
-pub fn Join( action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView {
+pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView {
     view! {
         <Meta property="og:title" content="Signup"/>
         <Title text="Signup"/>

@@ -14,9 +14,8 @@ pub struct PostParams {
 pub fn Post() -> impl IntoView {
     let params = use_params::<PostParams>();
     let post = create_blocking_resource(
-
         move || params().map(|params| params.slug).ok().unwrap(),
-        move |slug| get_post( slug),
+        move |slug| get_post(slug),
     );
 
     view! {
@@ -47,7 +46,7 @@ pub fn Post() -> impl IntoView {
 }
 
 #[component]
-pub fn PostContent( post: post::Post) -> impl IntoView {
+pub fn PostContent(post: post::Post) -> impl IntoView {
     let auth_context = use_context::<AuthContext>().expect("Failed to get Auth Context");
 
     view! {

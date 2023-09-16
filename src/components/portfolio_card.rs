@@ -1,7 +1,13 @@
 use leptos::*;
 
 #[component]
-pub fn PortfolioCard( img: String, href: String, heading: String, sub_heading: String, description: String) -> impl IntoView{
+pub fn PortfolioCard(
+    img: String,
+    href: String,
+    heading: String,
+    sub_heading: String,
+    description: String,
+) -> impl IntoView {
     view! {
         <section>
             <a href=href>

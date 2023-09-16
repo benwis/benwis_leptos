@@ -1,11 +1,11 @@
 use leptos::*;
 use leptos_meta::*;
 
-use crate::providers::color_scheme::{ColorScheme};
-use crate::components::{Nav,Footer};
+use crate::components::{Footer, Nav};
+use crate::providers::color_scheme::ColorScheme;
 
 #[component]
-pub fn Default( children: Children) -> impl IntoView{
+pub fn Default(children: Children) -> impl IntoView {
     let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorScheme");
 
     view! {
@@ -19,7 +19,7 @@ pub fn Default( children: Children) -> impl IntoView{
         }/>
         <Body class="h-screen bg-white dark:bg-gray-900 max-w-5xl mx-auto flex flex-col"/>
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
-        
+
         <Link rel="preload"
           href="fonts/BerkeleyMono-Regular.woff2"
           as_="font"
@@ -50,5 +50,4 @@ pub fn Default( children: Children) -> impl IntoView{
         </main>
         <Footer/>
     }
-   
 }

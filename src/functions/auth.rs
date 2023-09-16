@@ -70,7 +70,6 @@ if #[cfg(feature = "ssr")] {
 #[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(Login, "/api")]
 pub async fn login(
-
     username: String,
     password: String,
     remember: Option<String>,
@@ -90,7 +89,7 @@ pub async fn login(
             auth.login_user(user.id);
             auth.session.set_store(true);
             auth.remember_user(remember.is_some());
-            leptos_axum::redirect( "/");
+            leptos_axum::redirect("/");
             Ok(())
         }
         Err(_) => Err(ServerFnError::ServerError(
@@ -102,7 +101,6 @@ pub async fn login(
 #[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(Signup, "/api")]
 pub async fn signup(
-
     username: String,
     display_name: String,
     password: String,
@@ -119,7 +117,7 @@ pub async fn signup(
     }
     // Don't want anyone signing up but me!
     if username != "benwis" {
-        leptos_axum::redirect( "/nedry");
+        leptos_axum::redirect("/nedry");
         return Ok(());
     }
 
@@ -141,7 +139,7 @@ pub async fn signup(
     auth.login_user(user.id);
     auth.remember_user(remember.is_some());
 
-    leptos_axum::redirect( "/");
+    leptos_axum::redirect("/");
 
     Ok(())
 }
@@ -152,7 +150,7 @@ pub async fn logout() -> Result<(), ServerFnError> {
     let auth = auth()?;
     auth.logout_user();
     auth.session.set_store(false);
-    leptos_axum::redirect( "/");
+    leptos_axum::redirect("/");
 
     Ok(())
 }

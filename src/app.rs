@@ -1,11 +1,9 @@
 use crate::error_template::*;
-use crate::layouts::{Default};
+use crate::layouts::Default;
 use crate::providers::{provide_auth, provide_color_scheme, AuthContext};
 use crate::routes::auth::{Join, Login, Logout};
 use crate::routes::blog::*;
-use crate::routes::{
-    About, Index, Nedry, Portfolio,
-};
+use crate::routes::{About, Index, Nedry, Portfolio};
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;

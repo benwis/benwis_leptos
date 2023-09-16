@@ -16,7 +16,6 @@ pub fn Blog() -> impl IntoView {
 
     // list of posts is loaded from the server in reaction to changes
     let posts = create_resource(
-
         move || {
             (
                 add_post.version().get(),

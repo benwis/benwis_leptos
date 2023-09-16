@@ -1,4 +1,4 @@
-use crate::components::{FeatureCard};
+use crate::components::FeatureCard;
 use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
 use leptos::*;
 use leptos_meta::*;
@@ -11,8 +11,13 @@ pub fn Index() -> impl IntoView {
 
     // list of posts is loaded from the server in reaction to changes
     let posts_meta = create_resource(
-
-        move || (add_post.version().get(), update_post.version().get(), delete_post.version().get()),
+        move || {
+            (
+                add_post.version().get(),
+                update_post.version().get(),
+                delete_post.version().get(),
+            )
+        },
         move |_| get_some_posts_meta(),
     );
 
@@ -96,7 +101,7 @@ pub fn Index() -> impl IntoView {
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"
-                    href="posts"   
+                    href="posts"
                 >
                     "See more posts"
                     <svg

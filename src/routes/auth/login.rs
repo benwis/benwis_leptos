@@ -4,10 +4,7 @@ use leptos_meta::*;
 use leptos_router::*;
 
 #[component]
-pub fn Login(
-
-    action: Action<functions::auth::Login, Result<(), ServerFnError>>,
-) -> impl IntoView {
+pub fn Login(action: Action<functions::auth::Login, Result<(), ServerFnError>>) -> impl IntoView {
     view! {
         <Meta property="og:title" content="Login"/>
         <Title text="Login"/>
