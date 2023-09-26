@@ -43,7 +43,7 @@ pub fn Default(children: Children) -> impl IntoView {
 
         // Fathom - beautiful, simple website analytics
         <script src="https://cdn.usefathom.com/script.js" data-site="MTMCOBMG" defer/>
-        <Stylesheet id="leptos" href="/styles/output.css"/>
+        <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
         <Nav/>
         <main class="mx-auto flex w-full flex-col items-center justify-center border-gray-200 px-4 pb-16 md:pt-4 dark:border-gray-900 sm:px-8">
             {children()}

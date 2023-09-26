@@ -61,6 +61,19 @@ pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppErro
 
     let reader = posts.0.read();
 
+      // If there are no Posts, try to get some if we haven't checked in the last minute
+      if reader.posts.get(&slug).is_none() && (Utc::now() - reader.last_checked) >= Duration::minutes(1) {
+        println!("Refetching");
+        let mut writer =  posts.0.write();
+        writer.fetch_posts_from_github().await?;
+        writer.last_checked = Utc::now();
+
+            // Sort Posts by created_at date in descending order
+        writer
+        .posts
+        .sort_unstable_by(|a, b, c, d| d.created_at.partial_cmp(&b.created_at).unwrap());
+    }
+
     let post = match reader.posts.get(&slug) {
         Some(p) => Some(p.to_owned()),
         None => None,

@@ -17,17 +17,52 @@
 
 } */
 @font-face {
+	font-family: 'Eurostile Extended Bold';
+	 src: url('/fonts/Eurostile_Extended_Bold.ttf') format('truetype');
+	 font-display: swap;
+
+}
+/* @font-face {
 	font-family: 'Neue Plak Black';
 	src: url('/fonts/Neue Plak Black.ttf') format('truetype');
 	font-display: swap;
 
+} */
+
+@font-face {
+	font-family: 'Neue Haas Unica';
+	src: url('/fonts/NeueHaasUnica-Regular.woff2') format('woff2');
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Neue Haas Unica';
+	src: url('/fonts/NeueHaasUnica-Bold.woff2') format('woff2');
+	font-display: swap;
+	font-weight: bold;
+
+}
+@font-face {
+	font-family: 'Neue Haas Unica';
+	src: url('/fonts/NeueHaasUnica-Italic.woff2') format('woff2');
+	font-display: swap;
+	font-style: italic;
+
+}
+
+@font-face {
+	font-family: 'Neue Haas Unica';
+	src: url('/fonts/NeueHaasUnica-BoldItalic.woff2') format('woff2');
+	font-display: swap;
+	font-weight: bold;
+	font-style: italic;
+
 }
 
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Neue Plak Black', sans-serif;
+	font-family: 'Eurostile Extended', sans-serif, system-ui;
 }
 body {
-	font-family: 'Berkeley Mono', 'Neue Plak Regular', serif;
+	font-family: 'Neue Haas Unica', serif, system-ui;
 }
 
 h1, h2, h3, h4, h5, h6 a{
@@ -174,94 +209,94 @@ pre {
 }
 /* Light Highlighting Classes */
 
-.light .code-block{
+ .code-block{
 	background-color: var(--light-bg);
 }
-.light .code-block-inner{
+ .code-block-inner{
 	background-color: var(--light-bg);
 	color: var(--light-black);
 }
-.light .hh0{
+ .hh0{
 	/* Attribute */
 	color: var(--light-yellow);
 }
-.light .hh1{
+ .hh1{
 	/* Constant */
 	color: var(--light-yellow);
 }
-.light .hh2{
+ .hh2{
 	/* function.builtIn */
 	color: var(--light-cyan);
 }
-.light .hh3{
+ .hh3{
 	/* function */
 	color: var(--light-blue);
 }
-.light .hh4{
+ .hh4{
 	/* keyword */
 	color: var(--light-cyan);
 }
-.light .hh5{
+ .hh5{
 	/* operator */
 	color: var(--light-cyan)
 }
-.light .hh6{
+ .hh6{
 	/* property */
 	color: var(--light-gray);
 }
-.light .hh7{
+ .hh7{
 	/* punctuation */
 	color: var(--light-cyan);
 }
-.light .hh8{
+ .hh8{
 	/* punctuation.bracket */
 	color: var(--light-cyan);
 }
-.light .hh9{
+ .hh9{
 	/* punctuation.delimiter */
 	color: var(--light-cyan);
 }
-.light .hh10{
+ .hh10{
 	/* string */
 	color: var(--light-green);
 }
-.light .hh11{
+ .hh11{
 	/* string.special */
 	color: var(--light-green);
 }
-.light .hh12{
+.hh12{
 	/* tag */
 	color: var(--light-red);
 }
-.light .hh13{
+ .hh13{
 	/* type */
 	color: var(--light-purple);
 }
-.light .hh14{
+ .hh14{
 	/* type.builtin */
 	color: var(--light-red);
 }
-.light .hh15{
+ .hh15{
 	/* variable */
 	color: var(--dark-fg);
 }
-.light .hh16{
+ .hh16{
 	/* variable.builtin */
 	color: var(--light-fg);
 }
-.light .hh17{
+ .hh17{
 	/* variable.parameter */
 	color: var(--light-fg)
 }
-.light .hh18{
+ .hh18{
 	/* comment */
 	color: var(--light-comments);
 }
-.light .hh19{
+ .hh19{
 	/* macro */
 	color: var(--light-blue);
 }
-.light .hh20{
+ .hh20{
 	/* label */ 
 	color: var(--light-red)
 }
@@ -362,7 +397,7 @@ pre {
 .dark .table-of-contents-parent {
  background-color: var(--dark-bg);
 }
-.light .table-of-contents-parent {
+ .table-of-contents-parent {
 	background-color: var(--light-bg);
 }
 .table-of-contents{

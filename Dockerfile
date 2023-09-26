@@ -23,7 +23,7 @@ COPY --from=builder /app/Cargo.toml /app/
 WORKDIR /app
 ENV RUST_LOG="info"
 ENV LEPTOS_OUTPUT_NAME="benwis_leptos"
-ENV LEPTOS_ENVIRONMENT="production"
+ENV LEPTOS_ENVIRONMENT="prod_no_trace"
 ENV LEPTOS_SITE_ADDR="0.0.0.0:3000"
 ENV LEPTOS_SITE_ROOT="site"
 EXPOSE 3000
