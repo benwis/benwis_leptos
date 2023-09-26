@@ -16,10 +16,10 @@ futures = "0.3.28"
 cfg-if = "1.0.0"
  leptos = { git="https://github.com/leptos-rs/leptos", features = [
  	"serde", "tracing", "nightly"
- ], rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
- leptos_meta = { git="https://github.com/leptos-rs/leptos", features=["nightly"], rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
- leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true, rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
- leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"], rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
+ ] }
+ leptos_meta = { git="https://github.com/leptos-rs/leptos", features=["nightly"] }
+ leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true }
+ leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"] }
 #leptos = { path="../leptos/leptos", default-features = false, features = [
 #	"serde", "tracing"
 #] }
@@ -51,9 +51,9 @@ async-trait = { version = "0.1.71", optional = true }
 miette = "5.9.0"
 axum-extra = { version = "0.7.4", features = ["cookie"] }
 web-sys = { version = "0.3.64", features = ["HtmlDocument"] }
-femark = { path="../femark", optional = true }
+femark = { git="https://github.com/benwis/femark", branch="pure_rust", optional = true }
 slug = "0.1.4"
-chrono = { version = "0.4.26", optional = true }
+chrono = {version="0.4.26", features=["serde"]}
 opentelemetry = { version = "0.19.0", features = ["rt-tokio"], optional = true }
 opentelemetry-otlp = { version = "0.12.0", features = ["reqwest-client", "http-proto"], optional = true }
 tracing-opentelemetry = { version = "0.19.0", optional = true }
@@ -71,6 +71,9 @@ hyper = { version = "0.14.27", optional = true }
 tracing-logfmt = { version = "0.3.2", optional = true }
 reqwest = {version="0.11.18", default-features=false, features = ["rustls-tls"], optional = true }
 octocrab = {version="0.30.1", optional=true}
+indexmap = { version = "2.0.0", features = ["serde"] }
+toml = "0.8.0"
+parking_lot = { version = "0.12.1", features = ["serde"] }
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = {version="0.5", optional=true}
 
@@ -78,7 +81,7 @@ jemallocator = {version="0.5", optional=true}
 default = ["csr"]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = ["dep:axum","dep:jemallocator", "dep:octocrab", "dep:hyper", "dep:tower","dep:tracing-logfmt", "dep:hyper-tls", "dep:reqwest","dep:tokio-native-tls", "dep:native-tls", "dep:dotenvy", "dep:tracing-futures", "dep:tracing-subscriber", "dep:tracing-bunyan-formatter", "dep:tracing-log", "dep:opentelemetry", "dep:opentelemetry-otlp", "dep:tracing-opentelemetry", "dep:tonic", "dep:tokio", "dep:tower-http", "dep:axum_session_auth", "dep:axum_session", "dep:async-trait", "dep:sqlx", "dep:argon2", "dep:femark", "dep:rand", "dep:rand_core", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
+ssr = ["dep:axum","dep:jemallocator", "dep:octocrab", "dep:hyper", "dep:tower","dep:tracing-logfmt", "dep:hyper-tls", "dep:reqwest","dep:tokio-native-tls", "dep:native-tls", "dep:dotenvy", "dep:tracing-futures", "dep:tracing-subscriber", "dep:tracing-bunyan-formatter", "dep:tracing-log", "dep:opentelemetry", "dep:opentelemetry-otlp", "dep:tracing-opentelemetry", "dep:tonic", "dep:tokio", "dep:tower-http", "dep:axum_session_auth", "dep:axum_session", "dep:async-trait", "dep:sqlx", "dep:argon2", "dep:femark", "dep:rand", "dep:rand_core", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum" ]
 
 [package.metadata.cargo-all-features]
 denylist = ["axum", "tower", "tower-http", "reqwest", "tokio", "sqlx", "leptos_axum", "femark", "chrono", "argon2","rand", "rand_core", "octocrab"]
@@ -127,7 +130,10 @@ lib-features = ["hydrate"]
 #
 # Optional. Defaults to false.
 lib-default-features = false
-
+# The tailwind input file.
+#
+# Optional, Activates the tailwind build
+tailwind-input-file = "styles/input.css"
 
 # The profile to use for the bin target when compiling for release
 #

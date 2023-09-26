@@ -1,4 +1,4 @@
-use crate::functions::post::{get_posts, AddPost, DeletePost, UpdatePost};
+use crate::functions::post::get_posts;
 use crate::models::Post;
 use leptos::*;
 // export type RssEntry = {
@@ -27,7 +27,7 @@ impl From<Post> for RssEntry {
             link: full_url.clone(),
             description: post.excerpt,
             pub_date: post.created_at_pretty,
-            author: post.user.unwrap_or_default().display_name,
+            author: "benwis".to_string(),
             guid: full_url,
         }
     }
@@ -83,21 +83,8 @@ pub fn generate_rss(title: &str, description: &str, link: &str, posts: Vec<Post>
 
 #[component]
 pub fn Rss() -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>();
-    let update_post = create_server_action::<UpdatePost>();
-    let delete_post = create_server_action::<DeletePost>();
-
     // list of posts is loaded from the server in reaction to changes
-    let posts = create_resource(
-        move || {
-            (
-                add_post.version().get(),
-                update_post.version().get(),
-                delete_post.version().get(),
-            )
-        },
-        move |_| get_posts(),
-    );
+    let posts = create_resource(move || {}, move |_| get_posts());
 
     view! {
         <Transition fallback=|| {
@@ -107,7 +94,7 @@ pub fn Rss() -> impl IntoView {
                 let posts = {
                     move || {
                         posts
-                            .read()
+                            .get()
                             .map(|post| match post {
                                 Ok(p) => p.into_iter().filter(|p| p.published).collect::<Vec<Post>>(),
                                 Err(_) => Vec::new(),

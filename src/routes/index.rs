@@ -1,26 +1,11 @@
 use crate::components::FeatureCard;
-use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
+use crate::functions::post::get_posts;
 use leptos::*;
 use leptos_meta::*;
 
 #[component]
 pub fn Index() -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>();
-    let update_post = create_server_action::<UpdatePost>();
-    let delete_post = create_server_action::<DeletePost>();
-
-    // list of posts is loaded from the server in reaction to changes
-    let posts_meta = create_resource(
-        move || {
-            (
-                add_post.version().get(),
-                update_post.version().get(),
-                delete_post.version().get(),
-            )
-        },
-        move |_| get_some_posts_meta(),
-    );
-
+    let posts = create_resource(move || {}, move |_| get_posts(Some(3)));
     view! {
         <Meta property="og:title" content="benwis"/>
         <Title text="benwis"/>
@@ -64,28 +49,34 @@ pub fn Index() -> impl IntoView {
                         view! {  <p>"Loading..."</p> }
                     }>
                         {move || {
-                            let posts_meta = {
+                            let posts = {
                                 move || {
-                                    posts_meta
-                                        .read()
-                                        .map(move |posts_meta| match posts_meta {
+                                    posts
+                                        .get()
+                                        .map(move |posts| match posts {
                                             Err(e) => {
                                                 vec![
                                                     view! {  < pre class = "error" > "Server Error: " { e
                                                     .to_string() } </ pre > } .into_view()
                                                 ]
                                             }
-                                            Ok(posts_meta) => {
-                                                if posts_meta.is_empty() {
+                                            Ok(Err(e)) => {
+                                            vec![
+                                                    view! {  < pre class = "error" > "Error: " { e
+                                                    .to_string() } </ pre > } .into_view()
+                                                ]
+                                        }
+                                            Ok(Ok(posts)) => {
+                                                if posts.posts.len() == 0 {
                                                     vec![
                                                         view! {  < p class = "text-black dark:text-white" >
                                                         "No posts were found." </ p > } .into_view()
                                                     ]
                                                 } else {
-                                                    posts_meta
-                                                        .into_iter()
+                                                    posts.posts
+                                                        .into_values()
                                                         .map(move |post_meta| {
-                                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
+                                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at.to_string()}/> }
                                                                 .into_view()
                                                         })
                                                         .collect::<Vec<_>>()
@@ -95,7 +86,7 @@ pub fn Index() -> impl IntoView {
                                         .unwrap_or_default()
                                 }
                             };
-                            posts_meta.into_view()
+                            posts.into_view()
                         }}
                     </Transition>
                 </div>
