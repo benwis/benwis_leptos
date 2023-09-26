@@ -1,6 +1,5 @@
 use crate::functions::post::get_post;
 use crate::models::post;
-use crate::providers::AuthContext;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -22,7 +21,7 @@ pub fn Post() -> impl IntoView {
         <Transition fallback=move || {
             view! {  <p>"Loading..."</p> }
         }>
-            { move || post.read().map(|p|{ match p {
+            { move || post.get().map(|p|{ match p {
                 Ok(Ok(Some(post))) => {
                     view! {  <PostContent post={post}/> }
                         .into_view()
@@ -47,8 +46,6 @@ pub fn Post() -> impl IntoView {
 
 #[component]
 pub fn PostContent(post: post::Post) -> impl IntoView {
-    let auth_context = use_context::<AuthContext>().expect("Failed to get Auth Context");
-
     view! {
         <section class="px-4 w-full">
             <div class="flex justify-between w-full">
@@ -67,30 +64,13 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta name="twitter:card" content="summary"/>
                 <Meta name="twitter:image" content="https://benwis.imgix.net/ben_catcarbon.jpeg"/>
                 <Meta name="twitter:description" content={post.excerpt.clone().unwrap_or_default()}/>
-                <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>                <Transition fallback=|| ()>
-                    {move || {
-                        match auth_context.user.read() {
-                            Some(Ok(user)) => {
-                                view! {
-                                    <Show when=move || user.is_some() fallback=|| ()>
-                                        <A class="dark:text-white no-underline" href="edit">
-                                            "Edit"
-                                        </A>
-                                    </Show>
-                                }
-                                    .into_view()
-                            }
-                            Some(Err(_)) => ().into_view(),
-                            None => ().into_view(),
-                        }
-                    }}
-                </Transition>
+                <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>
             </div>
             {(post.preview || post.published)
                 .then(|| {
                     view! {
                         <h1 class="mb-4 text-3xl text-black dark:text-white md:text-5xl">{post.title.clone()}</h1>
-                        <div class="dark:text-white text-black mb-2">{post.created_at_pretty}</div>
+                        <div class="dark:text-white text-black mb-2">{post.created_at.to_string()}</div>
                         <div class="-mx-4 my-2 flex h-1 w-[100vw] bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 sm:mx-0 sm:w-full"></div>
                         <section class="dark:bg-gray-800 p-4 mt-4 table-of-contents-parent">
                             <h2 class="text-xl text-black dark:text-white md:text-2xl">"Contents"</h2>
@@ -101,7 +81,7 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                         </section>
                         <section
                             class="text-black mx-auto prose lg:prose-xl dark:prose-invert dark:text-white text-base mt-8"
-                            inner_html={post.html}
+                            inner_html={post.content}
                         ></section>
                     }
                 })}
