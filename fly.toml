@@ -35,6 +35,10 @@ app = "benwis-leptos"
   headers = { }
 
 [mounts]
-source="benwis_leptos_bench"
-destination="/bench"
+  source="benwis_leptos_bench"
+  destination="/bench"
+
+[env]
+  HONEYCOMB_DATASET="benwis_leptos"
+  HONEYCOMB_SERVICE_NAME="benwis_leptos"
 

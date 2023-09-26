@@ -14,6 +14,7 @@ if #[cfg(feature = "ssr")] {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct PostFrontmatter {
+    title: String,
     slug: String,
     excerpt: String,
     created_at: DateTime<Utc>,
@@ -55,9 +56,8 @@ impl TryFrom<String> for Post {
         let code_block = frontmatter.code_block.ok_or(BenwisAppError::MissingOrInvalidFrontmatter)?;
         let fm: PostFrontmatter = toml::from_str(&code_block.source)?;
 
-
         Ok(Self {
-            title: frontmatter.title.unwrap_or_default(),
+            title: fm.title,
             slug: fm.slug,
             excerpt: Some(fm.excerpt),
             content,
