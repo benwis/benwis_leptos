@@ -84,7 +84,7 @@ impl PostsContainer {
         let mut posts = Posts::default();
         posts.fetch_posts_from_github().await?;
         posts.posts.sort_unstable_by(|_a, b, _c, d| d.created_at.partial_cmp(&b.created_at).unwrap());
-    
+
         let container = PostsContainer(Arc::new(RwLock::new(posts)));
         Ok(container)
     }
@@ -159,8 +159,33 @@ impl Posts {
         Ok(())
     }
     /// Get the post. If it's not in local, check github. If not in Github, return None
-    pub fn get_post_from_github(&mut self) -> Result<Option<Post>, BenwisAppError> {
-        todo!()
+    pub async fn fetch_post_from_github(&mut self, slug: &str) -> Result<Option<Post>, BenwisAppError> {
+        let api_token = std::env::var("GITHUB_TOKEN").expect("Failed to get Github Token");
+        let octocrab = Octocrab::builder()
+            .personal_token(api_token)
+            .build()
+            .unwrap();
+
+        let post_path = format!("posts/{}/{}.md", slug, slug);
+
+         let mut content =  match octocrab
+                    .repos("benwis", "benwis_posts")
+                    .get_content()
+                    .path(post_path)
+                    .send()
+                    .await
+                    {
+                        Ok(p) => p,
+                        Err(_) => return Ok(None),
+                    };
+                let contents = content.take_items();
+                let c = &contents[0];
+                let decoded_content = c.decoded_content().unwrap();
+
+                let post: Post = decoded_content.try_into()?;
+
+                self.posts.insert(post.slug.clone(), post.clone());
+                Ok(Some(post))
     }
 }
 }

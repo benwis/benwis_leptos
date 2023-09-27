@@ -16,12 +16,12 @@
 	 font-display: swap;
 
 } */
-@font-face {
+/* @font-face {
 	font-family: 'Eurostile Extended Bold';
 	 src: url('/fonts/Eurostile_Extended_Bold.ttf') format('truetype');
 	 font-display: swap;
 
-}
+} */
 /* @font-face {
 	font-family: 'Neue Plak Black';
 	src: url('/fonts/Neue Plak Black.ttf') format('truetype');
@@ -58,8 +58,14 @@
 
 }
 
+@font-face {
+	font-family: 'Eurostile';
+	src: url('/fonts/EurostileBold.woff2') format('woff2');
+	font-display: swap;
+}
+
 h1, h2, h3, h4, h5, h6 {
-	font-family: 'Eurostile Extended', sans-serif, system-ui;
+	font-family: 'Eurostile', sans-serif, system-ui;
 }
 body {
 	font-family: 'Neue Haas Unica', serif, system-ui;
@@ -423,6 +429,10 @@ pre {
 }
 .level-6{
 	text-indent: 100px;
+}
+
+.code-block-inner i {
+	font-style: normal;
 }
 
 /* Custom classes for the Nav */
