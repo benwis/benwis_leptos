@@ -5,7 +5,7 @@ use leptos_meta::*;
 
 #[component]
 pub fn Index() -> impl IntoView {
-    let posts = create_resource(move || {}, move |_| get_posts(Some(3)));
+    let posts = create_resource(move || {}, move |_| get_posts(None));
     view! {
         <Meta property="og:title" content="benwis"/>
         <Title text="benwis"/>
@@ -75,6 +75,8 @@ pub fn Index() -> impl IntoView {
                                                 } else {
                                                     posts.posts
                                                         .into_values()
+                                                        .filter(|p| p.published)
+                                                        .take(3)
                                                         .map(move |post_meta| {
                                                             view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at.to_string()}/> }
                                                                 .into_view()
