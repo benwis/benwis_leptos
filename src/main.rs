@@ -122,7 +122,7 @@ if #[cfg(feature = "ssr")] {
         let conf = get_configuration(None).await.expect("Failed to get config");
         let leptos_options = conf.leptos_options;
         let addr = leptos_options.site_addr;
-        let routes = generate_route_list(|| view! {  <BenwisApp/> }).await;
+        let routes = generate_route_list(|| view! {  <BenwisApp/> });
 
         let app_state= AppState::new_with_posts(leptos_options, pool.clone()).await.expect("Failed to create App State");
 
