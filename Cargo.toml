@@ -21,12 +21,12 @@ cfg-if = "1.0.0"
 # leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true }
 # leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"] }
 
-leptos = { git="https://github.com/benwis/leptos", features = [
-	"serde", "tracing", "nightly"
+leptos = { git="https://github.com/benwis/leptos", branch="fix_render_route", features = [
+	"serde", "tracing", "nightly",
 ] }
-leptos_meta = { git="https://github.com/benwis/leptos", features=["nightly"] }
-leptos_axum = { git="https://github.com/benwis/leptos", optional = true }
-leptos_router = {  git="https://github.com/benwis/leptos", features = ["nightly"] }
+leptos_meta = { git="https://github.com/benwis/leptos", branch="fix_render_route", features=["nightly"] }
+leptos_axum = { git="https://github.com/benwis/leptos", branch="fix_render_route", optional = true }
+leptos_router = {  git="https://github.com/benwis/leptos", branch="fix_render_route", features = ["nightly"] }
 #leptos = { path="../leptos/leptos", default-features = false, features = [
 #	"serde", "tracing", "nightly"
 #] }
