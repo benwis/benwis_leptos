@@ -79,9 +79,9 @@ pub fn Footer() -> impl IntoView {
                 </div>
                 <div class="mt-8 md:mt-0 md:order-1">
                     <p class="text-center text-base text-gray-400 dark:text-white">
-                        "© 2022 Ben Wishovich | Built with "
-                        <a href="https://github.com/leptos-rs/leptos">"Leptos"</a>
-                        <span>" | v2"</span>
+                        "© 2023 Ben Wishovich | Built with "
+                        <a href="https://leptos.dev">"Leptos"</a>
+                        <span>" | v3"</span>
                     </p>
                 </div>
             </div>
