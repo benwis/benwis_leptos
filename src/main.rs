@@ -41,7 +41,7 @@ if #[cfg(feature = "ssr")] {
     }
     #[tracing::instrument(level = "info", fields(error))]
  async fn leptos_routes_handler(State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
-            let handler = leptos_axum::render_app_to_stream_with_context(app_state.leptos_options.clone(),
+            let handler = leptos_axum::render_route_with_context(app_state.leptos_options.clone(), app_state.routes.clone(),
             move || {
                 provide_context( app_state.pool.clone());
                 provide_context( app_state.posts.clone());
@@ -124,7 +124,7 @@ if #[cfg(feature = "ssr")] {
         let addr = leptos_options.site_addr;
         let routes = generate_route_list(|| view! {  <BenwisApp/> });
 
-        let app_state= AppState::new_with_posts(leptos_options, pool.clone()).await.expect("Failed to create App State");
+        let app_state= AppState::new_with_posts(leptos_options, pool.clone(), routes.clone()).await.expect("Failed to create App State");
 
         // build our application with a route
         let app = Router::new()
