@@ -7,13 +7,14 @@ cfg_if! {
 if #[cfg(feature = "ssr")] {
     use crate::functions::pool;
     use slug::slugify;
-    use leptos_axum::redirect;
+    use leptos_axum::{redirect, ResponseOptions};
     use chrono::{NaiveDateTime, prelude::*};
+    use http::HeaderValue;
     use crate::models::Post;
 }}
 
 #[tracing::instrument(level = "info", fields(error), err)]
-#[server(GetPosts, "/api")]
+#[server(GetPosts, "/api", "GetJson")]
 pub async fn get_posts(num: Option<usize>) -> Result<Result<Posts, BenwisAppError>, ServerFnError> {
     // Get Posts out of Context
     let Some(posts) = use_context::<PostsContainer>() else {
@@ -47,11 +48,18 @@ pub async fn get_posts(num: Option<usize>) -> Result<Result<Posts, BenwisAppErro
         posts: processed_posts,
         last_checked: reader.last_checked.clone(),
     };
+
+    // Set Cache-Control headers
+    let res = expect_context::<ResponseOptions>();
+    res.append_header(
+        http::header::CACHE_CONTROL,
+        HeaderValue::from_str("private, max-age=3600").unwrap(),
+    );
     Ok(Ok(out))
 }
 
 #[tracing::instrument(level = "info", fields(error), err)]
-#[server(GetPost, "/api")]
+#[server(GetPost, "/api", "GetJson")]
 pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppError>, ServerFnError> {
     let Some(posts) = use_context::<PostsContainer>() else {
         return Err(ServerFnError::ServerError(
@@ -80,6 +88,11 @@ pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppErro
         Some(p) => Some(p.to_owned()),
         None => None,
     };
-
+    // Set Cache-Control headers
+    let res = expect_context::<ResponseOptions>();
+    res.append_header(
+        http::header::CACHE_CONTROL,
+        HeaderValue::from_str("private, max-age=3600").unwrap(),
+    );
     Ok(Ok(post))
 }
