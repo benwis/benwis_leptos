@@ -6,7 +6,7 @@ if #[cfg(feature = "ssr")] {
     use benwis_leptos::telemetry::TracingSettings;
     use axum::{
         response::{Response, IntoResponse},
-        routing::{post, get},
+        routing::get,
         extract::{Path, State, RawQuery},
         http::{Request, header::HeaderMap},
         body::Body as AxumBody,
@@ -24,7 +24,7 @@ if #[cfg(feature = "ssr")] {
     use crate::app::*;
     use tower_http::{compression::CompressionLayer};
     use benwis_leptos::state::AppState;
-
+    use crate::rss::rss_page;
     #[cfg(not(target_env = "msvc"))]
     use jemallocator::Jemalloc;
 
@@ -128,6 +128,7 @@ if #[cfg(feature = "ssr")] {
 
         // build our application with a route
         let app = Router::new()
+        .route("/rss.xml", get(rss_page))
         .route("/api/*fn_name", get(server_fn_handler).post(server_fn_handler))
         .leptos_routes_with_handler(routes, get(leptos_routes_handler) )
         .fallback(file_and_error_handler)

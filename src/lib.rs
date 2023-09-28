@@ -12,6 +12,7 @@ pub mod functions;
 pub mod layouts;
 pub mod models;
 pub mod providers;
+pub mod rss;
 pub mod state;
 pub mod telemetry;
 // Needs to be in lib.rs AFAIK because wasm-bindgen needs us to be compiling a lib. I may be wrong.
