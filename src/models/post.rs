@@ -167,7 +167,6 @@ impl Posts {
             .unwrap();
 
         let post_path = format!("posts/{}/{}.md", slug, slug);
-
          let mut content =  match octocrab
                     .repos("benwis", "benwis_posts")
                     .get_content()

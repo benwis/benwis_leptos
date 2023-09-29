@@ -71,9 +71,9 @@ pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppErro
 
     // If there are no Posts, try to get some if we haven't checked in the last minute
     if reader.posts.get(&slug).is_none()
-        && (Utc::now() - reader.last_checked) >= Duration::minutes(1)
+        && (Utc::now() - reader.last_checked) >= Duration::seconds(1)
     {
-        println!("Fetching {slug}");
+        drop(reader); // Writer will block forever apparently if we're still holding reader
         let mut writer = posts.0.write();
         writer.fetch_post_from_github(&slug).await?;
         writer.last_checked = Utc::now();
@@ -83,7 +83,7 @@ pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppErro
             .posts
             .sort_unstable_by(|a, b, c, d| d.created_at.partial_cmp(&b.created_at).unwrap());
     }
-
+    let reader = posts.0.read();
     let post = match reader.posts.get(&slug) {
         Some(p) => Some(p.to_owned()),
         None => None,
