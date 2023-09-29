@@ -11,7 +11,6 @@ use leptos_router::*;
 pub fn BenwisApp() -> impl IntoView {
     // Create Actions for the Auth methods and provide the current user
     _ = provide_color_scheme();
-
     provide_meta_context();
 
     view! {

@@ -60,7 +60,7 @@ pub fn About() -> impl IntoView {
             <section>
                 <img
                     class="rounded"
-                    src="/img/ben_catcarbon.jpeg"
+                    src="/img/ben_catcarbon.png"
                     alt="A white guy with blue eyes, dark hair, and glasses. Kinda looks like Harry Potter. Describing yourself is hard"
                 />
                 <address class="my-4 w-full transform rounded-xl bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 p-1 transition-all hover:scale-[1.01]">
