@@ -195,9 +195,8 @@ pre {
 	font-family: 'Berkeley Mono','JetBrains Mono', monospace;
 }
 .code-block-inner{
-	padding: 0.8rem;
 	font-family: 'Berkeley Mono','JetBrains Mono', monospace;
-	margin: 0 0;
+	margin: 0 0 !important;/* I know I shouldn't but */
 
 }
 .language-tag{
