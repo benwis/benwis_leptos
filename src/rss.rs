@@ -50,7 +50,7 @@ r#"
             <description><![CDATA[{}]]></description>
             <pubDate>{}</pubDate>
             <link>{}</link>
-            <guid isPermaLink="false">{}</guid>
+            <guid>{}</guid>
         </item>
       "#,
             self.title,

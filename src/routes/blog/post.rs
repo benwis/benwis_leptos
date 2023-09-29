@@ -57,6 +57,7 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta property="og:site_name" content="benw.is"/>
                 <Meta property="og:locale" content="en-us"/>
                 <Meta property="og:type" content="article"/>
+                <Meta name="og:image" content="https://benwis.imgix.net/ben_catcarbon.jpeg"/>
                 <Meta property="og:url" content={post.excerpt.clone().unwrap_or_default()}/>
                 <Meta name="twitter:title" content={post.title.clone()}/>
                 <Meta name="twitter:site" content="@iambenwis"/>
