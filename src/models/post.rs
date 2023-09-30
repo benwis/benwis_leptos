@@ -152,7 +152,6 @@ impl Posts {
                 let decoded_content = c.decoded_content().unwrap();
 
                 let post: Post = decoded_content.try_into()?;
-
                 self.posts.insert(post.slug.clone(), post);
             }
         }

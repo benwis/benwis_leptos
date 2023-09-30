@@ -57,15 +57,16 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta property="og:site_name" content="benw.is"/>
                 <Meta property="og:locale" content="en-us"/>
                 <Meta property="og:type" content="article"/>
-                <Meta name="og:image" content="https://benwis.imgix.net/ben_catcarbon.png"/>
+                <Meta property="og:image" content="https://benw.is/img/ben_catcarbon.png"/>
                 <Meta property="og:url" content={format!("https://benw.is/posts/{}", post.slug.clone())}/>
                 <Meta name="twitter:title" content={post.title.clone()}/>
                 <Meta name="twitter:site" content="@iambenwis"/>
                 <Title text={post.title.clone()} />
                 <Meta name="twitter:card" content="summary"/>
-                <Meta name="twitter:image" content="https://benwis.imgix.net/ben_catcarbon.png"/>
+                <Meta name="twitter:image" content="https://benw.is/img/ben_catcarbon.png"/>
                 <Meta name="twitter:description" content={post.excerpt.clone().unwrap_or_default()}/>
                 <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>
+                <Link rel="canonical" href={format!("https://benw.is/posts/{}",post.slug.clone())}/>
             </div>
             {(post.preview || post.published)
                 .then(|| {
