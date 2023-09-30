@@ -11,6 +11,7 @@ if #[cfg(feature = "ssr")] {
     use chrono::{NaiveDateTime, prelude::*};
     use http::HeaderValue;
     use crate::models::Post;
+    use serde_json::{json};
 }}
 
 #[tracing::instrument(level = "info", fields(error), err)]
@@ -95,4 +96,25 @@ pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppErro
         HeaderValue::from_str("private, max-age=3600").unwrap(),
     );
     Ok(Ok(post))
+}
+#[tracing::instrument(level = "info", fields(error), err)]
+#[server(RefetchPosts, "/api", "GetJson", "refetch")]
+pub async fn refetch_posts(password: String) -> Result<serde_json::Value, ServerFnError> {
+    let Ok(stored_password) = std::env::var("REFETCH_PASSCODE") else {
+        return Err(ServerFnError::ServerError(
+            "REFETCH_PASSCODE not set. Refetch Disabled".to_string(),
+        ));
+    };
+    let posts = expect_context::<PostsContainer>();
+
+    if stored_password == password {
+        let mut writer = posts.0.write();
+        writer
+            .fetch_posts_from_github()
+            .await
+            .map_err(|e| ServerFnError::ServerError(e.to_string()))?
+    }
+    Ok(json!({
+        "result": "success"
+    }))
 }
