@@ -10,25 +10,6 @@
 
 }
 
-/* @font-face {
-	font-family: 'Neue Plak Regular';
-	 src: url('/fonts/Neue Plak Regular.ttf') format('truetype');
-	 font-display: swap;
-
-} */
-/* @font-face {
-	font-family: 'Eurostile Extended Bold';
-	 src: url('/fonts/Eurostile_Extended_Bold.ttf') format('truetype');
-	 font-display: swap;
-
-} */
-/* @font-face {
-	font-family: 'Neue Plak Black';
-	src: url('/fonts/Neue Plak Black.ttf') format('truetype');
-	font-display: swap;
-
-} */
-
 @font-face {
 	font-family: 'Neue Haas Unica';
 	src: url('/fonts/NeueHaasUnica-Regular.woff2') format('woff2');
@@ -88,6 +69,9 @@ pre {
 .min-w-prose{
     width: 65ch;
 }
+.prose{
+	max-width: none !important;
+}
 
 	/* @import url("https://fast.fonts.net/lt/1.css?apiType=css&c=5a486e39-1b9b-408b-86fd-7cfd1d527e45&fontids=1296355,1296684"); */
 	@font-face {
@@ -101,7 +85,7 @@ pre {
 			url('/fonts/1296684/cab43791-79e0-4d9d-b680-9d36fb8082cf.woff') format('woff');
 	} */
 	.brand {
-		font-family: 'Horizon W03 Rg';
+		font-family: 'Horizon W03 Rg', system-ui, serif;
 	}
 
 /* Syntax Highlighting Styles, derived from neovim Material theme */
@@ -192,10 +176,10 @@ pre {
     padding: 0;
     border: 1px solid #facc15;
 	margin: 1.8rem 0;
-	font-family: 'Berkeley Mono','JetBrains Mono', monospace;
+	font-family: 'Berkeley Mono', monospace, system-ui;
 }
 .code-block-inner{
-	font-family: 'Berkeley Mono','JetBrains Mono', monospace;
+	font-family: 'Berkeley Mono', monospace, system-ui;
 	margin: 0 0 !important;/* I know I shouldn't but */
 
 }
@@ -407,7 +391,7 @@ pre {
 }
 .table-of-contents{
 	list-style: none;
-	padding-left: 0;
+	padding-left: 0 !important;
 }
 .toc-entry{
 	margin: 0;
@@ -415,19 +399,19 @@ pre {
 }
 
 .level-2{
-	text-indent: 20px;
+	text-indent: 10px;
 }
 .level-3{
-	text-indent: 40px;
+	text-indent: 20px;
 }
 .level-4{
-	text-indent: 60px;
+	text-indent: 30px;
 }
 .level-5{
-	text-indent: 80px;
+	text-indent: 40px;
 }
 .level-6{
-	text-indent: 100px;
+	text-indent: 50px;
 }
 
 .code-block-inner i {

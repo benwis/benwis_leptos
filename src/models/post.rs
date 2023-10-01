@@ -16,6 +16,8 @@ if #[cfg(feature = "ssr")] {
 pub struct PostFrontmatter {
     title: String,
     slug: String,
+    hero: Option<String>,
+    hero_caption: Option<String>,
     excerpt: String,
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
@@ -27,6 +29,8 @@ pub struct PostFrontmatter {
 pub struct Post {
     pub title: String,
     pub slug: String,
+    pub hero: Option<String>,
+    pub hero_caption: Option<String>,
     pub excerpt: Option<String>,
     pub content: String,
     pub toc: Option<String>,
@@ -59,6 +63,8 @@ impl TryFrom<String> for Post {
         Ok(Self {
             title: fm.title,
             slug: fm.slug,
+            hero: fm.hero,
+            hero_caption: fm.hero_caption,
             excerpt: Some(fm.excerpt),
             content,
             toc,
