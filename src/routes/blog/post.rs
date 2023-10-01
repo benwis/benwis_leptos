@@ -84,20 +84,18 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                                 />
                             </div>
                         </aside>
-                        <section class="lg:prose-xl dark:prose-invert dark:text-white text-base mt-8 col-span-1 md:col-span-9">
+                        <section class="dark:text-white text-base mt-8 col-span-1 md:col-span-9 grid inherit-grid">
                                 {
-                                let (read_hero, _write_hero) = create_signal(post.hero.clone());
-                                let (read_hero_caption, _write_hero_caption) = create_signal(post.hero_caption.clone());
-                                view!{
-                                <Show when=move || read_hero.with(|h|h.is_some()) fallback=||()>
-                                    <img class="obj-cover max-w-full h-auto" src={read_hero().unwrap()}/>
-                                    <caption class="w-full">{read_hero_caption().unwrap_or("".to_string())}</caption>
-                                    <div class="-mx-4 my-2 flex h-1 w-[100vw] dark:bg-white bg-black sm:mx-0 sm:w-full"/>
-                                </Show>
-                                }
+                                post.hero.clone().map(|h| view!{
+                                    <img class="obj-cover col-span-full h-auto" src={h}/>
+                                    {post.hero_caption.clone().map(|c| view!{
+                                    <span class="col-span-full mt-2 prose lg:prose-xl dark:text-white text-base">{c}</span>
+                                    })}
+                                    <div class="-mx-4 my-2 flex h-1 w-[100vw] dark:bg-white bg-black sm:mx-0 sm:w-full col-span-full"/>
+                                })
                                 }
                             <div
-                            class="text-black prose lg:prose-xl dark:prose-invert dark:text-white text-base mt-8 md:col-span-9"
+                            class="text-black prose lg:prose-xl dark:prose-invert dark:text-white text-base mt-4 md:col-span-9"
                             inner_html={post.content}
                             />
                         </section>
