@@ -21,26 +21,6 @@ pub fn Default(children: Children) -> impl IntoView {
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Link rel="alternate" type_="application/rss+xml"
           href="https://benw.is/rss.xml" title="benwis Blog"/>
-        <Link rel="preload"
-          href="fonts/BerkeleyMono-Regular.woff2"
-          as_="font"
-          type_="font/woff2"
-          crossorigin="anonymous"
-        />
-
-        <Link rel="preload"
-        href="fonts/Neue Plak Black.ttf"
-        as_="font"
-        type_="font/ttf"
-        crossorigin="anonymous"
-        />
-
-        <Link rel="preload"
-        href="fonts/1296355/af582cef-2f0c-494d-862f-b06b8e7b1cbf.woff2"
-        as_="font"
-        type_="font/woff2"
-        crossorigin="anonymous"
-        />
 
         // Fathom - beautiful, simple website analytics
         <script src="https://cdn.usefathom.com/script.js" data-site="MTMCOBMG" defer/>

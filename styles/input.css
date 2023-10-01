@@ -61,7 +61,9 @@ pre {
     width: 100%;
     display: inline-block;
 }
-
+.inherit-grid {
+	grid-template-columns: subgrid;
+}
 .anchor{
 	text-decoration: none;
 }
@@ -474,8 +476,8 @@ pre {
   }
 
   .dark .menu-button,
-  .menu-button::before,
-  .menu-button::after {
+  .dark .menu-button::before,
+  .dark .menu-button::after {
 	background-color: #fff;
   }
   
@@ -491,23 +493,35 @@ pre {
   }
   
   #menu-toggle:checked + .menu-button-container .menu-button::before {
+  	background-color: rgba(0,0,0,1);
 	margin-top: 0px;
 	transform: rotate(405deg);
   }
+.dark #menu-toggle:checked + .menu-button-container .menu-button::before {
+	background-color: rgba(255,255,255,1);
+	margin-top: 0px;
+	transform: rotate(405deg);
+}
   
   #menu-toggle:checked + .menu-button-container .menu-button {
-	background: rgba(255, 255, 255, 0);
+	background: rgba(255, 255, 255, 1);
   }
 
   .dark #menu-toggle:checked + .menu-button-container .menu-button {
-	background: rgba(0, 0, 0, 0);
+	background: rgba(0, 0, 0, 1);
   }
   
   #menu-toggle:checked + .menu-button-container .menu-button::after {
+  	background-color: #000;
 	margin-top: 0px;
 	transform: rotate(-405deg);
   }
-  
+
+	.dark #menu-toggle:checked + .menu-button-container .menu-button::after {
+	background-color: rgba(255,255,255,1);
+	margin-top: 0px;
+	transform: rotate(-405deg);
+}
   @media (max-width: 700px) {
 	.menu-button-container {
 	  display: flex;
