@@ -75,13 +75,15 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                         <div class="dark:text-white text-black mb-2">{post.created_at.to_string()}</div>
                         <div class="-mx-4 my-2 flex h-1 w-[100vw] bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 sm:mx-0 sm:w-full"/>
                         <main class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        <section class="dark:bg-gray-800 p-4 mt-4 table-of-contents-parent md:col-span-3 hidden md:block ">
-                            <h2 class="text-xl text-black dark:text-white md:text-2xl">"Contents"</h2>
-                            <div
-                                class="text-black prose lg:prose-xl dark:prose-invert dark:text-white text-base md: w-full"
-                                inner_html={post.toc}
-                            ></div>
-                        </section>
+                        <aside class="dark:bg-gray-900 p-4 mt-4 table-of-contents-parent md:col-span-3 hidden md:block ">
+                            <div class="dark:bg-gray-800 p-4 rounded">
+                                <h2 class="text-xl text-black dark:text-white md:text-2xl">"Contents"</h2>
+                                <div
+                                    class="text-black prose lg:prose-xl dark:prose-invert dark:text-white text-base md: w-full"
+                                    inner_html={post.toc}
+                                />
+                            </div>
+                        </aside>
                         <section class="lg:prose-xl dark:prose-invert dark:text-white text-base mt-8 col-span-1 md:col-span-9">
                                 {
                                 let (read_hero, _write_hero) = create_signal(post.hero.clone());
