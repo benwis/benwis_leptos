@@ -17,7 +17,7 @@ pub fn Default(children: Children) -> impl IntoView {
             };
             format!("{} {}", classes, theme)
         }/>
-        <Body class="h-screen bg-white dark:bg-gray-900 max-w-5xl mx-auto flex flex-col"/>
+        <Body class="h-screen bg-white dark:bg-gray-900 max-w-7xl mx-auto flex flex-col"/>
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico"/>
         <Link rel="alternate" type_="application/rss+xml"
           href="https://benw.is/rss.xml" title="benwis Blog"/>
