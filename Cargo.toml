@@ -22,10 +22,10 @@ cfg-if = "1.0.0"
 # leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"] }
 
 leptos = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = [
-	"serde", "tracing", "nightly",
+	"serde", "tracing", "nightly", "experimental-islands"
 ] }
 leptos_meta = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features=["nightly"] }
-leptos_axum = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", optional = true }
+leptos_axum = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", optional = true, features=["experimental-islands"] }
 leptos_router = {  git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = ["nightly"] }
 #leptos = { path="../leptos/leptos", default-features = false, features = [
 #	"serde", "tracing", "nightly"

@@ -46,7 +46,7 @@ pub fn Index() -> impl IntoView {
                 </h3>
                 <div class="flex flex-col gap-6 md:flex-row">
                     <Transition fallback=move || {
-                        view! {  <p>"Loading..."</p> }
+                        view! { <p>"Loading..."</p> }
                     }>
                         {move || {
                             let posts = {
@@ -56,29 +56,36 @@ pub fn Index() -> impl IntoView {
                                         .map(move |posts| match posts {
                                             Err(e) => {
                                                 vec![
-                                                    view! {  < pre class = "error" > "Server Error: " { e
+                                                    view! { < pre class = "error" > "Server Error: " { e
                                                     .to_string() } </ pre > } .into_view()
                                                 ]
                                             }
                                             Ok(Err(e)) => {
-                                            vec![
-                                                    view! {  < pre class = "error" > "Error: " { e
-                                                    .to_string() } </ pre > } .into_view()
+                                                vec![
+                                                    view! { < pre class = "error" > "Error: " { e.to_string() }
+                                                    </ pre > } .into_view()
                                                 ]
-                                        }
+                                            }
                                             Ok(Ok(posts)) => {
                                                 if posts.posts.len() == 0 {
                                                     vec![
-                                                        view! {  < p class = "text-black dark:text-white" >
+                                                        view! { < p class = "text-black dark:text-white" >
                                                         "No posts were found." </ p > } .into_view()
                                                     ]
                                                 } else {
-                                                    posts.posts
+                                                    posts
+                                                        .posts
                                                         .into_values()
                                                         .filter(|p| p.published)
                                                         .take(3)
                                                         .map(move |post_meta| {
-                                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at.to_string()}/> }
+                                                            view! {
+                                                                <FeatureCard
+                                                                    href=post_meta.slug
+                                                                    title=post_meta.title
+                                                                    date=post_meta.created_at.to_string()
+                                                                />
+                                                            }
                                                                 .into_view()
                                                         })
                                                         .collect::<Vec<_>>()
@@ -90,6 +97,7 @@ pub fn Index() -> impl IntoView {
                             };
                             posts.into_view()
                         }}
+
                     </Transition>
                 </div>
                 <a

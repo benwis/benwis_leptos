@@ -6,7 +6,9 @@ pub fn Nav() -> impl IntoView {
     view! {
         <nav class="top-nav bg-white dark:bg-gray-900 text-gray-700 dark:text-white">
             <div class="text-2xl">
-                <a href="/"><h3 class="text-2xl dark:text-white text-base">"BENWIS"</h3></a>
+                <a href="/">
+                    <h3 class="text-2xl dark:text-white text-base">"BENWIS"</h3>
+                </a>
             </div>
             <input id="menu-toggle" type="checkbox"/>
             <label class="menu-button-container" for="menu-toggle">

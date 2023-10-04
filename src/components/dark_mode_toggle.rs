@@ -31,7 +31,8 @@ pub fn DarkModeToggle() -> impl IntoView {
                                                                                                                                                                 "#
                         }
                     }
-                ></button>
+                >
+                </button>
             </ActionForm>
         </li>
     }
