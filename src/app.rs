@@ -17,18 +17,19 @@ pub fn BenwisApp() -> impl IntoView {
         <Router>
             <Routes>
                 <Route
-                path="minimal"
-                view=move || {
-                    view! {  <Index/> }
-                }
-            />
+                    path="minimal"
+                    view=move || {
+                        view! { <Index/> }
+                    }
+                />
+
                 <Route
                     path=""
                     view=|| {
                         view! {
                             <Default>
-                                <ErrorBoundary fallback=| errors| {
-                                    view! {  <ErrorTemplate errors=errors/> }
+                                <ErrorBoundary fallback=|errors| {
+                                    view! { <ErrorTemplate errors=errors/> }
                                 }>
                                     <Outlet/>
                                 </ErrorBoundary>
@@ -36,51 +37,58 @@ pub fn BenwisApp() -> impl IntoView {
                         }
                     }
                 >
+
                     <Route
                         path=""
                         view=move || {
-                            view! {  <Index/> }
+                            view! { <Index/> }
                         }
                     />
+
                     <Route
                         path="about"
                         view=move || {
-                            view! {  <About/> }
+                            view! { <About/> }
                         }
                     />
+
                     <Route
                         path="portfolio"
                         view=move || {
-                            view! {  <Portfolio/> }
+                            view! { <Portfolio/> }
                         }
                     />
+
                     <Route
                         path="posts"
                         view=move || {
-                            view! {  <Blog/> }
+                            view! { <Blog/> }
                         }
                     />
+
                     <Route
                         path="posts/:slug"
                         view=move || {
-                            view! {  <Post/> }
+                            view! { <Post/> }
                         }
+
                         ssr=SsrMode::Async
                     />
                     <Route
                         path="nedry"
                         view=move || {
-                            view! {  <Nedry/> }
+                            view! { <Nedry/> }
                         }
                     />
+
                 </Route>
-            //     <Route
-            //         path="/rss.xml"
-            //         view=move || {
-            //             view! {  <Rss/> }
-            //         }
-            //         ssr=SsrMode::Async
-            //     />
+            // <Route
+            // path="/rss.xml"
+            // view=move || {
+            // view! {  <Rss/> }
+            // }
+            // ssr=SsrMode::Async
+            // />
             </Routes>
         </Router>
     }

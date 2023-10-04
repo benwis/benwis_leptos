@@ -65,13 +65,13 @@ pub fn Footer() -> impl IntoView {
                         .map(|link| {
                             view! {
                                 <a
-                                    key={link.name}
-                                    href={link.href}
-                                    rel={link.rel}
+                                    key=link.name
+                                    href=link.href
+                                    rel=link.rel
                                     class="text-gray-400 dark:text-white hover:text-gray-500"
                                 >
                                     <span class="sr-only">{link.name}</span>
-                                    <div inner_html={link.icon}></div>
+                                    <div inner_html=link.icon></div>
                                 </a>
                             }
                         })
@@ -80,8 +80,7 @@ pub fn Footer() -> impl IntoView {
                 <div class="mt-8 md:mt-0 md:order-1">
                     <p class="text-center text-base text-gray-400 dark:text-white">
                         "© 2023 Ben Wishovich | Built with "
-                        <a href="https://leptos.dev">"Leptos"</a>
-                        <span>" | v3"</span>
+                        <a href="https://leptos.dev">"Leptos"</a> <span>" | v3"</span>
                     </p>
                 </div>
             </div>

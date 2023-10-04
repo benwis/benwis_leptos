@@ -10,11 +10,17 @@ pub fn Blog() -> impl IntoView {
     view! {
         <Meta property="og:title" content="benwis Blog"/>
         <Title text="benwis Blog"/>
-        <Meta name="description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
-        <Meta property="og:description" content="The potentially misguided ramblings of a Rust developer flailing around on the web"/>
+        <Meta
+            name="description"
+            content="The potentially misguided ramblings of a Rust developer flailing around on the web"
+        />
+        <Meta
+            property="og:description"
+            content="The potentially misguided ramblings of a Rust developer flailing around on the web"
+        />
         <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
         <Transition fallback=move || {
-            view! {  <p>"Loading..."</p> }
+            view! { <p>"Loading..."</p> }
         }>
             {move || {
                 let existing_posts = {
@@ -24,28 +30,27 @@ pub fn Blog() -> impl IntoView {
                             .map(move |posts| match posts {
                                 Err(e) => {
                                     vec![
-                                        view! {  < pre class = "error" > "Server Error: " { e
+                                        view! { < pre class = "error" > "Server Error: " { e
                                         .to_string() } </ pre > } .into_any()
                                     ]
-                                },
+                                }
                                 Ok(Err(e)) => {
                                     vec![
-                                    view! { < pre class="error" > "Error: " {e
-                                        .to_string() } </ pre > }.into_any()
+                                        view! { < pre class = "error" > "Error: " { e.to_string() }
+                                        </ pre > } .into_any()
                                     ]
-                                },
+                                }
                                 Ok(Ok(posts)) => {
                                     if posts.posts.len() == 0 {
                                         vec![
-                                            view! {  < p class = "text-black dark:text-white" >
+                                            view! { < p class = "text-black dark:text-white" >
                                             "No posts were found." </ p > } .into_any()
                                         ]
                                     } else {
-                                        posts.posts
+                                        posts
+                                            .posts
                                             .into_values()
-                                            .filter(|post| {
-                                                post.published
-                                            })
+                                            .filter(|post| { post.published })
                                             .map(move |post| {
                                                 view! {
                                                     <section>
@@ -85,6 +90,7 @@ pub fn Blog() -> impl IntoView {
                     </div>
                 }
             }}
+
         </Transition>
     }
 }
