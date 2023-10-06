@@ -14,24 +14,24 @@ rand_core = { version = "0.6.4", features = ["std"], optional = true }
 console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
- leptos = { git="https://github.com/leptos-rs/leptos", features = [
- 	"serde", "tracing", "nightly", "experimental-islands"
- ] }
- leptos_meta = { git="https://github.com/leptos-rs/leptos", features=["nightly"] }
- leptos_axum = { git="https://github.com/leptos-rs/leptos", features = ["experimental-islands"], optional = true }
- leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"] }
+# leptos = { git="https://github.com/leptos-rs/leptos", features = [
+# 	"serde", "tracing", "nightly", "experimental-islands"
+# ] }
+# leptos_meta = { git="https://github.com/leptos-rs/leptos", features=["nightly"] }
+# leptos_axum = { git="https://github.com/leptos-rs/leptos", features = ["experimental-islands"], optional = true }
+# leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"] }
 
-#leptos = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = [
+leptos = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = [
+	"serde", "tracing", "nightly", "experimental-islands"
+] }
+leptos_meta = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features=["nightly"] }
+leptos_axum = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", optional = true, features=["experimental-islands"] }
+leptos_router = {  git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = ["nightly"] }
+#leptos = { path="../leptos/leptos", default-features = false, features = [
 #	"serde", "tracing", "nightly", "experimental-islands"
 #] }
-#leptos_meta = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features=["nightly"] }
-#leptos_axum = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", optional = true, features=["experimental-islands"] }
-#leptos_router = {  git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = ["nightly"] }
-#leptos = { path="../leptos/leptos", default-features = false, features = [
-#	"serde", "tracing", "nightly"
-#] }
 #leptos_meta = { path="../leptos/meta", features=["nightly"] }
-#leptos_axum = { path="../leptos/integrations/axum", optional = true }
+#leptos_axum = { path="../leptos/integrations/axum", features=["experimental-islands"], optional = true }
 #leptos_router = {  path="../leptos/router", features=["nightly"] }
 log = "0.4.19"
 simple_logger = "4.2.0"
