@@ -51,7 +51,8 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta property="og:site_name" content="benw.is"/>
                 <Meta property="og:locale" content="en-us"/>
                 <Meta property="og:type" content="article"/>
-                <Meta property="og:image" content="https://benw.is/img/ben_catcarbon.png"/>
+                <Meta property="og:image" content={post.hero.clone().unwrap_or("https://benw.is/img/ben_catcarbon.png".to_string())}/>
+                <Meta property="og:image:type" content="image/png"/>
                 <Meta
                     property="og:url"
                     content=format!("https://benw.is/posts/{}", post.slug.clone())
@@ -59,8 +60,8 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta name="twitter:title" content=post.title.clone()/>
                 <Meta name="twitter:site" content="@iambenwis"/>
                 <Title text=post.title.clone()/>
-                <Meta name="twitter:card" content="summary"/>
-                <Meta name="twitter:image" content="https://benw.is/img/ben_catcarbon.png"/>
+                <Meta name="twitter:card" content={if post.hero.is_some(){"summary_large_image"} else {"summary"}}/>
+                <Meta name="twitter:image" content={post.hero.clone().unwrap_or("https://benw.is/img/ben_catcarbon.png".to_string())}/>
                 <Meta name="twitter:description" content=post.excerpt.clone().unwrap_or_default()/>
                 <Meta name="description" content=post.excerpt.clone().unwrap_or_default()/>
                 <Link rel="canonical" href=format!("https://benw.is/posts/{}", post.slug.clone())/>

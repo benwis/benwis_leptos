@@ -19,8 +19,6 @@ pub mod telemetry;
 cfg_if! {
     if #[cfg(feature = "hydrate")] {
         use wasm_bindgen::prelude::wasm_bindgen;
-        use crate::app::*;
-        use leptos::view;
 
         #[wasm_bindgen]
         pub fn hydrate() {
