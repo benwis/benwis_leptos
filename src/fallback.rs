@@ -17,9 +17,14 @@ if #[cfg(feature = "ssr")] {
 
     pub async fn file_and_error_handler(uri: Uri, State(options): State<LeptosOptions>, req: Request<Body>) -> AxumResponse {
         let root = options.site_root.clone();
-        let res = get_static_file(uri.clone(), &root).await.unwrap();
+        let mut res = get_static_file(uri.clone(), &root).await.unwrap();
 
         if res.status() == StatusCode::OK {
+            let headers = res.headers_mut();
+            let uri_string = uri.to_string();
+            if !(uri_string.contains(".js") || uri_string.contains(".wasm") || uri_string.contains(".css")){
+                headers.insert(http::header::CACHE_CONTROL, http::HeaderValue::from_str("public, max-age=31536000").unwrap());
+            }
             res.into_response()
         } else{
             let mut errors = Errors::default();
