@@ -8,6 +8,7 @@ use axum::extract::State;
 use axum::response::IntoResponse;
 use indexmap::IndexMap;
 use http::{HeaderValue, HeaderMap};
+use xml::escape::escape_str_pcdata;
 // export type RssEntry = {
 //     title: string;
 //     link: string;
@@ -76,12 +77,18 @@ pub fn generate_rss(
         .map(|r: RssEntry| r.to_item())
         .collect::<String>();
 
+    // It's possible to insert XML injection attacks that might affect the RSS readers
+    // if untrusted people can put in title, description, or link. To solve that,
+    // we can escape these inputs
+    let safe_title = escape_str_pcdata(title);
+    let safe_description = escape_str_pcdata(description);
+
     format!(
 r#"<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>{title}</title>
-        <description>{description}</description>
+        <title>{safe_title}</title>
+        <description>{safe_description}</description>
         <link>{link}</link>
         <language>en-us</language>
         <ttl>60</ttl>

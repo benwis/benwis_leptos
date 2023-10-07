@@ -95,7 +95,7 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                                     .clone()
                                     .map(|h| {
                                         view! {
-                                            <img class="obj-cover col-span-full h-auto" src=h/>
+                                            <img class="obj-cover col-span-full h-auto" src=h alt={post.hero_alt.unwrap_or("".to_string())}/>
                                             {post
                                                 .hero_caption
                                                 .clone()
