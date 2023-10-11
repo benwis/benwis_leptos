@@ -128,7 +128,7 @@ pre {
 	--dark-bg_alt :			#1B1E2B;
 	--dark-fg :				#A6ACCD;
 	--dark-text :			#717CB4;
-	--dark-comments :		#676E95;
+	--dark-comments :		#ea580c;
 	--dark-selection :		#444267;
 	--dark-contrast :		#202331;
 	--dark-active :			#414863;
@@ -141,7 +141,7 @@ pre {
 	/* Light Mode Variables */
 	--light-fg :				#546E7A;
 	--light-text :				#94A7B0;
-	--light-comments :			#AABFC9;
+	--light-comments :			#ea580c;
 	--light-selection : 		#80CBC4;
 	--light-line_numbers :		#CFD8DC;
 	--light-accent :			#00BCD4;

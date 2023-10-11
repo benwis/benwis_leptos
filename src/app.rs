@@ -3,6 +3,7 @@ use crate::layouts::Default;
 use crate::providers::provide_color_scheme;
 use crate::routes::blog::*;
 use crate::routes::{About, Index, Nedry, Portfolio};
+use leptos::nonce::use_nonce;
 use leptos::*;
 use leptos_meta::*;
 use leptos_router::*;
@@ -12,8 +13,20 @@ pub fn BenwisApp() -> impl IntoView {
     // Create Actions for the Auth methods and provide the current user
     _ = provide_color_scheme();
     provide_meta_context();
-
     view! {
+        <Meta
+            http_equiv="Content-Security-Policy"
+            content=move || {
+                use_nonce()
+                    .map(|nonce| {
+                        format!(
+                            "default-src 'self'; base-uri 'self'; img-src 'self' https://* http://*; script-src 'strict-dynamic' 'nonce-{nonce}' \
+                                    'wasm-unsafe-eval' 'unsafe-inline'; style-src 'nonce-{nonce}';"
+                        )
+                    })
+                    .unwrap_or_default()
+            }
+        />
         <Router>
             <Routes>
                 <Route

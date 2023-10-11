@@ -1,15 +1,15 @@
-use leptos::*;
-use leptos_meta::*;
-
 use crate::components::{Footer, Nav};
 use crate::providers::color_scheme::ColorScheme;
+use leptos::nonce::use_nonce;
+use leptos::*;
+use leptos_meta::*;
 
 #[component]
 pub fn Default(children: Children) -> impl IntoView {
     let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorScheme");
 
     view! {
-        <Html class=move || {
+        <Html lang="en-US" class=move || {
             let classes = "h-full";
             let theme = match color_scheme.prefers_dark.get() {
                 true => "dark",
@@ -27,7 +27,7 @@ pub fn Default(children: Children) -> impl IntoView {
         />
 
         // Fathom - beautiful, simple website analytics
-        <script src="https://cdn.usefathom.com/script.js" data-site="MTMCOBMG" defer></script>
+        <script nonce={use_nonce()} src="https://cdn.usefathom.com/script.js" data-site="MTMCOBMG" defer></script>
         <Stylesheet id="leptos" href="/pkg/benwis_leptos.css"/>
         <Meta charset="utf-8"/>
         <Nav/>
