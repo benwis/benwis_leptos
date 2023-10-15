@@ -47,10 +47,5 @@ cfg_if! {
                 Self::TomlError(value.to_string())
             }
         }
-        impl From<argon2::password_hash::Error> for BenwisAppError {
-            fn from(error: argon2::password_hash::Error) -> Self {
-                Self::Argon2Error(error.to_string())
-            }
-        }
     }
 }
