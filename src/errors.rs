@@ -13,8 +13,6 @@ pub enum BenwisAppError {
     SqlxError(String),
     #[error("TomlError: {0}")]
     TomlError(String),
-    #[error("Argon2Error: {0}")]
-    Argon2Error(String),
     #[error("Invalid Date or Time")]
     InvalidDateTime,
     #[error("Missing or Invalid Frontmatter")]
@@ -27,7 +25,6 @@ impl BenwisAppError {
             BenwisAppError::NotFound => StatusCode::NOT_FOUND,
             BenwisAppError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
             BenwisAppError::SqlxError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            BenwisAppError::Argon2Error(_) => StatusCode::BAD_REQUEST,
             BenwisAppError::InvalidDateTime => StatusCode::BAD_REQUEST,
             BenwisAppError::MissingOrInvalidFrontmatter => StatusCode::INTERNAL_SERVER_ERROR,
             BenwisAppError::TomlError(_) => StatusCode::INTERNAL_SERVER_ERROR,
