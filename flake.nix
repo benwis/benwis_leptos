@@ -39,14 +39,14 @@
             overlays = [ (import rust-overlay) ];
           };
 
-          rustTarget = pkgs.rust-bin.nightly."2023-06-30".default.override {
-            extensions = [ "rust-src" "rust-analyzer" ];
+          rustTarget = pkgs.rust-bin.selectLatestNightlyWith( toolchain: toolchain.default.override {
+            extensions = [ "rust-src" "rust-analyzer" "rustc-codegen-cranelift-preview" ];
             targets = [ "wasm32-unknown-unknown" ];
-          };
+          });
 
 
-          #rustTarget = pkgs.rust-bin.nightly."2023-06-01".default.override{
-          #  extensions = [ "rust-src" "rust-analyzer" ];
+          #rustTarget = pkgs.rust-bin.nightly."2023-11-11".default.override{
+          #  extensions = [ "rust-src" "rust-analyzer" "rustc-codegen-cranelift-preview" ];
           #  targets = [ "wasm32-unknown-unknown" ];
           #};
           # NB: we don't need to overlay our custom toolchain for the *entire*
@@ -169,7 +169,7 @@
 
             src = inputs.cargo-leptos-git;
 
-            cargoSha256 = "sha256-9lKD9AZ5if/pxurtWNH0V+aUPs4pdEFIJIWbiGgz4cs=";
+            cargoSha256 ="sha256-FWDDtv2Cpv3jeKkBL/FBQI9hfFueOWmUl+QYoosWNxw=";
 
             nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
@@ -190,7 +190,6 @@
           };
       };
           flyConfig = ./fly.toml;
-
           # Deploy the image to Fly with our own bash script
           flyDeploy = pkgs.writeShellScriptBin "flyDeploy" ''
             OUT_PATH=$(nix build --print-out-paths .#container)
@@ -281,6 +280,8 @@
           apps.flyDeploy = flake-utils.lib.mkApp {
             drv = flyDeploy;
           };
+
+          
           devShells.default = pkgs.mkShell {
             inputsFrom = builtins.attrValues self.checks;
 
@@ -295,12 +296,16 @@
               wasm-pack
               pkg-config
               binaryen
+              clang
+              cargo-udeps
+              hyperfine
               flamegraph
               tokio-console
               oha
               nodejs
               hey
               drill
+              mold-wrapped
               nodePackages.tailwindcss
               heaptrack
               gdb
@@ -310,6 +315,12 @@
               flyctl
             ];
             RUST_SRC_PATH = "${rustTarget}/lib/rustlib/src/rust/library";
+            MOLD_PATH = "${pkgs.mold-wrapped}/bin/mold";
+            #CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER = "${pkgs.mold}/bin/mold";
+            shellHook = ''
+            sed -i -e '/rustflags = \["-C", "link-arg=-fuse-ld=/ s|ld=.*|ld=${pkgs.mold-wrapped}/bin/mold"]|' .cargo/config.toml
+            '';
+            LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
           };
         });
 }

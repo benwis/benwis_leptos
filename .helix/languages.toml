@@ -1,0 +1,7 @@
+[[language]]
+name = "rust"
+config = { procMacro = {ignored = {leptos_macro = ["component"]}}, cargo = { features = [ "ssr" ] } }
+[language.formatter]
+command = "sh"
+args = ["-c", "rustfmt | leptosfmt --stdin"]
+

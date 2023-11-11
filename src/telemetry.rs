@@ -10,11 +10,11 @@ cfg_if! {
         //     Router,
         // };
 
-use anyhow::Result;
 use opentelemetry::sdk::{
     trace::{self, RandomIdGenerator, Sampler},
     Resource,
 };
+use anyhow::Result;
 use opentelemetry::KeyValue;
 use std::collections::HashMap;
 use opentelemetry_otlp::WithExportConfig;
@@ -49,89 +49,6 @@ where
         &conf.honeycomb_service_name,
     ) {
         (Some(honeycomb_team), Some(honeycomb_dataset), Some(honeycomb_service_name)) => {
-            //let mut map = MetadataMap::with_capacity(3);
-            //map.insert("x-honeycomb-team", honeycomb_team.parse()?);
-            //map.insert("x-honeycomb-dataset", honeycomb_dataset.parse()?);
-
-            // let mut http = hyper::client::HttpConnector::new();
-            // http.enforce_http(false);
-            //
-            // let channel =
-            //     tonic::transport::channel::Channel::from_static("https://api.honeycomb.io/")
-            //         .timeout(Duration::from_secs(3))
-            //         .connect_with_connector(hyper_tls::HttpsConnector::from((
-            //             http,
-            //             tokio_native_tls::TlsConnector::from(
-            //                 native_tls::TlsConnector::builder()
-            //                     .request_alpns(&["h2"])
-            //                     .build()
-            //                     .unwrap(),
-            //             ),
-            //         )))
-            //         .await?;
-            // let export_config = ExportConfig {
-            //     endpoint: "http://localhost:4317".to_string(),
-            //     timeout: Duration::from_secs(3),
-            //     protocol: opentelemetry_otlp::Protocol::Grpc
-            // };
-
-            // let exporter = opentelemetry_otlp::new_exporter()
-            //     .tonic()
-            //     .with_channel(channel)
-            //     .with_timeout(Duration::from_secs(3))
-            //     .with_metadata(map);
-
-            // let trace_config = opentelemetry::sdk::trace::config()
-            //     .with_sampler(opentelemetry::sdk::trace::Sampler::AlwaysOn)
-            //     // .with_id_generator(opentelemetry::sdk::trace::IdGenerator::default())
-            //     .with_resource(opentelemetry::sdk::Resource::new(vec![
-            //         opentelemetry::KeyValue::new("service.name", honeycomb_service_name.clone()),
-            //     ]));
-
-            // let tracer = opentelemetry_otlp::new_pipeline()
-            //     .tracing()
-            //     .with_exporter(exporter)
-            //     .with_trace_config(trace_config)
-            //     .install_batch(opentelemetry::runtime::Tokio)?;
-
-            // let tracer = opentelemetry_otlp::new_pipeline()
-            //     .tracing()
-            //     .with_exporter(
-            //         opentelemetry_otlp::new_exporter()
-            //             .tonic()
-            //             .with_endpoint("https://api.honeycomb.io/")
-            //             .with_timeout(Duration::from_secs(3))
-            //             .with_metadata(map),
-            //     )
-            //     .with_trace_config
-            //         trace::config()
-            //             .with_sampler(Sampler::AlwaysOn)
-            //             .with_id_generator(RandomIdGenerator::default())
-            //             .with_max_events_per_span(64)
-            //             .with_max_attributes_per_span(16)
-            //             .with_max_events_per_span(16)
-            //             .with_resource(Resource::new(vec![KeyValue::new(
-            //                 "service.name",
-            //                 honeycomb_service_name.clone(),
-            //             )])),
-            //     )
-            //     .install_batch(opentelemetry::runtime::Tokio)?;
-            //
-            // Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
-
-        // Configure Reqwest Client to use rustls-platform-verifier
-        //let client = reqwest::Client::builder()
-        //    .use_preconfigured_tls(rustls_platform_verifier::tls_config())
-        //    .build()
-        //    .expect("Failed to create Reqwest Client");
-        //let mut buf = Vec::new();
-        //File::open("certs/Amazon_RSA_2048_M02.pem")?
-        //.read_to_end(&mut buf)?;
-        //let honeycomb_cert = reqwest::tls::Certificate::from_pem(&buf).expect("Failed to load Honeycomb Cert");
-        //let client = reqwest::Client::builder()
-        //.add_root_certificate(honeycomb_cert)
-        //.build()
-        //.expect("Failed to create Reqwest Client");
         let client = reqwest::Client::builder()
             .use_rustls_tls()
             .build()
