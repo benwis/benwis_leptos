@@ -12,7 +12,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     
     cargo-leptos-git = {
-      #url= "github:leptos-rs/cargo-leptos/v1.7";
+      #url= "github:leptos-rs/cargo-leptos";
       url = "github:benwis/cargo-leptos";
       flake = false;
     };
@@ -91,6 +91,7 @@
             pkgs.protobuf
             pkgs.binaryen
             pkgs.cargo-generate
+            pkgs.tailwindcss
           ] ++ lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
             pkgs.libiconv
@@ -148,7 +149,7 @@
             buildPhaseCargoCommand = "cargo leptos build --release -vvv";
             installPhaseCommand = ''
             mkdir -p $out/bin
-            cp target/server/x86_64-unknown-linux-gnu/release/benwis_leptos $out/bin/
+            cp target/x86_64-unknown-linux-gnu/release/benwis_leptos $out/bin/
             cp -r target/site $out/bin/
             '';
             # Prevent cargo test and nextest from duplicating tests
@@ -164,12 +165,12 @@
           
           cargo-leptos-git = pkgs.rustPlatform.buildRustPackage rec {
             pname = "cargo-leptos";
-            version = "0.1.11";
+            version = "0.2.22";
             buildFeatures = ["no_downloads"]; # cargo-leptos will try to download Ruby and other things without this feature
 
             src = inputs.cargo-leptos-git;
 
-            cargoSha256 ="sha256-FWDDtv2Cpv3jeKkBL/FBQI9hfFueOWmUl+QYoosWNxw=";
+            cargoSha256 ="sha256-Wg5/cMys5cQfv8JctVH8uUixwh7wANzwlqTsDibU2rI=";
 
             nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
@@ -301,6 +302,7 @@
               hyperfine
               flamegraph
               tokio-console
+              tailwindcss
               oha
               nodejs
               hey

@@ -3,11 +3,11 @@
     "advisory-db": {
       "flake": false,
       "locked": {
-        "lastModified": 1699437461,
-        "narHash": "sha256-XlzC3yoYgaBos53DFiXOpQTr5713t3OXeDFg4IcVyQw=",
+        "lastModified": 1699714741,
+        "narHash": "sha256-7cRZc3RoBv4n9GgMun+OoTK5ssI2fzqkDAZsp37uhTs=",
         "owner": "rustsec",
         "repo": "advisory-db",
-        "rev": "0f4e16f7cd4339870985903cde44ea45ffe265c5",
+        "rev": "3338fcfb59cea5fcd7d2a4e7fe24cbc7cb778003",
         "type": "github"
       },
       "original": {
@@ -19,11 +19,11 @@
     "cargo-leptos-git": {
       "flake": false,
       "locked": {
-        "lastModified": 1698795750,
-        "narHash": "sha256-vl8t/m115hedA2O615Y4xJgu0hQmJB7zDf95aKm9JqI=",
+        "lastModified": 1699742891,
+        "narHash": "sha256-vvbJNmGiNHf1CJA32uhc89BRpSfYYmTYi1bqJZQPb58=",
         "owner": "benwis",
         "repo": "cargo-leptos",
-        "rev": "0bdd77d1f39d069f661604cf015d19ec84f823d1",
+        "rev": "bdec34885f2d1b00b62df5514d8e2f4711347d79",
         "type": "github"
       },
       "original": {
