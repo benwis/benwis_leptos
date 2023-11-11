@@ -42,8 +42,9 @@ pub fn Index() -> impl IntoView {
         <section class="mb-16 w-9/12 flex flex-col">
             <div class="mx-auto">
                 <h3 class="mb-6 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
-                    "Recent Posts"
+                    "Recent Post"
                 </h3>
+                <dfn>121200251142</dfn>
                 <div class="flex flex-col gap-6 md:flex-row">
                     <Transition fallback=move || {
                         view! { <p>"Loading..."</p> }
