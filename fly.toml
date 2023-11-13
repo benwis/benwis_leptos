@@ -41,4 +41,4 @@ app = "benwis-leptos"
 [env]
   HONEYCOMB_DATASET="benwis_leptos"
   HONEYCOMB_SERVICE_NAME="benwis_leptos"
-
+  LEPTOS_ENV="production"
