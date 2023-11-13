@@ -90,14 +90,14 @@ if #[cfg(feature = "ssr")] {
         };
 
         // Get telemetry layer
-        if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var").to_lowercase() == "local" {
-            println!("LOCAL ENVIRONMENT");
+        if env::var("LEPTOS_ENV").expect("Failed to find LEPTOS_ENVIRONMENT Env Var").to_lowercase() == "dev" {
+            println!("DEV ENVIRONMENT");
             init_subscriber(get_subscriber(
                 "benwis_leptos".into(),
                 "INFO".into(),
                 std::io::stdout,
             ));
-        } else if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "prod_no_trace" {
+        } else if env::var("LEPTOS_ENV").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "prod_no_trace" {
             init_subscriber(get_subscriber(
                 "benwis_leptos".into(),
                 "INFO".into(),

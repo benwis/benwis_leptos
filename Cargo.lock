@@ -1600,6 +1600,7 @@ version = "0.5.2"
 source = "git+https://github.com/leptos-rs/leptos#8573f22d963b82d2877df7042d2499e819234c2b"
 dependencies = [
  "async-recursion",
+ "base64 0.21.5",
  "cfg-if",
  "drain_filter_polyfill",
  "futures",
@@ -1612,6 +1613,7 @@ dependencies = [
  "once_cell",
  "pad-adapter",
  "paste",
+ "rand",
  "rustc-hash",
  "serde",
  "serde_json",

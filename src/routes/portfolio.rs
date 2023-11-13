@@ -5,7 +5,6 @@ use leptos_meta::*;
 #[component]
 pub fn Portfolio() -> impl IntoView {
     view! {
-        impl
         <Meta property="og:title" content="My Portfolio"/>
         <Title text="My Portfolio"/>
         <Meta name="description" content="A collection of things I've built or helped build."/>

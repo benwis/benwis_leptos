@@ -267,7 +267,7 @@
               pathsToLink = [ "/bin" "/db" "/migrations /bytehound" ];
             };
             config = {
-              Env = [  "LEPTOS_ENVIRONMENT=prod_no_trace" "RUST_LOG=warn" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
+              Env = [  "LEPTOS_ENV=prod_no_trace" "RUST_LOG=warn" "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" "LEPTOS_OUTPUT_NAME=benwis_leptos" "LEPTOS_SITE_ADDR=0.0.0.0:3000" "LEPTOS_SITE_ROOT=${benwis_leptos}/bin/site" ];
 
               ExposedPorts = {
                 "3000/tcp" = { };

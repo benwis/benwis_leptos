@@ -14,10 +14,10 @@ console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
 leptos = { git="https://github.com/leptos-rs/leptos", features = [
-	"serde", "tracing", "nightly", "experimental-islands"
+	"serde", "tracing", "nightly", "experimental-islands", "nonce"
 ] }
 leptos_meta = { git="https://github.com/leptos-rs/leptos", features=["nightly"] }
-leptos_axum = { git="https://github.com/leptos-rs/leptos", features = ["experimental-islands"], optional = true }
+leptos_axum = { git="https://github.com/leptos-rs/leptos", features = ["experimental-islands","nonce"], optional = true }
 leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"] }
 
 #leptos = { git="https://github.com/benwis/leptos", branch="meta_line_breaks", features = [
