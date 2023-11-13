@@ -23,7 +23,7 @@ pub fn BenwisApp() -> impl IntoView {
                         use_nonce()
                             .map(|nonce| {
                                 format!(
-                                    "default-src 'self'; base-uri 'self'; img-src 'nonce-{nonce}' 'self' https://benwis.imgix.net; script-src 'nonce-{nonce}' 'strict-dynamic' 'wasm-unsafe-eval';"
+                                    "default-src 'self'; base-uri 'self'; img-src 'nonce-{nonce}' 'self' https://benwis.imgix.net https://cdn.usefathom.com; script-src 'nonce-{nonce}' 'strict-dynamic' 'wasm-unsafe-eval'; style-src 'nonce-{nonce}' 'self' https://cdn.usefathom.com/script.js;"
                                 )
                             })
                             .unwrap_or_default()
