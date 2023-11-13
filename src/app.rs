@@ -14,19 +14,26 @@ pub fn BenwisApp() -> impl IntoView {
     _ = provide_color_scheme();
     provide_meta_context();
     view! {
-        <Meta
-            http_equiv="Content-Security-Policy"
-            content=move || {
-                use_nonce()
-                    .map(|nonce| {
-                        format!(
-                            "default-src 'self'; base-uri 'self'; img-src 'self' https://* http://*; script-src 'strict-dynamic' 'nonce-{nonce}' \
-                                    'wasm-unsafe-eval' 'unsafe-inline'; style-src 'nonce-{nonce}';"
-                        )
-                    })
-                    .unwrap_or_default()
+        {
+            if std::env::var("LEPTOS_ENV") == Ok("dev".to_string()){
+                view!{
+                <Meta
+                    http_equiv="Content-Security-Policy"
+                    content=move || {
+                        use_nonce()
+                            .map(|nonce| {
+                                format!(
+                                    "default-src 'self'; base-uri 'self'; img-src 'nonce-{nonce}' 'self' https://benwis.imgix.net; script-src 'nonce-{nonce}' 'strict-dynamic' 'wasm-unsafe-eval';"
+                                )
+                            })
+                            .unwrap_or_default()
+                    }
+                />
+                    }.into_view()
+            } else{
+            ().into_view()
             }
-        />
+        }
         <Router>
             <Routes>
                 <Route
