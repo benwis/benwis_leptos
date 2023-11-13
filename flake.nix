@@ -69,8 +69,9 @@
           icoFilter = path: _type: builtins.match ".*ico$" path != null;
           pemFilter = path: _type: builtins.match ".*pem$" path !=null;
           soFilter = path: _type: builtins.match ".*so$" path !=null;
+          jsFilter = path: _type: builtins.match ".*js$" path !=null;
           protoOrCargo = path: type:
-            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (soFilter path type) || (pemFilter path type) ||(cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
+            (protoFilter path type) || (craneLib.filterCargoSources path type) || (sqlxFilter path type) || (sqlFilter path type) || (jsFilter path type) || (soFilter path type) || (pemFilter path type) ||(cssFilter path type) || (woff2Filter path type) || (ttfFilter path type) || (webpFilter path type) || (icoFilter path type) || (jpegFilter path type) || (pngFilter path type);
           # other attributes omitted
 
           # Include more types of files in our bundle
