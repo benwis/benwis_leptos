@@ -15,7 +15,7 @@ pub fn BenwisApp() -> impl IntoView {
     provide_meta_context();
     view! {
         {
-            if std::env::var("LEPTOS_ENV") == Ok("dev".to_string()){
+            if std::env::var("LEPTOS_ENV") == Ok("prod".to_string()){
                 view!{
                 <Meta
                     http_equiv="Content-Security-Policy"
