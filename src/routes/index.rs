@@ -45,7 +45,7 @@ pub fn Index() -> impl IntoView {
                     "Recent Post"
                 </h3>
                 //<dfn>121200251142</dfn>
-                <pre>{format!("{:#?}", leptos::nonce::use_nonce())}</pre>
+                //<pre>{format!("{:#?}", leptos::nonce::use_nonce())}</pre>
                 <div class="flex flex-col gap-6 md:flex-row">
                     <Transition fallback=move || {
                         view! { <p>"Loading..."</p> }
