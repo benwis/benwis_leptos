@@ -1,6 +1,8 @@
 [workspace]
 members = ["app", "frontend", "benwis_server", "models", "errors"]
 resolver = "2"
+version = "0.1.0"
+name = "benwis"
 
 # need to be applied only to wasm build
 [profile.wasm-release]

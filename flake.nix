@@ -84,6 +84,8 @@
           # Common arguments can be set here
           commonArgs = {
             inherit src;
+          pname = "benwis";
+          version = "0.1.0";
           buildInputs = [
             # Add additional build inputs here
             cargo-leptos-git
@@ -150,7 +152,7 @@
             buildPhaseCargoCommand = "cargo leptos build --release -vvv";
             installPhaseCommand = ''
             mkdir -p $out/bin
-            cp target/x86_64-unknown-linux-gnu/release/benwis_leptos $out/bin/
+            cp target/x86_64-unknown-linux-gnu/release/benwis_server $out/bin/
             cp -r target/site $out/bin/
             '';
             # Prevent cargo test and nextest from duplicating tests
