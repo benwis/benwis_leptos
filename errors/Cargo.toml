@@ -1,0 +1,19 @@
+[package]
+name = "errors"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+http.workspace = true
+cfg-if.workspace = true
+thiserror.workspace = true
+miette = "5.10.0"
+serde = { version = "1.0.192", features = ["derive"] }
+toml = { version = "0.8.8", features = ["preserve_order"] }
+sqlx = { version = "0.7.2", optional = true }
+
+[features]
+ssr = ["dep:sqlx"]
+hydrate = []

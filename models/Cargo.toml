@@ -1,0 +1,24 @@
+[package]
+name = "models"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cfg-if = "1.0.0"
+chrono = { version = "0.4.31", features = ["serde"] }
+femark = {git="https://github.com/benwis/femark", branch="pure_rust", optional=true}
+indexmap = { version = "2.1.0", features = ["serde"] }
+octocrab = { version = "0.32.0", optional = true }
+parking_lot = "0.12.1"
+serde = { version = "1.0.192", features = ["derive"] }
+toml = { version = "0.8.8", features = ["preserve_order"] }
+errors = {path="../errors"}
+
+[features]
+ssr = ["dep:femark", "dep:octocrab", "errors/ssr"]
+hydrate = []
