@@ -44,7 +44,7 @@ pub fn Index() -> impl IntoView {
                 <h3 class="mb-6 text-2xl font-bold tracking-tight text-black dark:text-white md:text-4xl">
                     "Recent Post"
                 </h3>
-                //<dfn>121200251142</dfn>
+                //<dfn>111700179138</dfn>
                 //<pre>{format!("{:#?}", leptos::nonce::use_nonce())}</pre>
                 <div class="flex flex-col gap-6 md:flex-row">
                     <Transition fallback=move || {
