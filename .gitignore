@@ -21,6 +21,7 @@ result
 #intellij
 .idea
 
+test_results
 results
 db/App.db
 .DS_Store

@@ -112,6 +112,7 @@ dependencies = [
  "slug",
  "sqlx",
  "thiserror",
+ "tracing",
  "web-sys",
 ]
 

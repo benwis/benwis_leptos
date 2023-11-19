@@ -107,3 +107,6 @@ lib-features = []
 #
 # Optional. Defaults to false.
 lib-default-features = false
+
+[profile]
+dev = { opt-level = 0, package = { "*" = { opt-level = 0 } } }

@@ -2,10 +2,15 @@
 codegen-backend = true
 profile-rustflags = true
 
+[build]
+rustflags = ["-Z", "threads=8"]
+#rustflags = ["-Z", "threads=8"]
+
+
 [profile.server-dev]
 #codegen-backend="cranelift"
 #rustflags = ["-Z", "threads=8"]
 
 [target.x86_64-unknown-linux-gnu]
-#linker = "clang"
-#rustflags = ["-C", "link-arg=-fuse-ld=/nix/store/fhmmp2dmkbkjzywbvjpxp3hwm8jxi9yx-mold-wrapper-2.3.2/bin/mold"]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=/nix/store/fhmmp2dmkbkjzywbvjpxp3hwm8jxi9yx-mold-wrapper-2.3.2/bin/mold"]

@@ -173,7 +173,7 @@
 
             src = inputs.cargo-leptos-git;
 
-            cargoSha256 ="sha256-Wg5/cMys5cQfv8JctVH8uUixwh7wANzwlqTsDibU2rI=";
+            cargoSha256 ="sha256-vD9+6Vgclx3/Q4KmGChI8tmj18PR7OXuViE6V++G5QU=";
 
             nativeBuildInputs = [pkgs.pkg-config pkgs.openssl];
 
