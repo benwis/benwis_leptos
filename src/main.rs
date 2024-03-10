@@ -1,4 +1,5 @@
 use cfg_if::cfg_if;
+use tokio::net::TcpListener;
 
 // boilerplate to run in different modes
 cfg_if! {
@@ -18,7 +19,7 @@ if #[cfg(feature = "ssr")] {
     use benwis_leptos::telemetry::{get_subscriber,get_subscriber_with_tracing, init_subscriber};
 
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
-    use leptos::{log, view, provide_context, get_configuration};
+    use leptos::{logging::log, view, provide_context, get_configuration};
     use std::env;
     use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
     use axum_session::{SessionConfig, SessionLayer, SessionMode, SessionStore};
@@ -38,7 +39,7 @@ if #[cfg(feature = "ssr")] {
 
         log!("{:?}", path);
 
-        handle_server_fns_with_context(path, headers, raw_query, move || {
+        handle_server_fns_with_context(move || {
             provide_context( auth_session.clone());
             provide_context( app_state.pool.clone());
         }, request).await
@@ -118,7 +119,8 @@ if #[cfg(feature = "ssr")] {
         }
 
         // Auth section
-        let session_config = SessionConfig::default().with_table_name("axum_sessions").with_mode(SessionMode::Storable);
+        let session_config =
+            SessionConfig::default().with_table_name("axum_sessions");
         let auth_config = AuthConfig::<i64>::default();
         let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config).await.expect("Failed to get Session!");
 
@@ -131,7 +133,7 @@ if #[cfg(feature = "ssr")] {
         let conf = get_configuration(None).await.expect("Failed to get config");
         let leptos_options = conf.leptos_options;
         let addr = leptos_options.site_addr;
-        let routes = generate_route_list(|| view! {  <BenwisApp/> }).await;
+        let routes = generate_route_list(BenwisApp);
 
         let app_state = AppState{
             leptos_options,
@@ -152,8 +154,8 @@ if #[cfg(feature = "ssr")] {
         // run our app with hyper
         // `axum::Server` is a re-export of `hyper::Server`
         log!("listening on http://{}", &addr);
-        axum::Server::bind(&addr)
-            .serve(app.into_make_service())
+        let listener = TcpListener::bind(&addr).await.unwrap();
+        axum::serve(listener, app)
             .await
             .expect("Failed to start hyper server");
     }
