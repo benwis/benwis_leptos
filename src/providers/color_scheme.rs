@@ -13,7 +13,7 @@ fn initial_prefers_dark() -> bool {
 #[cfg(feature = "ssr")]
 fn initial_prefers_dark() -> bool {
     use axum_extra::extract::cookie::CookieJar;
-    use_context::<leptos_axum::RequestParts>()
+    use_context::<http::request::Parts>()
         .and_then(|req| {
             let cookies = CookieJar::from_headers(&req.headers);
             cookies.get("darkmode").and_then(|v| match v.value() {

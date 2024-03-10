@@ -14,12 +14,12 @@ rand_core = { version = "0.6.4", features = ["std"], optional = true }
 console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
- leptos = { git="https://github.com/leptos-rs/leptos", features = [
+ leptos = { version = "0.6", features = [
  	"serde", "tracing", "nightly"
- ], rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
- leptos_meta = { git="https://github.com/leptos-rs/leptos", features=["nightly"], rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
- leptos_axum = { git="https://github.com/leptos-rs/leptos", optional = true, rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
- leptos_router = {  git="https://github.com/leptos-rs/leptos", features = ["nightly"], rev="dbc707adcd54b7e83ed2179a9879116ebf13534d" }
+ ] }
+ leptos_meta = { version = "0.6", features=["nightly"] }
+ leptos_axum = { version = "0.6", optional = true }
+ leptos_router = { version = "0.6", features = ["nightly"] }
 #leptos = { path="../leptos/leptos", default-features = false, features = [
 #	"serde", "tracing"
 #] }
@@ -29,29 +29,29 @@ cfg-if = "1.0.0"
 log = "0.4.19"
 simple_logger = "4.2.0"
 serde = { version = "1.0.171", features = ["derive"] }
-axum = { version = "0.6.18", optional = true }
+axum = { version = "0.7", optional = true, features = ["macros"] }
 tower = { version = "0.4.13", optional = true }
-tower-http = { version = "0.4.1", features = ["compression-gzip", "fs", "trace"], optional = true }
+tower-http = { version = "0.5", features = ["compression-gzip", "fs", "trace"], optional = true }
 tokio = { version = "1.29.1", features = ["full"], optional = true }
-http = "0.2.9"
+http = "1"
 sqlx = { version = "0.7.0", features = [
 	"runtime-tokio-rustls",
 	"sqlite",
 ], optional = true }
 thiserror = "1.0.43"
-wasm-bindgen = "0.2.87"
-axum_session_auth = { version = "0.5.0", features = [
+wasm-bindgen = "=0.2.92"
+axum_session_auth = { version = "0.12.0", features = [
 	"sqlite-rustls",
 ], optional = true }
-axum_session = { version = "0.5.0", features = [
+axum_session = { version = "0.12.0", features = [
 	"sqlite-rustls",
 ], optional = true }
 argon2 = { version = "0.5.0", optional = true }
 async-trait = { version = "0.1.71", optional = true }
 miette = "5.9.0"
-axum-extra = { version = "0.7.4", features = ["cookie"] }
+axum-extra = { version = "0.9", features = ["cookie"] }
 web-sys = { version = "0.3.64", features = ["HtmlDocument"] }
-femark = { path="../femark", optional = true }
+femark = { version = "0.1", optional = true }
 slug = "0.1.4"
 chrono = { version = "0.4.26", optional = true }
 opentelemetry = { version = "0.19.0", features = ["rt-tokio"], optional = true }
