@@ -1,0 +1,14 @@
+- update removed/deprecated APIs and imports
+- resources
+- actions
+- ActionForm
+- Redirect
+- `<A/>` component
+- update routing 
+- leptos_axum for 0.7
+- router params
+- router HTML rendering
+- leptos_meta for 0.7
+- route components and migrate routing back
+- Suspense/Transition components?
+- clean up import patterns

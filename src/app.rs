@@ -15,107 +15,107 @@ pub fn BenwisApp() -> impl IntoView {
     let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContezt");
     _ = provide_color_scheme();
 
-    provide_meta_context();
+    // TODO    provide_meta_context();
 
     view! {
-        <Router>
-            <Routes>
-                <Route
-                path="minimal"
-                view=move || {
-                    view! {  <Index/> }
-                }
-            />
-                <Route
-                    path=""
-                    view=|| {
-                        view! {
-                            <Default>
-                                <ErrorBoundary fallback=| errors| {
-                                    view! {  <ErrorTemplate errors=errors/> }
-                                }>
-                                    <Outlet/>
-                                </ErrorBoundary>
-                            </Default>
-                        }
+    /*        <Router>
+                <Routes>
+                    <Route
+                    path="minimal"
+                    view=move || {
+                        view! {  <Index/> }
                     }
-                >
+                />
                     <Route
                         path=""
-                        view=move || {
-                            view! {  <Index/> }
+                        view=|| {
+                            view! {
+                                <Default>
+                                    <ErrorBoundary fallback=| errors| {
+                                        view! {  <ErrorTemplate errors=errors/> }
+                                    }>
+                                        <Outlet/>
+                                    </ErrorBoundary>
+                                </Default>
+                            }
                         }
-                    />
-                    <Route
-                        path="signup"
-                        view=move || {
-                            view! {  <Join action=auth_context.signup/> }
-                        }
-                    />
-                    <Route
-                        path="about"
-                        view=move || {
-                            view! {  <About/> }
-                        }
-                    />
-                    <Route
-                        path="portfolio"
-                        view=move || {
-                            view! {  <Portfolio/> }
-                        }
-                    />
-                    <Route
-                        path="posts"
-                        view=move || {
-                            view! {  <Blog/> }
-                        }
-                    />
-                    <Route
-                        path="posts/add"
-                        view=move || {
-                            view! {  <AddPost/> }
-                        }
-                    />
-                    <Route
-                        path="posts/:slug"
-                        view=move || {
-                            view! {  <Post/> }
-                        }
-                        ssr=SsrMode::Async
-                    />
-                    <Route
-                        path="posts/:slug/edit"
-                        view=move || {
-                            view! {  <EditPost/> }
-                        }
-                    />
-                    <Route
-                        path="login"
-                        view=move || {
-                            view! {  <Login action=auth_context.login/> }
-                        }
-                    />
-                    <Route
-                        path="logout"
-                        view=move || {
-                            view! {  <Logout action=auth_context.logout/> }
-                        }
-                    />
-                    <Route
-                        path="nedry"
-                        view=move || {
-                            view! {  <Nedry/> }
-                        }
-                    />
-                </Route>
-            //     <Route
-            //         path="/rss.xml"
-            //         view=move || {
-            //             view! {  <Rss/> }
-            //         }
-            //         ssr=SsrMode::Async
-            //     />
-            </Routes>
-        </Router>
-    }
+                    >
+                        <Route
+                            path=""
+                            view=move || {
+                                view! {  <Index/> }
+                            }
+                        />
+                        <Route
+                            path="signup"
+                            view=move || {
+                                view! {  <Join action=auth_context.signup/> }
+                            }
+                        />
+                        <Route
+                            path="about"
+                            view=move || {
+                                view! {  <About/> }
+                            }
+                        />
+                        <Route
+                            path="portfolio"
+                            view=move || {
+                                view! {  <Portfolio/> }
+                            }
+                        />
+                        <Route
+                            path="posts"
+                            view=move || {
+                                view! {  <Blog/> }
+                            }
+                        />
+                        <Route
+                            path="posts/add"
+                            view=move || {
+                                view! {  <AddPost/> }
+                            }
+                        />
+                        <Route
+                            path="posts/:slug"
+                            view=move || {
+                                view! {  <Post/> }
+                            }
+                            ssr=SsrMode::Async
+                        />
+                        <Route
+                            path="posts/:slug/edit"
+                            view=move || {
+                                view! {  <EditPost/> }
+                            }
+                        />
+                        <Route
+                            path="login"
+                            view=move || {
+                                view! {  <Login action=auth_context.login/> }
+                            }
+                        />
+                        <Route
+                            path="logout"
+                            view=move || {
+                                view! {  <Logout action=auth_context.logout/> }
+                            }
+                        />
+                        <Route
+                            path="nedry"
+                            view=move || {
+                                view! {  <Nedry/> }
+                            }
+                        />
+                    </Route>
+                //     <Route
+                //         path="/rss.xml"
+                //         view=move || {
+                //             view! {  <Rss/> }
+                //         }
+                //         ssr=SsrMode::Async
+                //     />
+                </Routes>
+            </Router>*/
+        }
 }
