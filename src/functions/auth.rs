@@ -80,11 +80,9 @@ pub async fn login(
     let user: User = User::get_from_username(username, &pool)
         .await
         .ok_or("User does not exist.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+        .map_err(ServerFnError::new)?;
 
-    match verify_password(user.password, password)
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))
-    {
+    match verify_password(user.password, password) {
         Ok(_) => {
             auth.login_user(user.id);
             auth.session.set_store(true);
@@ -128,13 +126,12 @@ pub async fn signup(
         .bind(display_name.clone())
         .bind(password_hashed)
         .execute(&pool)
-        .await
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+        .await?;
 
     let user = User::get_from_username(username, &pool)
         .await
         .ok_or("Signup failed: User does not exist.")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+        .map_err(ServerFnError::new)?;
 
     auth.login_user(user.id);
     auth.remember_user(remember.is_some());

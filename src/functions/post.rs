@@ -40,9 +40,9 @@ pub async fn add_post(
     //2023-03-28 19:30:41
 
     let created_at = match created_at_pretty.is_empty() {
-        false => NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")
-            .map_err(|e| ServerFnError::ServerError(e.to_string()))?
-            .timestamp(),
+        false => {
+            NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")?.timestamp()
+        }
         true => Utc::now().timestamp(),
     };
 
@@ -79,11 +79,7 @@ pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
     let mut posts = Vec::new();
     let mut rows = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts").fetch(&pool);
 
-    while let Some(row) = rows
-        .try_next()
-        .await
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
-    {
+    while let Some(row) = rows.try_next().await? {
         posts.push(row);
     }
 
@@ -113,11 +109,7 @@ pub async fn get_some_posts() -> Result<Vec<Post>, ServerFnError> {
         sqlx::query_as::<_, SqlPost>("SELECT * FROM posts ORDER by created_at DESC limit 3")
             .fetch(&pool);
 
-    while let Some(row) = rows
-        .try_next()
-        .await
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
-    {
+    while let Some(row) = rows.try_next().await? {
         posts.push(row);
     }
 
@@ -147,11 +139,7 @@ pub async fn get_some_posts_meta() -> Result<Vec<PostMeta>, ServerFnError> {
         sqlx::query_as::<_, SqlPostMeta>("SELECT id, user_id, title, slug, excerpt, created_at, updated_at, published, preview, links, hero, tags FROM posts ORDER by created_at DESC limit 3")
             .fetch(&pool);
 
-    while let Some(row) = rows
-        .try_next()
-        .await
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?
-    {
+    while let Some(row) = rows.try_next().await? {
         posts.push(row);
     }
 
@@ -211,8 +199,7 @@ pub async fn update_post(
     let published = published.parse::<bool>().unwrap();
     let preview = preview.parse::<bool>().unwrap();
     //2023-03-28 19:30:41
-    let created_at = NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")
-        .map_err(|e| ServerFnError::ServerError(e.to_string()))?;
+    let created_at = NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")?;
 
     let post = sqlx::query("UPDATE posts SET title=?, hero=?, created_at=?, excerpt=?, content=?,published=?,preview=? WHERE slug=?")
         .bind(title)
