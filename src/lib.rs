@@ -6,6 +6,7 @@ pub use routes::*;
 pub mod components;
 pub mod error_template;
 pub mod errors;
+#[cfg(feature = "ssr")]
 pub mod fallback;
 #[allow(clippy::too_many_arguments)]
 pub mod functions;
