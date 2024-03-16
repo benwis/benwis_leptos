@@ -6,7 +6,7 @@ use axum::{
     http::{Request, Response, StatusCode, Uri},
     response::IntoResponse,
 };
-use leptos::{view, Errors, LeptosOptions};
+use leptos::{config::LeptosOptions, view};
 use tower::ServiceExt;
 use tower_http::services::ServeDir;
 
@@ -21,13 +21,15 @@ pub async fn file_and_error_handler(
     if res.status() == StatusCode::OK {
         res.into_response()
     } else {
-        let mut errors = Errors::default();
+        println!("not found for {uri:?}");
+        /*let mut errors = Errors::default();
         errors.insert_with_default_key(BenwisAppError::NotFound);
         let handler = leptos_axum::render_app_to_stream(
             options.to_owned(),
             move || view! { <ErrorTemplate outside_errors=errors.clone()/>},
         );
-        handler(req).await.into_response()
+        handler(req).await.into_response()*/
+        todo!()
     }
 }
 

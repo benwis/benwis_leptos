@@ -1,12 +1,12 @@
 use crate::functions::post::{get_post, UpdatePost};
 use crate::models::post;
-use crate::routes::blog::PostParams;
-use leptos::*;
+//use crate::routes::blog::PostParams;
+use leptos::prelude::*;
+use leptos::{component, view, IntoView};
 use leptos_meta::*;
-use leptos_router::*;
 #[component]
 pub fn EditPost() -> impl IntoView {
-    let params = use_params::<PostParams>();
+    /*    let params = use_params::<PostParams>();
     let post = create_resource(
         move || params().map(|params| params.slug).ok().unwrap(),
         // any of the following would work (they're identical)
@@ -42,18 +42,19 @@ pub fn EditPost() -> impl IntoView {
                 })
             }
         </Transition>
-    }
+    }*/
 }
 
 #[component]
 pub fn EditPostForm(post: post::Post) -> impl IntoView {
-    let update_post = create_server_action::<UpdatePost>();
+    //let update_post = create_server_action::<UpdatePost>();
     view! {
         <Meta property="og:title" content="Edit Post"/>
         <Title text="Edit Post"/>
         <Meta name="description" content="Edit a Post"/>
         <Meta property="og:description" content="Edit a Post"/>
-        <ActionForm action=update_post class="text-black dark:text-white w-full">
+        // TODO ActionForm
+     /*   <ActionForm action=update_post class="text-black dark:text-white w-full">
             <p>
                 <label>"Post Title:"</label>
                 <input
@@ -150,6 +151,6 @@ pub fn EditPostForm(post: post::Post) -> impl IntoView {
                     "Edit Post"
                 </button>
             </p>
-        </ActionForm>
+        </ActionForm>*/
     }
 }

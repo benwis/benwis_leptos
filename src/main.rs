@@ -1,4 +1,6 @@
 use cfg_if::cfg_if;
+use leptos::{AutoReload, HydrationScripts};
+use leptos_meta::MetaTags;
 use tokio::net::TcpListener;
 
 // boilerplate to run in different modes
@@ -19,7 +21,7 @@ if #[cfg(feature = "ssr")] {
     use benwis_leptos::telemetry::{get_subscriber,get_subscriber_with_tracing, init_subscriber};
 
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
-    use leptos::{logging::log, view, provide_context, get_configuration};
+    use leptos::{logging::log, view, context::provide_context, config::get_configuration};
     use std::env;
     use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
     use axum_session::{SessionConfig, SessionLayer, SessionMode, SessionStore};
@@ -45,13 +47,34 @@ if #[cfg(feature = "ssr")] {
         }, request).await
     }
     #[tracing::instrument(level = "info", fields(error))]
- async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
+     async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
             let handler = leptos_axum::render_app_to_stream_with_context(app_state.leptos_options.clone(),
             move || {
+                println!("providing contexts here");
                 provide_context( auth_session.clone());
                 provide_context( app_state.pool.clone());
             },
-            || view! {  <BenwisApp/> }
+            move || {
+                use leptos::prelude::*;
+
+                view! {
+                    <!DOCTYPE html>
+                    <html lang="en">
+                        <head>
+                            <meta charset="utf-8"/>
+                            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                            <AutoReload options=app_state.leptos_options.clone() />
+                            //<HydrationScripts options=app_state.leptos_options.clone() islands=false/>
+                            <link rel="stylesheet" id="leptos" href="/pkg/benwis_leptos.css"/>
+                            <link rel="shortcut icon" type="image/ico" href="/favicon.ico"/>
+                            <MetaTags/>
+                        </head>
+                        <body>
+                            <BenwisApp/>
+                        </body>
+                    </html>
+                }
+            }
         );
         handler(req).await.into_response()
     }
@@ -95,7 +118,7 @@ if #[cfg(feature = "ssr")] {
         };
 
         // Get telemetry layer
-        if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var").to_lowercase() == "local" {
+        /*if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var").to_lowercase() == "local" {
             println!("LOCAL ENVIRONMENT");
             init_subscriber(get_subscriber(
                 "benwis_leptos".into(),
@@ -116,7 +139,7 @@ if #[cfg(feature = "ssr")] {
                     "INFO".into(),
                     std::io::stdout,
                 ).await);
-        }
+        }*/
 
         // Auth section
         let session_config =
@@ -134,6 +157,7 @@ if #[cfg(feature = "ssr")] {
         let leptos_options = conf.leptos_options;
         let addr = leptos_options.site_addr;
         let routes = generate_route_list(BenwisApp);
+        println!("routes = {routes:#?}");
 
         let app_state = AppState{
             leptos_options,

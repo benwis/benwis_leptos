@@ -1,6 +1,7 @@
 use leptos::children::Children;
 use leptos::reactive_graph::owner::use_context;
-use leptos::*;
+use leptos::{component, IntoView};
+use leptos::{prelude::*, view};
 use leptos_meta::*;
 
 use crate::components::{Footer, Nav};

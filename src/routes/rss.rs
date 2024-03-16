@@ -1,6 +1,7 @@
 use crate::functions::post::{get_posts, AddPost, DeletePost, UpdatePost};
 use crate::models::Post;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, server, view, IntoView};
 // export type RssEntry = {
 //     title: string;
 //     link: string;
@@ -83,7 +84,8 @@ pub fn generate_rss(title: &str, description: &str, link: &str, posts: Vec<Post>
 
 #[component]
 pub fn Rss() -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>();
+    // TODO
+    /*    let add_post = create_server_multi_action::<AddPost>();
     let update_post = create_server_action::<UpdatePost>();
     let delete_post = create_server_action::<DeletePost>();
 
@@ -124,5 +126,5 @@ pub fn Rss() -> impl IntoView {
                 rss.into_view()
             }}
         </Transition>
-    }
+    }*/
 }

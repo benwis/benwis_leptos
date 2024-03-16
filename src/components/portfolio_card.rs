@@ -1,4 +1,5 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, server, view, IntoView};
 
 #[component]
 pub fn PortfolioCard(

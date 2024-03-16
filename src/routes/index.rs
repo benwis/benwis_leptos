@@ -1,11 +1,13 @@
 use crate::components::FeatureCard;
 use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, server, view, IntoView};
 use leptos_meta::*;
 
 #[component]
 pub fn Index() -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>();
+    // TODO
+    /*let add_post = create_server_multi_action::<AddPost>();
     let update_post = create_server_action::<UpdatePost>();
     let delete_post = create_server_action::<DeletePost>();
 
@@ -19,7 +21,7 @@ pub fn Index() -> impl IntoView {
             )
         },
         move |_| get_some_posts_meta(),
-    );
+    );*/
 
     view! {
         <Meta property="og:title" content="benwis"/>
@@ -60,7 +62,8 @@ pub fn Index() -> impl IntoView {
                     "Recent Posts"
                 </h3>
                 <div class="flex flex-col gap-6 md:flex-row">
-                    <Transition fallback=move || {
+                // TODO
+          /*          <Transition fallback=move || {
                         view! {  <p>"Loading..."</p> }
                     }>
                         {move || {
@@ -97,7 +100,7 @@ pub fn Index() -> impl IntoView {
                             };
                             posts_meta.into_view()
                         }}
-                    </Transition>
+                    </Transition>*/
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"

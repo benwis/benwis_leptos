@@ -1,6 +1,6 @@
 use crate::errors::BenwisAppError;
 use cfg_if::cfg_if;
-use leptos::{Errors, *};
+use leptos::{component, prelude::*, IntoView};
 
 #[cfg(feature = "ssr")]
 use leptos_axum::ResponseOptions;
@@ -8,12 +8,11 @@ use leptos_axum::ResponseOptions;
 // A basic function to display errors served by the error boundaries. Feel free to do more complicated things
 // here than just displaying them
 #[component]
-pub fn ErrorTemplate(
-    #[prop(optional)] outside_errors: Option<Errors>,
-    #[prop(optional)] errors: Option<RwSignal<Errors>>,
-) -> impl IntoView {
-    let errors = match outside_errors {
-        Some(e) => create_rw_signal(e),
+pub fn ErrorTemplate(/*    #[prop(optional)] outside_errors: Option<Errors>,
+    #[prop(optional)] errors: Option<RwSignal<Errors>>,*/) -> impl IntoView {
+    // TODO
+    /*  let errors = match outside_errors {
+        Some(e) => RwSignal::new(e),
         None => match errors {
             Some(e) => e,
             None => panic!("No Errors found and we expected errors!"),
@@ -53,5 +52,5 @@ pub fn ErrorTemplate(
                 }
             }
         />
-    }
+    }*/
 }

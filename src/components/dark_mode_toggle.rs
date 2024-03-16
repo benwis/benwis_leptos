@@ -1,14 +1,16 @@
 use crate::providers::ColorScheme;
-use leptos::{reactive_graph::owner::use_context, *};
-use leptos_router::ActionForm;
+use leptos::prelude::*;
+use leptos::{component, context::use_context, view, IntoView};
+//use leptos_router::ActionForm;
 
 #[component]
 pub fn DarkModeToggle() -> impl IntoView {
     let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorSchemeProvider");
 
     view! {
+        // TODO
         <li class="items-center">
-            <ActionForm action=color_scheme.action>
+            //<ActionForm action=color_scheme.action>
                 <input
                     type="hidden"
                     name="prefers_dark"
@@ -32,7 +34,7 @@ pub fn DarkModeToggle() -> impl IntoView {
                         }
                     }
                 ></button>
-            </ActionForm>
+            //</ActionForm>
         </li>
     }
 }
