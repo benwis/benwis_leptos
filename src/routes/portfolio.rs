@@ -1,11 +1,11 @@
 use crate::components::PortfolioCard;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, server, view, IntoView};
 use leptos_meta::*;
 
 #[component]
 pub fn Portfolio() -> impl IntoView {
     view! {
-        impl
         <Meta property="og:title" content="My Portfolio"/>
         <Title text="My Portfolio"/>
         <Meta name="description" content="A collection of things I've built or helped build."/>
@@ -15,7 +15,7 @@ pub fn Portfolio() -> impl IntoView {
             <h1 class="mb-2 text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl ">
                 "Portfolio"
             </h1>
-            <div sty class="bg mt-2 flex w-full justify-between sm:flex-col sm:items-start md:flex-row md:items-center">
+            <div class="bg mt-2 flex w-full justify-between sm:flex-col sm:items-start md:flex-row md:items-center">
                 <p class="min-w-32 flex items-center text-sm text-gray-600 dark:text-gray-400 md:mt-0"></p>
             </div>
             <div class="-mx-4 my-2 flex h-1 w-[100vw] bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 sm:mx-0 sm:w-full"></div>

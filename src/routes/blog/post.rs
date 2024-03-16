@@ -1,54 +1,50 @@
 use crate::functions::post::get_post;
 use crate::models::post;
 use crate::providers::AuthContext;
+use leptos::reactive_graph::computed::Memo;
 use leptos::reactive_graph::owner::use_context;
-use leptos::*;
+use leptos::server::Resource;
+use leptos::tachys::either::{Either, EitherOf4};
+use leptos::{component, IntoView};
+use leptos::{prelude::*, view};
 use leptos_meta::*;
-use leptos_router::*;
-
+use routing::RouteData;
+/*
 #[derive(Params, PartialEq, Clone, Debug)]
 pub struct PostParams {
     pub slug: String,
-}
+}*/
 
-#[component]
-pub fn Post() -> impl IntoView {
-    let params = use_params::<PostParams>();
-    let post = create_blocking_resource(
-        move || params().map(|params| params.slug).ok().unwrap(),
-        move |slug| get_post(slug),
-    );
+pub fn Post(route_data: RouteData) -> impl IntoView {
+    let params = Memo::from(route_data.params);
+    // TODO typed param decoding
+    // TODO blocking resources
+    let post = Resource::new_serde(move || async move {
+        let slug = params
+            .with(|p| p.get("slug").map(ToOwned::to_owned))
+            .unwrap_or_default();
+        get_post(slug).await
+    });
 
-    view! {
-        <Transition fallback=move || {
-            view! {  <p>"Loading..."</p> }
-        }>
-            { move || post.read().map(|p|{ match p {
-                Ok(Ok(Some(post))) => {
-                    view! {  <PostContent post={post}/> }
-                        .into_view()
-                }
-                Ok(Ok(None)) => {
-                    view! {  <p>"Post Not Found"</p> }
-                        .into_view()
-                }
-                Ok(Err(_)) => {
-                    view! {  <p>"Server Error"</p> }
-                        .into_view()
-                }
-                Err(_) => {
-                    view! {  <p>"Server Fn Error"</p> }
-                        .into_view()
-                }
-            }})
+    move || {
+        async move {
+            match post.await {
+                Ok(Ok(Some(post))) => EitherOf4::A(view! {  <PostContent post={post}/> }),
+                Ok(Ok(None)) => EitherOf4::B(view! {  <p>"Post Not Found"</p> }),
+                Ok(Err(_)) => EitherOf4::C(view! {  <p>"Server Error"</p> }),
+                Err(_) => EitherOf4::D(view! {  <p>"Server Fn Error"</p> }),
             }
-        </Transition>
+        }
+        .suspend()
+        .transition()
+        .with_fallback(view! { <p>"Loading..."</p> })
+        .track()
     }
 }
 
 #[component]
 pub fn PostContent(post: post::Post) -> impl IntoView {
-    let auth_context = use_context::<AuthContext>().expect("Failed to get Auth Context");
+    //let auth_context = use_context::<AuthContext>().expect("Failed to get Auth Context");
 
     view! {
         <section class="px-4 w-full">
@@ -68,7 +64,9 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta name="twitter:card" content="summary"/>
                 <Meta name="twitter:image" content="https://benwis.imgix.net/ben_catcarbon.jpeg"/>
                 <Meta name="twitter:description" content={post.excerpt.clone().unwrap_or_default()}/>
-                <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>                <Transition fallback=|| ()>
+                <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>
+                // TODO
+                /*<Transition fallback=|| ()>
                     {move || {
                         match auth_context.user.read() {
                             Some(Ok(user)) => {
@@ -85,7 +83,7 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                             None => ().into_view(),
                         }
                     }}
-                </Transition>
+                </Transition>*/
             </div>
             {(post.preview || post.published)
                 .then(|| {

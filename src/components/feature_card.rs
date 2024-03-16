@@ -1,4 +1,5 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, server, view, IntoView};
 
 #[component]
 pub fn FeatureCard(title: String, href: String, date: String) -> impl IntoView {

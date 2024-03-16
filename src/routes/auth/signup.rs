@@ -1,10 +1,10 @@
 use crate::functions::auth::Signup;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, view, IntoView};
 use leptos_meta::*;
-use leptos_router::*;
 
 #[component]
-pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView {
+pub fn Join(/*action: Action<Signup, Result<(), ServerFnError>>*/) -> impl IntoView {
     view! {
     /*        <Meta property="og:title" content="Signup"/>
             <Title text="Signup"/>
@@ -16,7 +16,8 @@ pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView 
                     <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                         "Join"
                     </h1>
-                    <ActionForm action=action class="space-y-6">
+                    // TODO
+                    //<ActionForm action=action class="space-y-6">
                         <div>
                             <label
                                 for="email"
@@ -30,7 +31,7 @@ pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView 
                                     required
                                     name="username"
                                     type="text"
-                                    autoComplete="username"
+                                    autocomplete="username"
                                     aria-describedby="username-error"
                                     class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
                                 />
@@ -49,7 +50,7 @@ pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView 
                                     required
                                     name="display_name"
                                     type="text"
-                                    autoComplete="dipslay_name"
+                                    autocomplete="dipslay_name"
                                     aria-describedby="display_name-error"
                                     class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
                                 />
@@ -67,7 +68,7 @@ pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView 
                                     id="password"
                                     name="password"
                                     type="password"
-                                    autoComplete="new-password"
+                                    autocomplete="new-password"
                                     aria-describedby="password-error"
                                     class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
                                 />
@@ -85,7 +86,7 @@ pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView 
                                     id="password_confirmation"
                                     name="password_confirmation"
                                     type="password"
-                                    autoComplete="password_confirmation"
+                                    autocomplete="password_confirmation"
                                     aria-describedby="password_confirmation_error"
                                     class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
                                 />
@@ -105,7 +106,7 @@ pub fn Join(action: Action<Signup, Result<(), ServerFnError>>) -> impl IntoView 
                                 </a>
                             </div>
                         </div>
-                    </ActionForm>
+                    //</ActionForm>
                 </div>
             </div>
         }

@@ -1,6 +1,8 @@
 use crate::{errors::BenwisAppError, models::post::*};
 use cfg_if::cfg_if;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::reactive_graph::owner::Owner;
+use leptos::{component, error::ServerFnError, server, view, IntoView};
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
@@ -74,12 +76,12 @@ pub async fn add_post(
 #[server(GetPosts, "/api")]
 pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
     use futures::TryStreamExt;
-    let pool = pool()?;
+    let pool = pool().unwrap();
 
     let mut posts = Vec::new();
     let mut rows = sqlx::query_as::<_, SqlPost>("SELECT * FROM posts").fetch(&pool);
 
-    while let Some(row) = rows.try_next().await? {
+    while let Some(row) = rows.try_next().await.unwrap() {
         posts.push(row);
     }
 
