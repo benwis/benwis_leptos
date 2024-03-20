@@ -19,12 +19,14 @@ pub fn Post(route_data: RouteData) -> impl IntoView {
     let params = Memo::from(route_data.params);
     // TODO typed param decoding
     // TODO blocking resources
-    let post = Resource::new_serde(move || async move {
-        let slug = params
-            .with(|p| p.get("slug").map(ToOwned::to_owned))
-            .unwrap_or_default();
-        get_post(slug).await
-    });
+    let post = Resource::new_serde(
+        move || {
+            params
+                .with(|p| p.get("slug").map(ToOwned::to_owned))
+                .unwrap_or_default()
+        },
+        get_post,
+    );
 
     move || {
         async move {

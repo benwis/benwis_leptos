@@ -2,6 +2,7 @@ use crate::functions::dark_mode::ToggleDarkMode;
 use leptos::prelude::*;
 use leptos::reactive_graph::owner::provide_context;
 use leptos::reactive_graph::wrappers::read::Signal;
+use leptos::server::ServerAction;
 use leptos::{component, IntoView};
 
 #[cfg(not(feature = "ssr"))]
@@ -32,8 +33,7 @@ fn initial_prefers_dark() -> bool {
 
 #[derive(Clone)]
 pub struct ColorScheme {
-    // TODO
-    //    pub action: Action<ToggleDarkMode, Result<bool, ServerFnError>>,
+    pub action: ServerAction<ToggleDarkMode>,
     pub prefers_dark: Signal<bool>,
 }
 
@@ -42,8 +42,7 @@ pub fn provide_color_scheme() -> Signal<bool> {
     // provide_context( ColorScheme(color_scheme_signal));
 
     let initial = initial_prefers_dark();
-    /* TODO
-    let toggle_dark_mode_action = create_server_action::<ToggleDarkMode>();
+    let toggle_dark_mode_action = ServerAction::<ToggleDarkMode>::new();
     // input is `Some(value)` when pending, and `None` if not pending
     let input = toggle_dark_mode_action.input();
     // value contains most recently-returned value
@@ -54,20 +53,19 @@ pub fn provide_color_scheme() -> Signal<bool> {
     // was not resetting input. This is how it should have been implemented
     // all along, which would also have fixed the bug at 49:24!
     let prefers_dark_fn = move || {
-        match (input(), value()) {
+        match (&*input(), &*value()) {
             // if there's some current input, use that optimistically
             (Some(submission), _) => submission.prefers_dark,
             // otherwise, if there was a previous value confirmed by server, use that
-            (_, Some(Ok(value))) => value,
+            (_, Some(Ok(value))) => *value,
             // otherwise, use the initial value
             _ => initial,
         }
     };
-    let prefers_dark = Signal::derive(prefers_dark_fn);*/
-    let prefers_dark = Signal::derive(move || initial);
+    let prefers_dark = Signal::derive(prefers_dark_fn);
 
     provide_context(ColorScheme {
-        //action: toggle_dark_mode_action,
+        action: toggle_dark_mode_action,
         prefers_dark,
     });
     prefers_dark

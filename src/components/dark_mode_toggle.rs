@@ -1,7 +1,7 @@
 use crate::providers::ColorScheme;
 use leptos::prelude::*;
+use leptos::ActionForm;
 use leptos::{component, context::use_context, view, IntoView};
-//use leptos_router::ActionForm;
 
 #[component]
 pub fn DarkModeToggle() -> impl IntoView {
@@ -10,7 +10,7 @@ pub fn DarkModeToggle() -> impl IntoView {
     view! {
         // TODO
         <li class="items-center">
-            //<ActionForm action=color_scheme.action>
+            <ActionForm action=color_scheme.action>
                 <input
                     type="hidden"
                     name="prefers_dark"
@@ -34,7 +34,7 @@ pub fn DarkModeToggle() -> impl IntoView {
                         }
                     }
                 ></button>
-            //</ActionForm>
+            </ActionForm>
         </li>
     }
 }

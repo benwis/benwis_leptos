@@ -4,9 +4,10 @@ use crate::{
 };
 use leptos::{
     component,
+    context::use_context,
     error::ServerFnError,
     reactive_graph::owner::StoredValue,
-    server,
+    server::{self, ServerAction},
     tachys::either::{Either, EitherOf3},
     view, IntoView,
 };
@@ -17,31 +18,16 @@ use leptos_meta::*;
 #[component]
 pub fn Blog() -> impl IntoView {
     // TODO
-    /*    let add_post = create_server_multi_action::<AddPost>();
-    let update_post = create_server_action::<UpdatePost>();
-    let delete_post = create_server_action::<DeletePost>();
+    let add_post = ServerAction::<AddPost>::new();
+    let update_post = ServerAction::<UpdatePost>::new();
+    let delete_post = ServerAction::<DeletePost>::new();
 
-    let submissions = add_post.submissions();
+    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContext");
 
-    // list of posts is loaded from the server in reaction to changes
-    let posts = create_resource(
-        move || {
-            (
-                add_post.version().get(),
-                update_post.version().get(),
-                delete_post.version().get(),
-            )
-        },
-        move |_| get_posts(),
-    );
-
-    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContext");*/
-
-    let posts = Resource::new_serde(get_posts);
+    let posts = Resource::new_serde(|| (), |_| get_posts());
 
     let posts_view = {
-        move || {
-            async move {
+        async move {
             match posts.await {
                 Err(e) => EitherOf3::A(view! { <pre class="error">"Server Error: " {e.to_string()}</pre> }),
                 Ok(mut posts) => {
@@ -107,7 +93,6 @@ pub fn Blog() -> impl IntoView {
         }
         .suspend()
         .with_fallback("Loading...")
-        }
     };
 
     view! {

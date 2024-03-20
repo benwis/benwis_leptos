@@ -1,6 +1,6 @@
 use crate::components::PortfolioCard;
 use leptos::prelude::*;
-use leptos::{component, server, view, IntoView};
+use leptos::{component, view, IntoView};
 use leptos_meta::*;
 
 #[component]
