@@ -50,7 +50,6 @@ if #[cfg(feature = "ssr")] {
      async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
             let handler = leptos_axum::render_app_to_stream_with_context(app_state.leptos_options.clone(),
             move || {
-                println!("providing contexts here");
                 provide_context( auth_session.clone());
                 provide_context( app_state.pool.clone());
             },
@@ -63,8 +62,8 @@ if #[cfg(feature = "ssr")] {
                         <head>
                             <meta charset="utf-8"/>
                             <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                            <AutoReload options=app_state.leptos_options.clone() />
-                            //<HydrationScripts options=app_state.leptos_options.clone() islands=false/>
+                            //<AutoReload options=app_state.leptos_options.clone() />
+                            <HydrationScripts options=app_state.leptos_options.clone() islands=false/>
                             <link rel="stylesheet" id="leptos" href="/pkg/benwis_leptos.css"/>
                             <link rel="shortcut icon" type="image/ico" href="/favicon.ico"/>
                             <MetaTags/>

@@ -15,44 +15,47 @@ use routing::{NestedRoute, ParamSegment, Router, Routes, StaticSegment};
 pub fn BenwisApp() -> impl IntoView {
     // Create Actions for the Auth methods and provide the current user
     provide_auth();
-    //    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContezt");
+    let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContezt");
     _ = provide_color_scheme();
 
     provide_meta_context();
 
     // TODO better API and component version of this
-    Router::<_, BrowserUrl, _, _>::new(
-        Routes::new(
-            NestedRoute::new(StaticSegment(""), |route_data| {
-                view! {
-                    <Default>
-                        {route_data.outlet}
-                    </Default>
-                }
-            })
-            .child((
-                NestedRoute::new(StaticSegment(""), |_| Index()),
-                NestedRoute::new(StaticSegment("signup"), |_| Join()),
-                NestedRoute::new(StaticSegment("about"), |_| About()),
-                NestedRoute::new(StaticSegment("portfolio"), |_| Portfolio()),
-                NestedRoute::new(StaticSegment("posts"), |_| Blog()),
-                NestedRoute::new((StaticSegment("posts"), StaticSegment("about")), |_| {
-                    AddPost()
-                }),
-                NestedRoute::new((StaticSegment("posts"), ParamSegment("slug")), Post),
-                NestedRoute::new(
-                    (
-                        StaticSegment("posts"),
-                        ParamSegment("slug"),
-                        StaticSegment("edit"),
-                    ),
-                    |_| EditPost(),
+    let router = Router::<_, BrowserUrl, _, _>::new(
+        Routes::new((
+            NestedRoute::new(StaticSegment(""), |_| Index()),
+            NestedRoute::new(
+                StaticSegment("signup"),
+                move |_| view! { <Join action=auth_context.signup/>},
+            ),
+            NestedRoute::new(StaticSegment("about"), |_| About()),
+            NestedRoute::new(StaticSegment("portfolio"), |_| Portfolio()),
+            NestedRoute::new(StaticSegment("posts"), |_| Blog()),
+            NestedRoute::new((StaticSegment("posts"), StaticSegment("about")), |_| {
+                AddPost()
+            }),
+            NestedRoute::new((StaticSegment("posts"), ParamSegment("slug")), Post),
+            NestedRoute::new(
+                (
+                    StaticSegment("posts"),
+                    ParamSegment("slug"),
+                    StaticSegment("edit"),
                 ),
-                NestedRoute::new(StaticSegment("login"), |_| Login()),
-                NestedRoute::new(StaticSegment("logout"), |_| Logout()),
-                NestedRoute::new(StaticSegment("nedry"), |_| Nedry()),
-            )),
-        ),
+                |_| EditPost(),
+            ),
+            NestedRoute::new(
+                StaticSegment("login"),
+                move |_| view! { <Login action=auth_context.login/> },
+            ),
+            NestedRoute::new(
+                StaticSegment("logout"),
+                move |_| view! { <Logout action=auth_context.logout/> },
+            ),
+            NestedRoute::new(StaticSegment("nedry"), |_| Nedry()),
+        )),
         || "Not found!",
-    )
+    );
+    view! {
+        <Default>{router}</Default>
+    }
 }

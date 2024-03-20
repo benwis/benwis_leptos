@@ -1,11 +1,10 @@
 use crate::functions;
 use leptos::prelude::*;
-use leptos::{component, server, view, IntoView};
+use leptos::{component, server::ServerAction, view, ActionForm, IntoView};
 use leptos_meta::*;
 
 #[component]
-pub fn Login(/*action: Action<functions::auth::Login, Result<(), ServerFnError>>*/) -> impl IntoView
-{
+pub fn Login(action: ServerAction<functions::auth::Login>) -> impl IntoView {
     view! {
         <Meta property="og:title" content="Login"/>
         <Title text="Login"/>
@@ -17,8 +16,7 @@ pub fn Login(/*action: Action<functions::auth::Login, Result<(), ServerFnError>>
                 <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "Login"
                 </h1>
-                // TODO
-                //<ActionForm action=action class="space-y-6">
+                <ActionForm action=action>// TODO class="space-y-6">
                     <div>
                         <label
                             for="username"
@@ -82,7 +80,7 @@ pub fn Login(/*action: Action<functions::auth::Login, Result<(), ServerFnError>>
                             </a>
                         </div>
                     </div>
-                //</ActionForm>
+                </ActionForm>
             </div>
         </div>
     }

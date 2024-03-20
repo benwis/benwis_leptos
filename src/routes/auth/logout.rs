@@ -1,14 +1,11 @@
 use crate::functions;
-use leptos::prelude::*;
-use leptos::{component, view, IntoView};
+use leptos::{component, server::ServerAction, view, IntoView};
 use leptos_meta::*;
 
 #[component]
-pub fn Logout(/*action: Action<functions::auth::Logout, Result<(), ServerFnError>>*/
-) -> impl IntoView {
-    //_ = &action.dispatch(functions::auth::Logout {});
+pub fn Logout(action: ServerAction<functions::auth::Logout>) -> impl IntoView {
+    _ = &action.dispatch(functions::auth::Logout {});
 
-    // TODO
     view! {  <Meta property="og:title" content="Logout"/>
     <Title text="Logout"/>
     <Meta name="description" content="Logout"/>
