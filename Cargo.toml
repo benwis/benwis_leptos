@@ -15,7 +15,7 @@ console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
 leptos = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62", features = [
-	"tracing", "nightly"
+	"nightly"
 ] }
 leptos_meta = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62" }
 routing = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62" }
@@ -154,7 +154,7 @@ panic = "unwind"
 [profile.release-wasm-size]
 inherits = "release"
 lto = true
-panic = "abort"
+#panic = "abort"
 opt-level = 'z'
 strip = true
 codegen-units = 1

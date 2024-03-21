@@ -15,11 +15,10 @@ pub fn DarkModeToggle() -> impl IntoView {
                     type="hidden"
                     name="prefers_dark"
                     value=move || {
-                        //println!("{}", (color_scheme.prefers_dark).get());
-                        true //(!(color_scheme.prefers_dark)()).to_string()
+                        (!(color_scheme.prefers_dark)()).to_string()
                     }
                 />
-                /*<button
+                <button
                     type="submit"
                     class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md rounded-md shadow mx-4 dark:bg-yellow-400 bg-gray-700"
                     value=move || { if (color_scheme.prefers_dark)() { "dark" } else { "light" } }
@@ -36,7 +35,7 @@ pub fn DarkModeToggle() -> impl IntoView {
                                                                                                                                                                 "#
                         }
                     }
-                ></button>*/
+                ></button>
             </ActionForm>
         </li>
     }
