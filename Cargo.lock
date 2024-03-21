@@ -2017,7 +2017,6 @@ dependencies = [
  "serde_json",
  "server_fn",
  "thiserror",
- "tracing",
 ]
 
 [[package]]
@@ -2928,7 +2927,6 @@ dependencies = [
  "serde",
  "slotmap",
  "thiserror",
- "tracing",
 ]
 
 [[package]]

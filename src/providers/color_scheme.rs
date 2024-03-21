@@ -54,20 +54,14 @@ pub fn provide_color_scheme() -> Signal<bool> {
     // was not resetting input. This is how it should have been implemented
     // all along, which would also have fixed the bug at 49:24!
     let prefers_dark_fn = move || {
-        /*let inp = input.get();
-        let val = value.get();
-        match (inp, val) {
+        match (input.get(), value.get()) {
             // if there's some current input, use that optimistically
             (Some(submission), _) => submission.prefers_dark,
             // otherwise, if there was a previous value confirmed by server, use that
             (_, Some(Ok(value))) => value,
             // otherwise, use the initial value
             _ => initial,
-        }*/
-        //let x = value.get();
-        println!("calling input.get()");
-        let x = input.get();
-        true
+        }
     };
     let prefers_dark = Signal::derive(prefers_dark_fn);
 
