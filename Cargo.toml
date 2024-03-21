@@ -14,24 +14,24 @@ rand_core = { version = "0.6.4", features = ["std"], optional = true }
 console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
-# leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features = [
-# 	"tracing", "nightly"
-# ] }
-# leptos = { git = "https://github.com/leptos-rs/leptos", branch = "leptos_0.7", features = [
-# 	"tracing", "nightly"
-# ] }
- #leptos_meta = { version = "0.6", features=["nightly"] }
-# leptos_axum = { version = "0.6", optional = true }
-# leptos_router = { version = "0.6", features = ["nightly"] }
-leptos = { path="../leptos/leptos", features = [
+leptos = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62", features = [
 	"tracing", "nightly"
 ] }
-leptos_axum = { path="../leptos/integrations/axum", optional = true }
-server_fn_macro = { path="../leptos/server_fn_macro" }
-leptos_meta = { path="../leptos/meta" }
-routing = { path="../leptos/routing", features = [
-	"tracing"
-] }
+leptos_meta = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62" }
+routing = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62" }
+leptos_axum = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62", optional = true }
+server_fn_macro = { git = "https://github.com/leptos-rs/leptos", rev = "e0d1d62" }
+# leptos_axum = { version = "0.6", optional = true }
+# leptos_router = { version = "0.6", features = ["nightly"] }
+#leptos = { path="../leptos/leptos", features = [
+#"tracing", "nightly"
+#] }
+#leptos_axum = { path="../leptos/integrations/axum", optional = true }
+#server_fn_macro = { path="../leptos/server_fn_macro" }
+#leptos_meta = { path="../leptos/meta" }
+#routing = { path="../leptos/routing", features = [
+#"tracing"
+#] }
 log = "0.4.19"
 simple_logger = "4.2.0"
 serde = { version = "1.0.171", features = ["derive"] }
@@ -154,7 +154,7 @@ panic = "unwind"
 [profile.release-wasm-size]
 inherits = "release"
 lto = true
-# panic = "abort"
+panic = "abort"
 opt-level = 'z'
 strip = true
 codegen-units = 1

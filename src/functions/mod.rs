@@ -16,7 +16,6 @@ cfg_if! {
         use crate::functions::auth::AuthSession;
 
         pub fn pool() -> Result<SqlitePool, ServerFnError> {
-            println!("{:?}", Owner::current());
             use_context::<SqlitePool>()
                 .ok_or("Pool missing.")
                 .map_err(|_| ServerFnError::ServerError("Pool Missing".to_string()))

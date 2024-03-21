@@ -9,19 +9,19 @@ use leptos::{component, IntoView};
 use leptos::{prelude::*, view};
 use leptos_meta::*;
 use routing::location::{BrowserUrl, RequestUrl};
-use routing::{NestedRoute, ParamSegment, Router, Routes, StaticSegment};
+use routing::{FlatRouter, NestedRoute, ParamSegment, Router, Routes, StaticSegment};
 
 #[component]
 pub fn BenwisApp() -> impl IntoView {
     // Create Actions for the Auth methods and provide the current user
     provide_auth();
     let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContezt");
-    _ = provide_color_scheme();
+    provide_color_scheme();
 
     provide_meta_context();
 
     // TODO better API and component version of this
-    let router = Router::<_, BrowserUrl, _, _>::new(
+    let router = FlatRouter::<_, BrowserUrl, _, _>::new(
         Routes::new((
             NestedRoute::new(StaticSegment(""), |_| Index()),
             NestedRoute::new(

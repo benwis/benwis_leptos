@@ -50,7 +50,7 @@ pub fn Index() -> impl IntoView {
                     "Recent Posts"
                 </h3>
                 <div class="flex flex-col gap-6 md:flex-row">
-                 /*   {async move {
+                    {async move {
                         match posts_meta.await {
                             Err(e) => {
                                 EitherOf3::A(view! {  <pre class = "error" > "Server Error: " { e
@@ -70,7 +70,7 @@ pub fn Index() -> impl IntoView {
                                 }
                             }
                         }
-                    }.suspend().with_fallback(view! { <p>"Loading posts..."</p> })}*/
+                    }.suspend().track().with_fallback(view! { <p>"Loading posts..."</p> })}
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"
