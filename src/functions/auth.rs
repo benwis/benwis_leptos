@@ -1,5 +1,7 @@
 use cfg_if::cfg_if;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::server_fn::ServerFnError;
+use leptos::{component, server, IntoView};
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {

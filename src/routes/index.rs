@@ -1,25 +1,15 @@
 use crate::components::FeatureCard;
 use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
-use leptos::*;
+use leptos::server::ServerAction;
+use leptos::tachys::either::EitherOf3;
+use leptos::{component, IntoView};
+use leptos::{prelude::*, server::Resource, view};
 use leptos_meta::*;
 
 #[component]
 pub fn Index() -> impl IntoView {
-    let add_post = create_server_multi_action::<AddPost>();
-    let update_post = create_server_action::<UpdatePost>();
-    let delete_post = create_server_action::<DeletePost>();
-
     // list of posts is loaded from the server in reaction to changes
-    let posts_meta = create_resource(
-        move || {
-            (
-                add_post.version().get(),
-                update_post.version().get(),
-                delete_post.version().get(),
-            )
-        },
-        move |_| get_some_posts_meta(),
-    );
+    let posts_meta = Resource::new_serde(move || (), move |_| get_some_posts_meta());
 
     view! {
         <Meta property="og:title" content="benwis"/>
@@ -28,7 +18,7 @@ pub fn Index() -> impl IntoView {
         <Meta property="og:description" content="Ben Wishovich's personal website"/>
         <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
 
-        <div class="flex w-9/12 flex-col-reverse items-start sm:flex-row">
+       <div class="flex w-9/12 flex-col-reverse items-start sm:flex-row">
             <div class="flex flex-col pt-20 mx-auto">
                 <h1 class="mb-3 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "I am"
@@ -60,44 +50,27 @@ pub fn Index() -> impl IntoView {
                     "Recent Posts"
                 </h3>
                 <div class="flex flex-col gap-6 md:flex-row">
-                    <Transition fallback=move || {
-                        view! {  <p>"Loading..."</p> }
-                    }>
-                        {move || {
-                            let posts_meta = {
-                                move || {
-                                    posts_meta
-                                        .read()
-                                        .map(move |posts_meta| match posts_meta {
-                                            Err(e) => {
-                                                vec![
-                                                    view! {  < pre class = "error" > "Server Error: " { e
-                                                    .to_string() } </ pre > } .into_view()
-                                                ]
-                                            }
-                                            Ok(posts_meta) => {
-                                                if posts_meta.is_empty() {
-                                                    vec![
-                                                        view! {  < p class = "text-black dark:text-white" >
-                                                        "No posts were found." </ p > } .into_view()
-                                                    ]
-                                                } else {
-                                                    posts_meta
-                                                        .into_iter()
-                                                        .map(move |post_meta| {
-                                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
-                                                                .into_view()
-                                                        })
-                                                        .collect::<Vec<_>>()
-                                                }
-                                            }
+                    {async move {
+                        match posts_meta.await {
+                            Err(e) => {
+                                EitherOf3::A(view! {  <pre class = "error" > "Server Error: " { e
+                                    .to_string() } </ pre > })
+                            }
+                            Ok(posts_meta) => {
+                                if posts_meta.is_empty() {
+                                    EitherOf3::B(view! {  <p class = "text-black dark:text-white" >
+                                        "No posts were found." </ p > })
+                                } else {
+                                    EitherOf3::C(posts_meta
+                                        .into_iter()
+                                        .map(move |post_meta| {
+                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
                                         })
-                                        .unwrap_or_default()
+                                    .collect::<Vec<_>>())
                                 }
-                            };
-                            posts_meta.into_view()
-                        }}
-                    </Transition>
+                            }
+                        }
+                    }.suspend().track().with_fallback(view! { <p>"Loading posts..."</p> })}
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"

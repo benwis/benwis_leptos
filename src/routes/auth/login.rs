@@ -1,10 +1,10 @@
 use crate::functions;
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, server::ServerAction, view, ActionForm, IntoView};
 use leptos_meta::*;
-use leptos_router::*;
 
 #[component]
-pub fn Login(action: Action<functions::auth::Login, Result<(), ServerFnError>>) -> impl IntoView {
+pub fn Login(action: ServerAction<functions::auth::Login>) -> impl IntoView {
     view! {
         <Meta property="og:title" content="Login"/>
         <Title text="Login"/>
@@ -16,7 +16,7 @@ pub fn Login(action: Action<functions::auth::Login, Result<(), ServerFnError>>) 
                 <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "Login"
                 </h1>
-                <ActionForm action=action class="space-y-6">
+                <ActionForm action=action>// TODO class="space-y-6">
                     <div>
                         <label
                             for="username"
@@ -47,7 +47,7 @@ pub fn Login(action: Action<functions::auth::Login, Result<(), ServerFnError>>) 
                                 id="password"
                                 name="password"
                                 type="password"
-                                autoComplete="current-password"
+                                autocomplete="current-password"
                                 aria-describedby="password-error"
                                 class="w-full rounded border border-gray-500 px-2 py-1 text-lg"
                             />
