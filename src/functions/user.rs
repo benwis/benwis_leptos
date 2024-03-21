@@ -1,6 +1,8 @@
 use crate::functions::auth;
 use crate::models::{SafeUser, User};
-use leptos::*;
+use leptos::prelude::*;
+use leptos::server_fn::ServerFnError;
+use leptos::{component, server, view, IntoView};
 
 #[tracing::instrument(level = "info", fields(error), ret, err)]
 #[server(GetUser, "/api")]

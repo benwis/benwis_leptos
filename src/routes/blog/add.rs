@@ -1,23 +1,24 @@
 use crate::functions::post::AddPost;
-use leptos::*;
+use leptos::server::ServerAction;
+use leptos::{component, view, IntoView};
+use leptos::{prelude::*, ActionForm};
 use leptos_meta::*;
-use leptos_router::*;
+
 #[component]
 pub fn AddPost() -> impl IntoView {
-    let add_post = create_server_action::<AddPost>();
+    let add_post = ServerAction::<AddPost>::new();
 
     view! {
         <Meta property="og:title" content="Add Post"/>
         <Title text="Add Post"/>
         <Meta name="description" content="Add a post"/>
         <Meta property="og:description" content="Add a post"/>
-
         <div class="flex min-h-full w-full flex-col justify-center">
             <div class="mx-auto w-full px-8">
                 <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "Add Post"
                 </h1>
-                <ActionForm action=add_post class="w-full text-black dark:text-white">
+                <ActionForm action=add_post> // TODO // class="w-full text-black dark:text-white">
                     <p>
                         <label>"Post Title:"</label>
                         <input
@@ -51,7 +52,8 @@ pub fn AddPost() -> impl IntoView {
                             class="w-full rounded border border-gray-500 px-2 py-1 text-lg text-black bg-white"
                         />
                     </p>
-                    <p>
+                    // TODO fixme probably related to <option> in macro
+                    /*<p>
                         <label>"Published:"</label>
                         <select
                             name="published"
@@ -70,12 +72,12 @@ pub fn AddPost() -> impl IntoView {
                             <option value="false">"False"</option>
                             <option value="true">"True"</option>
                         </select>
-                    </p>
+                    </p>*/
                     <p>
                         <label>"Excerpt:"</label>
                         <textarea
                             id="excerpt"
-                            rows={5}
+                            rows="5" // {5}
                             name="excerpt"
                             class="w-full text-black border border-gray-500"
                         ></textarea>
@@ -85,7 +87,7 @@ pub fn AddPost() -> impl IntoView {
                         <br/>
                         <textarea
                             id="content"
-                            rows={20}
+                            rows="20" // TODO primitives as attribute values {20}
                             class="w-full text-black border border-gray-500"
                             name="content"
                         ></textarea>

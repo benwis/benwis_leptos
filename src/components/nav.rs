@@ -1,4 +1,8 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::reactive_graph::computed::AsyncDerived;
+use leptos::reactive_graph::owner::use_context;
+use leptos::tachys::either::Either;
+use leptos::{component, view, IntoView};
 
 use crate::components::DarkModeToggle;
 use crate::providers::AuthContext;
@@ -27,44 +31,31 @@ pub fn Nav() -> impl IntoView {
                     <a href="/portfolio">"Portfolio"</a>
                 </li>
                 <DarkModeToggle/>
-                <Transition fallback=move || ()>
-                    {move || {
-                        let user = move || match auth_context.user.read() {
-                            Some(Ok(Some(user))) => Some(user),
-                            Some(Ok(None)) => None,
-                            Some(Err(_)) => None,
-                            None => None,
-                        };
-                        view! {
-                            <Show
-                                when=move || user().is_some()
-                                fallback=|| {
-                                    view! {
-                                        <li class="items-center">
-                                            <a href="/signup">"Signup"</a>
-                                        </li>
-                                    }
-                                }
-                            >
-                                {|| ()}
-                            </Show>
-                            <Show
-                                when=move || user().is_some()
-                                fallback=|| {
-                                    view! {
-                                        <li class="items-center">
-                                            <a href="/login">"Login"</a>
-                                        </li>
-                                    }
-                                }
-                            >
+                {move || async move {
+                    match auth_context.user.await {
+                        Ok(Some(_)) => {
+                            Either::Left(view! {
                                 <li class="items-center">
                                     <a href="/logout">"Logout"</a>
                                 </li>
-                            </Show>
+                            })
                         }
-                    }}
-                </Transition>
+                        _ => {
+                            Either::Right(view! {
+                                <li class="items-center">
+                                    <a href="/signup">"Signup"</a>
+                                </li>
+                                <li class="items-center">
+                                    <a href="/logout">"Logout"</a>
+                                </li>
+                            })
+                        }
+                    }
+                }
+                    .suspend()
+                    .transition()
+                    .track()
+                }
             </ul>
         </nav>
     }

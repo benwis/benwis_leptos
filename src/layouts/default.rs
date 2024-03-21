@@ -1,4 +1,7 @@
-use leptos::*;
+use leptos::children::Children;
+use leptos::reactive_graph::owner::use_context;
+use leptos::{component, IntoView};
+use leptos::{prelude::*, view};
 use leptos_meta::*;
 
 use crate::components::{Footer, Nav};
@@ -9,6 +12,7 @@ pub fn Default(children: Children) -> impl IntoView {
     let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorScheme");
 
     view! {
+        // TODO I haven't actually implemented <html> and <body> classes in SSR yet
         <Html class=move || {
             let classes = "h-full";
             let theme = match color_scheme.prefers_dark.get() {

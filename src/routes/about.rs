@@ -1,4 +1,5 @@
-use leptos::*;
+use leptos::prelude::*;
+use leptos::{component, view, IntoView};
 use leptos_meta::*;
 
 #[component]
