@@ -20,8 +20,8 @@ pub mod telemetry;
 pub fn hydrate() {
     use crate::app::BenwisApp;
 
-    _ = console_log::init_with_level(log::Level::Info);
-    console_error_panic_hook::set_once();
+    //_ = console_log::init_with_level(log::Level::Info);
+    //console_error_panic_hook::set_once();
 
     leptos::hydrate_body(BenwisApp);
 }
