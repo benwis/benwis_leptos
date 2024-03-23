@@ -29,7 +29,6 @@ if #[cfg(feature = "ssr")] {
         #[tracing::instrument(level = "info", fields(error))]
         pub async fn into_post(self, pool: &SqlitePool) -> Post {
             let HTMLOutput{content, toc,..} = femark::process_markdown_to_html(&self.content).unwrap_or_default();
-                println!("Content: {:#?}",content);
             Post {
                 id: self.id,
                 user: SafeUser::get(self.user_id, pool).await,
