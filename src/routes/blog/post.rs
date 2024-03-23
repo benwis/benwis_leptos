@@ -7,14 +7,14 @@ use leptos_router::*;
 
 #[derive(Params, PartialEq, Clone, Debug)]
 pub struct PostParams {
-    pub slug: String,
+    pub slug: Option<String>,
 }
 
 #[component]
 pub fn Post() -> impl IntoView {
     let params = use_params::<PostParams>();
     let post = create_blocking_resource(
-        move || params().map(|params| params.slug).ok().unwrap(),
+        move || params.get().map(|params| params.slug).ok().unwrap().unwrap(),
         move |slug| get_post(slug),
     );
 
@@ -22,7 +22,7 @@ pub fn Post() -> impl IntoView {
         <Transition fallback=move || {
             view! {  <p>"Loading..."</p> }
         }>
-            { move || post.read().map(|p|{ match p {
+            { move || post.get().map(|p|{ match p {
                 Ok(Ok(Some(post))) => {
                     view! {  <PostContent post={post}/> }
                         .into_view()
@@ -69,7 +69,7 @@ pub fn PostContent(post: post::Post) -> impl IntoView {
                 <Meta name="twitter:description" content={post.excerpt.clone().unwrap_or_default()}/>
                 <Meta name="description" content={post.excerpt.clone().unwrap_or_default()}/>                <Transition fallback=|| ()>
                     {move || {
-                        match auth_context.user.read() {
+                        match auth_context.user.get() {
                             Some(Ok(user)) => {
                                 view! {
                                     <Show when=move || user.is_some() fallback=|| ()>

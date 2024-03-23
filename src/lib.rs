@@ -8,6 +8,8 @@ pub mod error_template;
 pub mod errors;
 #[cfg(feature = "ssr")]
 pub mod fallback;
+#[cfg(feature = "ssr")]
+pub mod session;
 #[allow(clippy::too_many_arguments)]
 pub mod functions;
 pub mod layouts;

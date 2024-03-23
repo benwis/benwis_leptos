@@ -8,7 +8,7 @@ use leptos_router::*;
 pub fn EditPost() -> impl IntoView {
     let params = use_params::<PostParams>();
     let post = create_resource(
-        move || params().map(|params| params.slug).ok().unwrap(),
+        move || params.get().map(|params| params.slug).ok().unwrap().unwrap(),
         // any of the following would work (they're identical)
         // move |id| async move { get_contact(id).await }
         // move |id| get_contact(id),
@@ -20,7 +20,7 @@ pub fn EditPost() -> impl IntoView {
             view! {  <p>"Loading..."</p> }
         }>
             {
-                 move || post.read().map(|p| match p {
+                 move || post.get().map(|p| match p {
                     Ok(Ok(Some(post))) => {
                         view! {
                                 <EditPostForm post={post}/>

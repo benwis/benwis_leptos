@@ -8,6 +8,7 @@ if #[cfg(feature = "ssr")] {
     use slug::slugify;
     use leptos_axum::redirect;
     use chrono::{NaiveDateTime, prelude::*};
+    use crate::functions::user::get_user;
 }}
 
 #[tracing::instrument(level = "info", fields(error), err)]
@@ -22,12 +23,13 @@ pub async fn add_post(
     preview: String,
 ) -> Result<(), ServerFnError> {
     let pool = pool()?;
-    let auth = auth()?;
-
-    // Redirect all non logged in users to Nedry!
-    if auth.is_anonymous() {
-        redirect("/nedry")
-    }
+    
+    // Check if User is logged in
+    let Ok(Some(user)) =  get_user().await else {
+        // Redirect all non logged in users to Nedry!
+        redirect("/nedry");
+        return Err(BenwisAppError::AuthError.into());
+    };
 
     let published = published.parse::<bool>().unwrap();
     let preview = preview.parse::<bool>().unwrap();
@@ -41,7 +43,7 @@ pub async fn add_post(
 
     let created_at = match created_at_pretty.is_empty() {
         false => {
-            NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")?.timestamp()
+            NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")?.and_utc().timestamp()
         }
         true => Utc::now().timestamp(),
     };
@@ -189,13 +191,14 @@ pub async fn update_post(
     preview: String,
 ) -> Result<Result<bool, BenwisAppError>, ServerFnError> {
     let pool = pool()?;
-    let auth = auth()?;
 
-    // Redirect all non logged in users to Nedry!
-    if auth.is_anonymous() {
-        redirect("/nedry")
-    }
 
+    // Check if User is logged in
+    let Ok(Some(user)) =  get_user().await else {
+        // Redirect all non logged in users to Nedry!
+        redirect("/nedry");
+        return Err(BenwisAppError::AuthError.into());
+    };
     let published = published.parse::<bool>().unwrap();
     let preview = preview.parse::<bool>().unwrap();
     //2023-03-28 19:30:41
@@ -224,13 +227,13 @@ pub async fn update_post(
 #[server(DeletePost, "/api")]
 pub async fn delete_post(id: u16) -> Result<(), ServerFnError> {
     let pool = pool()?;
-    let auth = auth()?;
 
-    // Redirect all non logged in users to Nedry!
-    if auth.is_anonymous() {
-        redirect("/nedry")
-    }
-
+    // Check if User is logged in
+    let Ok(Some(user)) =  get_user().await else {
+        // Redirect all non logged in users to Nedry!
+        redirect("/nedry");
+        return Err(BenwisAppError::AuthError.into());
+    };
     sqlx::query("DELETE FROM posts WHERE id = $1")
         .bind(id)
         .execute(&pool)

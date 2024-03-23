@@ -129,7 +129,7 @@ impl SqlUser {
         }
 
         #[tracing::instrument(level = "info", fields(error))]
-        pub async fn get_from_username(name: String, pool: &SqlitePool) -> Option<Self> {
+        pub async fn get_from_username(name: &str, pool: &SqlitePool) -> Option<Self> {
             let sqluser = sqlx::query_as::<_, SqlUser>("SELECT * FROM users WHERE username = ?")
                 .bind(name)
                 .fetch_one(pool)

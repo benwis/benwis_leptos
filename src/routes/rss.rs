@@ -107,7 +107,7 @@ pub fn Rss() -> impl IntoView {
                 let posts = {
                     move || {
                         posts
-                            .read()
+                            .get()
                             .map(|post| match post {
                                 Ok(p) => p.into_iter().filter(|p| p.published).collect::<Vec<Post>>(),
                                 Err(_) => Vec::new(),

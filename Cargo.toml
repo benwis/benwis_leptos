@@ -15,11 +15,11 @@ console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
  leptos = { version = "0.6", features = [
- 	"serde", "tracing", "nightly"
+ 	"serde", "tracing"
  ] }
- leptos_meta = { version = "0.6", features=["nightly"] }
+ leptos_meta = { version = "0.6" }
  leptos_axum = { version = "0.6", optional = true }
- leptos_router = { version = "0.6", features = ["nightly"] }
+ leptos_router = { version = "0.6" }
 #leptos = { path="../leptos/leptos", default-features = false, features = [
 #	"serde", "tracing"
 #] }
@@ -40,12 +40,6 @@ sqlx = { version = "0.7.0", features = [
 ], optional = true }
 thiserror = "1.0.43"
 wasm-bindgen = "=0.2.92"
-axum_session_auth = { version = "0.12.0", features = [
-	"sqlite-rustls",
-], optional = true }
-axum_session = { version = "0.12.0", features = [
-	"sqlite-rustls",
-], optional = true }
 argon2 = { version = "0.5.0", optional = true }
 async-trait = { version = "0.1.71", optional = true }
 miette = "5.9.0"
@@ -71,6 +65,8 @@ hyper = { version = "0.14.27", optional = true }
 tracing-logfmt = { version = "0.3.2", optional = true }
 reqwest = {version="0.11.18", default-features=false, features = ["rustls-tls"], optional = true }
 octocrab = {version="0.30.1", optional=true}
+async-session = { version = "3.0.0", optional = true }
+serde_json = "1.0.114"
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = {version="0.5", optional=true}
 
@@ -78,7 +74,7 @@ jemallocator = {version="0.5", optional=true}
 default = ["csr"]
 csr = ["leptos/csr", "leptos_meta/csr", "leptos_router/csr"]
 hydrate = ["leptos/hydrate", "leptos_meta/hydrate", "leptos_router/hydrate"]
-ssr = ["dep:axum","dep:jemallocator", "dep:octocrab", "dep:hyper", "dep:tower","dep:tracing-logfmt", "dep:hyper-tls", "dep:reqwest","dep:tokio-native-tls", "dep:native-tls", "dep:dotenvy", "dep:tracing-futures", "dep:tracing-subscriber", "dep:tracing-bunyan-formatter", "dep:tracing-log", "dep:opentelemetry", "dep:opentelemetry-otlp", "dep:tracing-opentelemetry", "dep:tonic", "dep:tokio", "dep:tower-http", "dep:axum_session_auth", "dep:axum_session", "dep:async-trait", "dep:sqlx", "dep:argon2", "dep:femark", "dep:rand", "dep:rand_core", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
+ssr = ["dep:axum","dep:jemallocator", "dep:async-session", "dep:octocrab", "dep:hyper", "dep:tower","dep:tracing-logfmt", "dep:hyper-tls", "dep:reqwest","dep:tokio-native-tls", "dep:native-tls", "dep:dotenvy", "dep:tracing-futures", "dep:tracing-subscriber", "dep:tracing-bunyan-formatter", "dep:tracing-log", "dep:opentelemetry", "dep:opentelemetry-otlp", "dep:tracing-opentelemetry", "dep:tonic", "dep:tokio", "dep:tower-http", "dep:async-trait", "dep:sqlx", "dep:argon2", "dep:femark", "dep:rand", "dep:rand_core", "leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "dep:leptos_axum", "dep:chrono"]
 
 [package.metadata.cargo-all-features]
 denylist = ["axum", "tower", "tower-http", "reqwest", "tokio", "sqlx", "leptos_axum", "femark", "chrono", "argon2","rand", "rand_core", "octocrab"]
