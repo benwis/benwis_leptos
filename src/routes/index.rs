@@ -67,7 +67,7 @@ pub fn Index() -> impl IntoView {
                             let posts_meta = {
                                 move || {
                                     posts_meta
-                                        .read()
+                                        .get()
                                         .map(move |posts_meta| match posts_meta {
                                             Err(e) => {
                                                 vec![

@@ -21,12 +21,9 @@ if #[cfg(feature = "ssr")] {
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
     use leptos::{logging::log, view, provide_context, get_configuration};
     use std::env;
-    use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
-    use axum_session::{SessionConfig, SessionLayer, SessionMode, SessionStore};
-    use axum_session_auth::{AuthSessionLayer, AuthConfig, SessionSqlitePool};
-    use crate::functions::auth::{AuthSession};
+    use sqlx::{sqlite::SqlitePoolOptions};
     use crate::app::*;
-    use crate::models::User;
+    use crate::session::SqliteStore;
     use tower_http::{compression::CompressionLayer};
     use benwis_leptos::state::AppState;
 
@@ -34,21 +31,21 @@ if #[cfg(feature = "ssr")] {
     use jemallocator::Jemalloc;
 
     #[tracing::instrument(level = "info", fields(error))]
-    async fn server_fn_handler(State(app_state): State<AppState>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, raw_query: RawQuery,
+    async fn server_fn_handler(State(app_state): State<AppState>, path: Path<String>, headers: HeaderMap, raw_query: RawQuery,
     request: Request<AxumBody>) -> impl IntoResponse {
 
         log!("{:?}", path);
 
         handle_server_fns_with_context(move || {
-            provide_context( auth_session.clone());
+            provide_context( app_state.store.clone());
             provide_context( app_state.pool.clone());
         }, request).await
     }
     #[tracing::instrument(level = "info", fields(error))]
- async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
+ async fn leptos_routes_handler(State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
             let handler = leptos_axum::render_app_to_stream_with_context(app_state.leptos_options.clone(),
             move || {
-                provide_context( auth_session.clone());
+                provide_context( app_state.store.clone());
                 provide_context( app_state.pool.clone());
             },
             || view! {  <BenwisApp/> }
@@ -118,12 +115,6 @@ if #[cfg(feature = "ssr")] {
                 ).await);
         }
 
-        // Auth section
-        let session_config =
-            SessionConfig::default().with_table_name("axum_sessions");
-        let auth_config = AuthConfig::<i64>::default();
-        let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config).await.expect("Failed to get Session!");
-
         sqlx::migrate!()
             .run(&pool)
             .await
@@ -135,9 +126,15 @@ if #[cfg(feature = "ssr")] {
         let addr = leptos_options.site_addr;
         let routes = generate_route_list(BenwisApp);
 
+
+
+        // Setup up Store for user sessions
+        let store = SqliteStore::from_pool(pool.clone());
+
         let app_state = AppState{
             leptos_options,
             pool: pool.clone(),
+            store,
         };
         // build our application with a route
         let app = Router::new()
@@ -145,9 +142,6 @@ if #[cfg(feature = "ssr")] {
         .leptos_routes_with_handler(routes, get(leptos_routes_handler) )
         .fallback(file_and_error_handler)
         .layer(TraceLayer::new_for_http())
-        .layer(AuthSessionLayer::<User, i64, SessionSqlitePool, SqlitePool>::new(Some(pool.clone()))
-        .with_config(auth_config))
-        .layer(SessionLayer::new(session_store))
         .layer(CompressionLayer::new())
         .with_state(app_state);
 

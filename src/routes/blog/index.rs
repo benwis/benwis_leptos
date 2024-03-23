@@ -41,7 +41,7 @@ pub fn Blog() -> impl IntoView {
                 let existing_posts = {
                     move || {
                         posts
-                            .read()
+                            .get()
                             .map(move |posts| match posts {
                                 Err(e) => {
                                     vec![
@@ -88,7 +88,7 @@ pub fn Blog() -> impl IntoView {
                                                         </a>
                                                         <Transition fallback=move || ()>
                                                             {move || {
-                                                                let user = move || match auth_context.user.read() {
+                                                                let user = move || match auth_context.user.get() {
                                                                     Some(Ok(Some(user))) => Some(user),
                                                                     Some(Ok(None)) => None,
                                                                     Some(Err(_)) => None,
