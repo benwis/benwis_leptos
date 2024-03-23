@@ -34,8 +34,6 @@ if #[cfg(feature = "ssr")] {
     async fn server_fn_handler(State(app_state): State<AppState>, path: Path<String>, headers: HeaderMap, raw_query: RawQuery,
     request: Request<AxumBody>) -> impl IntoResponse {
 
-        log!("{:?}", path);
-
         handle_server_fns_with_context(move || {
             provide_context( app_state.store.clone());
             provide_context( app_state.pool.clone());
