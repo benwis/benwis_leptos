@@ -24,7 +24,7 @@ pub fn Blog() -> impl IntoView {
 
     let auth_context = use_context::<AuthContext>().expect("Failed to get AuthContext");
 
-    let posts = Resource::new_serde(|| (), |_| get_posts());
+    let posts = Resource::new(|| (), |_| get_posts());
 
     let posts_view = {
         async move {

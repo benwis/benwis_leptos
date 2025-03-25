@@ -22,7 +22,7 @@ pub fn provide_auth() {
     let logout = ServerAction::<Logout>::new();
     let signup = ServerAction::<Signup>::new();
 
-    let user = Resource::new_serde(
+    let user = Resource::new(
         move || {
             (
                 login.version().get(),
