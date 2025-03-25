@@ -9,7 +9,7 @@ use leptos_meta::*;
 #[component]
 pub fn Index() -> impl IntoView {
     // list of posts is loaded from the server in reaction to changes
-    let posts_meta = Resource::new_serde(move || (), move |_| get_some_posts_meta());
+    let posts_meta = Resource::new(move || (), move |_| get_some_posts_meta());
 
     view! {
         <Meta property="og:title" content="benwis"/>
