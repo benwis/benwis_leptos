@@ -3,7 +3,6 @@ use crate::functions::user::get_safe_user;
 use crate::models::SafeUser;
 use leptos::context::provide_context;
 use leptos::prelude::*;
-use leptos::server::serializers::SerdeJson;
 use leptos::server::{Resource, ServerAction};
 use leptos::server_fn::ServerFnError;
 

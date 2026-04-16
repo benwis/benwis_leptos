@@ -1,5 +1,5 @@
 use leptos::prelude::*;
-use leptos::{component, server, view, IntoView};
+use leptos::{component, view, IntoView};
 
 pub struct FooterLink<'a> {
     name: &'a str,
@@ -66,13 +66,13 @@ pub fn Footer() -> impl IntoView {
                         .map(|link| {
                             view! {
                                 <a
-                                    //key={link.name}
-                                    href={link.href}
-                                    rel={link.rel}
+                                    // key={link.name}
+                                    href=link.href
+                                    rel=link.rel
                                     class="text-gray-400 dark:text-white hover:text-gray-500"
                                 >
                                     <span class="sr-only">{link.name}</span>
-                                    <div inner_html={link.icon}></div>
+                                    <div inner_html=link.icon></div>
                                 </a>
                             }
                         })

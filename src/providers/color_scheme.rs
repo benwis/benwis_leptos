@@ -1,10 +1,8 @@
 use crate::functions::dark_mode::ToggleDarkMode;
 use leptos::prelude::*;
-use leptos::reactive_graph::owner::provide_context;
-use leptos::reactive_graph::wrappers::read::Signal;
+use leptos::reactive::owner::provide_context;
+use leptos::reactive::wrappers::read::Signal;
 use leptos::server::ServerAction;
-use leptos::server_fn::ServerFnError;
-use leptos::{component, IntoView};
 
 #[cfg(not(feature = "ssr"))]
 fn initial_prefers_dark() -> bool {

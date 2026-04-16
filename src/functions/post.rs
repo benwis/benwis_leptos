@@ -1,8 +1,8 @@
 use crate::{errors::BenwisAppError, models::post::*};
 use cfg_if::cfg_if;
 use leptos::prelude::*;
-use leptos::reactive_graph::owner::Owner;
-use leptos::{component, error::ServerFnError, server, view, IntoView};
+use leptos::reactive::owner::Owner;
+use leptos::{component, prelude::*, server, view, IntoView};
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
@@ -43,7 +43,7 @@ pub async fn add_post(
 
     let created_at = match created_at_pretty.is_empty() {
         false => {
-            NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")?.timestamp()
+            NaiveDateTime::parse_from_str(&created_at_pretty, "%Y-%m-%d %H:%M:%S")?.and_utc().timestamp()
         }
         true => Utc::now().timestamp(),
     };
@@ -206,7 +206,7 @@ pub async fn update_post(
     let post = sqlx::query("UPDATE posts SET title=?, hero=?, created_at=?, excerpt=?, content=?,published=?,preview=? WHERE slug=?")
         .bind(title)
         .bind(hero)
-        .bind(created_at.timestamp())
+        .bind(created_at.and_utc().timestamp())
         .bind(excerpt)
         .bind(content)
         .bind(published)
