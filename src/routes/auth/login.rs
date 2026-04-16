@@ -1,22 +1,23 @@
 use crate::functions;
 use leptos::prelude::*;
-use leptos::{component, server::ServerAction, view, ActionForm, IntoView};
+use leptos::{component, server::ServerAction, view, IntoView};
 use leptos_meta::*;
 
 #[component]
 pub fn Login(action: ServerAction<functions::auth::Login>) -> impl IntoView {
     view! {
-        <Meta property="og:title" content="Login"/>
-        <Title text="Login"/>
-        <Meta name="description" content="Login to the site"/>
-        <Meta property="og:description" content="Login to the site"/>
-        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+        <Meta property="og:title" content="Login" />
+        <Title text="Login" />
+        <Meta name="description" content="Login to the site" />
+        <Meta property="og:description" content="Login to the site" />
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg" />
         <div class="flex min-h-full flex-col justify-center">
             <div class="mx-auto w-full max-w-md px-8">
                 <h1 class="mb-4 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "Login"
                 </h1>
-                <ActionForm action=action>// TODO class="space-y-6">
+                // TODO class="space-y-6">
+                <ActionForm action=action>
                     <div>
                         <label
                             for="username"

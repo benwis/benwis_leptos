@@ -14,9 +14,7 @@ rand_core = { version = "0.6.4", features = ["std"], optional = true }
 console_error_panic_hook = "0.1.7"
 futures = "0.3.28"
 cfg-if = "1.0.0"
-leptos = { git = "https://github.com/leptos-rs/leptos", features = [
-	"nightly"
-] }
+leptos = { git = "https://github.com/leptos-rs/leptos" }
 leptos_meta = { git = "https://github.com/leptos-rs/leptos" }
 leptos_router = { git = "https://github.com/leptos-rs/leptos" }
 leptos_axum = { git = "https://github.com/leptos-rs/leptos", optional = true }
@@ -35,7 +33,7 @@ server_fn_macro = { git = "https://github.com/leptos-rs/leptos" }
 log = "0.4.19"
 simple_logger = "4.2.0"
 serde = { version = "1.0.171", features = ["derive"] }
-axum = { version = "0.7", optional = true, features = ["macros"] }
+axum = { version = "0.8", optional = true, features = ["macros"] }
 tower = { version = "0.4.13", optional = true }
 tower-http = { version = "0.5", features = ["compression-gzip", "fs", "trace"], optional = true }
 tokio = { version = "1.29.1", features = ["full"], optional = true }
@@ -45,7 +43,7 @@ sqlx = { version = "0.7.0", features = [
 	"sqlite",
 ], optional = true }
 thiserror = "1.0.43"
-wasm-bindgen = "=0.2.93"
+wasm-bindgen = "=0.2.100"
 axum_session_auth = { version = "0.12.0", features = [
 	"sqlite-rustls",
 ], optional = true }

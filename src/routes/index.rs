@@ -1,6 +1,5 @@
 use crate::components::FeatureCard;
 use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
-use leptos::server::ServerAction;
 use leptos::tachys::either::EitherOf3;
 use leptos::{component, IntoView};
 use leptos::{prelude::*, server::Resource, view};
@@ -12,13 +11,13 @@ pub fn Index() -> impl IntoView {
     let posts_meta = Resource::new(move || (), move |_| get_some_posts_meta());
 
     view! {
-        <Meta property="og:title" content="benwis"/>
-        <Title text="benwis"/>
-        <Meta name="description" content="Ben Wishovich's personal website"/>
-        <Meta property="og:description" content="Ben Wishovich's personal website"/>
-        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+        <Meta property="og:title" content="benwis" />
+        <Title text="benwis" />
+        <Meta name="description" content="Ben Wishovich's personal website" />
+        <Meta property="og:description" content="Ben Wishovich's personal website" />
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg" />
 
-       <div class="flex w-9/12 flex-col-reverse items-start sm:flex-row">
+        <div class="flex w-9/12 flex-col-reverse items-start sm:flex-row">
             <div class="flex flex-col pt-20 mx-auto">
                 <h1 class="mb-3 text-3xl text-center font-bold tracking-tight text-black dark:text-white md:text-5xl">
                     "I am"
@@ -29,7 +28,7 @@ pub fn Index() -> impl IntoView {
                     </span>
                 </h1>
                 <h2 class="mb-4 text-gray-700 dark:text-gray-200">
-                    "Software Engineer, Full Stack Web Developer, Runner." <br/>
+                    "Software Engineer, Full Stack Web Developer, Runner." <br />
                     <span class="font-semibold">
                         "Rust, Typescript, WASM, Python, React, Svelte"
                     </span>
@@ -53,24 +52,43 @@ pub fn Index() -> impl IntoView {
                     {async move {
                         match posts_meta.await {
                             Err(e) => {
-                                EitherOf3::A(view! {  <pre class = "error" > "Server Error: " { e
-                                    .to_string() } </ pre > })
+                                EitherOf3::A(
+                                    view! {
+                                        <pre class="error">"Server Error: " {e.to_string()}</pre>
+                                    },
+                                )
                             }
                             Ok(posts_meta) => {
                                 if posts_meta.is_empty() {
-                                    EitherOf3::B(view! {  <p class = "text-black dark:text-white" >
-                                        "No posts were found." </ p > })
+                                    EitherOf3::B(
+                                        view! {
+                                            <p class="text-black dark:text-white">
+                                                "No posts were found."
+                                            </p>
+                                        },
+                                    )
                                 } else {
-                                    EitherOf3::C(posts_meta
-                                        .into_iter()
-                                        .map(move |post_meta| {
-                                            view! {  <FeatureCard href={post_meta.slug} title={post_meta.title} date={post_meta.created_at_pretty}/> }
-                                        })
-                                    .collect::<Vec<_>>())
+                                    EitherOf3::C(
+                                        posts_meta
+                                            .into_iter()
+                                            .map(move |post_meta| {
+                                                view! {
+                                                    <FeatureCard
+                                                        href=post_meta.slug
+                                                        title=post_meta.title
+                                                        date=post_meta.created_at_pretty
+                                                    />
+                                                }
+                                            })
+                                            .collect::<Vec<_>>(),
+                                    )
                                 }
                             }
                         }
-                    }.suspend().track().with_fallback(view! { <p>"Loading posts..."</p> })}
+                    }
+                        .suspend()
+                        .track()
+                        .with_fallback(view! { <p>"Loading posts..."</p> })}
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"

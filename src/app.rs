@@ -4,13 +4,10 @@ use crate::providers::{provide_auth, provide_color_scheme, AuthContext};
 use crate::routes::auth::{Join, Login, Logout};
 use crate::routes::blog::*;
 use crate::routes::{About, Index, Nedry, Portfolio};
-use leptos::reactive_graph::owner::use_context;
+use leptos::reactive::owner::use_context;
 use leptos::{component, IntoView};
 use leptos::{prelude::*, view};
 use leptos_meta::*;
-use routing::location::{BrowserUrl, RequestUrl};
-use routing::{FlatRouter, NestedRoute, ParamSegment, Router, Routes, StaticSegment};
-
 #[component]
 pub fn BenwisApp() -> impl IntoView {
     // Create Actions for the Auth methods and provide the current user
@@ -26,7 +23,7 @@ pub fn BenwisApp() -> impl IntoView {
             NestedRoute::new(StaticSegment(""), |_| Index()),
             NestedRoute::new(
                 StaticSegment("signup"),
-                move |_| view! { <Join action=auth_context.signup/>},
+                move |_| view! { <Join action=auth_context.signup /> },
             ),
             NestedRoute::new(StaticSegment("about"), |_| About()),
             NestedRoute::new(StaticSegment("portfolio"), |_| Portfolio()),
@@ -45,17 +42,15 @@ pub fn BenwisApp() -> impl IntoView {
             ),
             NestedRoute::new(
                 StaticSegment("login"),
-                move |_| view! { <Login action=auth_context.login/> },
+                move |_| view! { <Login action=auth_context.login /> },
             ),
             NestedRoute::new(
                 StaticSegment("logout"),
-                move |_| view! { <Logout action=auth_context.logout/> },
+                move |_| view! { <Logout action=auth_context.logout /> },
             ),
             NestedRoute::new(StaticSegment("nedry"), |_| Nedry()),
         )),
         || "Not found!",
     );
-    view! {
-        <Default>{router}</Default>
-    }
+    view! { <Default>{router}</Default> }
 }
