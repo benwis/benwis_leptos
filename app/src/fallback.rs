@@ -1,19 +1,17 @@
-use crate::error_template::ErrorTemplate;
-use crate::errors::BenwisAppError;
 use axum::{
     body::Body,
     extract::State,
     http::{Request, Response, StatusCode, Uri},
     response::IntoResponse,
 };
-use leptos::{config::LeptosOptions, view};
+use leptos::config::LeptosOptions;
 use tower::ServiceExt;
 use tower_http::services::ServeDir;
 
 pub async fn file_and_error_handler(
     uri: Uri,
     State(options): State<LeptosOptions>,
-    req: Request<Body>,
+    _req: Request<Body>,
 ) -> Response<Body> {
     let root = options.site_root.clone();
     let res = get_static_file(uri.clone(), &root).await.unwrap();
