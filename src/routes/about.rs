@@ -1,81 +1,59 @@
 use leptos::prelude::*;
-use leptos::{component, view, IntoView};
+use leptos::{IntoView, component, view};
 use leptos_meta::*;
 
 #[component]
 pub fn About() -> impl IntoView {
     view! {
-        <Meta property="og:title" content="About Me"/>
-        <Title text="About Me"/>
-        <Meta name="description" content="A page describing me"/>
-        <Meta property="og:description" content="A page describing me"/>
-        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg"/>
+        <Meta property="og:title" content="About Me" />
+        <Title text="About Me" />
+        <Meta name="description" content="A page describing me" />
+        <Meta property="og:description" content="A page describing me" />
+        <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg" />
 
-        <div class="mx-auto grid max-w-2xl grid-cols-1 items-start justify-center gap-y-20 border-gray-200 px-4 pb-16 dark:border-gray-900 sm:px-8 md:grid-cols-2 md:gap-x-20">
-            <section>
-                <div>
-                    <div class="flex max-w-2xl flex-col items-start justify-center border-gray-200 dark:border-gray-900">
-                        <div class="flex flex-col-reverse items-start sm:flex-row">
-                            <div class="flex w-full flex-col">
-                                <h1 class="text-3xl font-bold tracking-tight text-black dark:text-white md:text-5xl">
-                                    "I am"
-                                    <span class="relative ml-2 inline-block before:absolute before:-inset-1 before:block before:rounded-lg before:py-8">
-                                        <span class="brand relative py-8 text-5xl uppercase text-yellow-400">
-                                            "BENWIS"
-                                        </span>
-                                    </span>
-                                </h1>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-6 flex max-w-2xl flex-col items-start justify-center border-gray-200 dark:border-gray-900">
-                        <div class="flex flex-col-reverse items-start sm:flex-row">
-                            <div class="flex w-full flex-col">
-                                <h1 class="text-2xl font-bold tracking-tight text-black dark:text-white md:text-2xl">
-                                    "AKA"
-                                    <span class="relative ml-2 inline-block before:absolute before:-inset-1 before:block before:rounded-lg">
-                                        <span class="brand relative skew-y-3 py-8 text-4xl uppercase text-yellow-400 dark:text-yellow-400">
-                                            "Ben Wishovich"
-                                        </span>
-                                    </span>
-                                </h1>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <p class="text-black dark:text-white">
-                    "I'm a Software Engineer and Full Stack Web Developer, living and working in the SF Bay Area. I
-                                                                                                                                                                graduated from San Jose State with a degree in Industrial and Systems Engineering, and then
-                                                                                                                                                                made the jump into software engineering and web development."
-                </p>
-                <p class="text-black dark:text-white">
-                    "I've been coding and building things since High School, and have helped build a variety of
-                                                                                                                                                                projects. Everything from mapping software for UAVs, motor controllers for automated vending
-                                                                                                                                                                machines, to electric motorcycle diagnostic software."
-                </p>
-                <p class="text-black dark:text-white">
-                    "I build web experiences using Python, TypeScript, and Rust along with React, Remix, and Svelte. Currently exploring the boundaries
-                                                                                                                                                                of web development with WASM, GraphQL, Remix, and Svelte."
-                </p>
-            </section>
-            <section>
-                <img
-                    class="rounded"
-                    src="/img/ben_catcarbon.jpeg"
-                    alt="A white guy with blue eyes, dark hair, and glasses. Kinda looks like Harry Potter. Describing yourself is hard"
-                />
-                <address class="my-4 w-full transform rounded-xl bg-gradient-to-r from-yellow-400 via-rose-400 to-cyan-500 p-1 transition-all hover:scale-[1.01]">
-                    <section class="flex flex-col rounded-lg bg-white p-4 dark:bg-gray-900">
-                        <h3 class="text-xl text-black dark:text-white">"Contact Me:"</h3>
-                        <a href="mailto:ben@benw.is" class="text-black dark:text-white">
-                            "Email"
-                        </a>
-                        <a href="https://twitter.com/iambenwis" class="text-black dark:text-white">
-                            "Twitter"
-                        </a>
+        <div id="page">
+            <div id="page__header" class="align-center">
+                <h1 id="page__heading">"About"</h1>
+            </div>
+            <div id="page__layout">
+                <div id="page__body">
+                    <img
+                        class="rounded-sm"
+                        src="/img/ben_catcarbon.png"
+                        alt="A white guy with blue eyes, dark hair, and glasses. Kinda looks like Harry Potter. Describing yourself is hard"
+                    />
+                    <section>
+                        <p>
+                            "I'm a Software Engineer and Full Stack Web Developer, living and working in the SF Bay Area. I graduated from San Jose State with a degree in Industrial and Systems Engineering, and then made the jump into software engineering and web development."
+                        </p>
+                        <br />
+                        <p>
+                            "I've been coding and building things since High School, and have helped build a variety of projects. Everything from mapping software for UAVs, motor controllers for automated vending machines, to electric motorcycle diagnostic software."
+                        </p>
+                        <br />
+                        <p>
+                            "I mostly work on Rust on the web, maintaining several crates to that purpose, including Leptos, tower-governor, and femark. The future is bright, and I'm excited to help build a better web"
+                        </p>
+                        <br />
+                        <p>
+                            "In my free time, I enjoy running, cooking all manner of delicious foods, and hot sauces."
+                        </p>
+                        <br />
+                        <address>
+                            <section>
+                                <h3>"Contact Me:"</h3>
+                                <a href="mailto:ben@benw.is">"Email"</a>
+                                <br />
+                                <a href="https://hachyderm.io/@benwis">"Mastodon"</a>
+                                <br />
+                                <a href="https://www.linkedin.com/in/benwis">"Linkedin"</a>
+                                <br />
+                                <a href="https://twitter.com/iambenwis">"Twitter"</a>
+                            </section>
+                        </address>
                     </section>
-                </address>
-            </section>
+                </div>
+            </div>
         </div>
     }
 }
