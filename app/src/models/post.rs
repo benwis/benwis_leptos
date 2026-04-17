@@ -6,7 +6,7 @@ cfg_if! {
 if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
     use femark::HTMLOutput;
-    use chrono::naive::NaiveDateTime;
+    use chrono::DateTime;
 
     #[derive(sqlx::FromRow, Debug, Clone)]
     pub struct SqlPost{
@@ -42,7 +42,7 @@ if #[cfg(feature = "ssr")] {
                 title: self.title,
                 slug: self.slug,
                 created_at: self.created_at,
-                created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
+                created_at_pretty: DateTime::from_timestamp(self.created_at, 0).unwrap_or_default().to_string(),
                 published: self.published,
                 excerpt: self.excerpt,
                 raw_content,
@@ -50,7 +50,7 @@ if #[cfg(feature = "ssr")] {
                 html: self.content,
                 toc,
                 updated_at: self.updated_at,
-                updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
+                updated_at_pretty: DateTime::from_timestamp(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
                 hero_alt: self.hero_alt,
@@ -70,11 +70,11 @@ if #[cfg(feature = "ssr")] {
                 title: self.title,
                 slug: self.slug,
                 created_at: self.created_at,
-                created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
+                created_at_pretty: DateTime::from_timestamp(self.created_at, 0).unwrap_or_default().to_string(),
                 published: self.published,
                 excerpt: self.excerpt,
                 updated_at: self.updated_at,
-                updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
+                updated_at_pretty: DateTime::from_timestamp(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
                 hero_alt: self.hero_alt,
@@ -113,11 +113,11 @@ if #[cfg(feature = "ssr")] {
                 title: self.title,
                 slug: self.slug,
                 created_at: self.created_at,
-                created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
+                created_at_pretty: DateTime::from_timestamp(self.created_at, 0).unwrap_or_default().to_string(),
                 published: self.published,
                 excerpt: self.excerpt,
                 updated_at: self.updated_at,
-                updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
+                updated_at_pretty: DateTime::from_timestamp(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
                 hero_alt: self.hero_alt,
