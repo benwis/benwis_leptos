@@ -1,12 +1,13 @@
 use crate::{
-    functions::post::{get_posts, AddPost, DeletePost, UpdatePost},
+    functions::post::{AddPost, DeletePost, UpdatePost, get_posts},
     providers::AuthContext,
 };
+use leptos::prelude::*;
 use leptos::{
-    component, context::use_context, reactive::owner::StoredValue, server::ServerAction, tachys::either::EitherOf3, view, IntoView
+    IntoView, component, context::use_context, reactive::owner::StoredValue, server::ServerAction,
+    tachys::either::EitherOf3, view,
 };
 use leptos_meta::*;
-use leptos::prelude::*;
 
 #[component]
 pub fn Blog() -> impl IntoView {
@@ -19,14 +20,18 @@ pub fn Blog() -> impl IntoView {
 
     let posts = Resource::new(|| (), |_| get_posts());
 
-    let posts_view = {
-        async move {
+    let posts_view = move || {
+        Suspend::new(async move {
             match posts.await {
-                Err(e) => EitherOf3::A(view! { <pre class="error">"Server Error: " {e.to_string()}</pre> }),
+                Err(e) => EitherOf3::A(
+                    view! { <pre class="error">"Server Error: " {e.to_string()}</pre> },
+                ),
                 Ok(mut posts) => {
                     posts.sort_by(|a, b| b.created_at.partial_cmp(&a.created_at).unwrap());
                     if posts.is_empty() {
-                        EitherOf3::B(view! { <p class="text-black dark:text-white">"No posts were found."</p> })
+                        EitherOf3::B(
+                            view! { <p class="text-black dark:text-white">"No posts were found."</p> },
+                        )
                     } else {
                         let posts = posts
                             .into_iter()
@@ -64,9 +69,7 @@ pub fn Blog() -> impl IntoView {
                     }
                 }
             }
-        }
-        .suspend()
-        .with_fallback("Loading...")
+        })
     };
 
     view! {
@@ -81,6 +84,8 @@ pub fn Blog() -> impl IntoView {
             content="The potentially misguided ramblings of a Rust developer flailing around on the web"
         />
         <Meta property="og:image" content="https://benwis.imgix.net/pictureofMe.jpeg" />
-        <pre>{posts_view}</pre>
+        <pre>
+            <Suspense fallback=|| "Loading...">{posts_view}</Suspense>
+        </pre>
     }
 }

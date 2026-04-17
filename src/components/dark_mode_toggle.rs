@@ -1,6 +1,6 @@
 use crate::providers::ColorScheme;
 use leptos::prelude::*;
-use leptos::{component, context::use_context, view, IntoView};
+use leptos::{IntoView, component, context::use_context, view};
 
 #[component]
 pub fn DarkModeToggle() -> impl IntoView {
@@ -19,7 +19,7 @@ pub fn DarkModeToggle() -> impl IntoView {
                     type="submit"
                     class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md rounded-md shadow mx-4 dark:bg-yellow-400 bg-gray-700"
                     value=move || {
-                        if (color_scheme.prefers_dark.get()) { "dark" } else { "light" }
+                        if color_scheme.prefers_dark.get() { "dark" } else { "light" }
                     }
                     inner_html=move || {
                         if (color_scheme.prefers_dark).get() {

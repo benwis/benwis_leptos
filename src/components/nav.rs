@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos::reactive::owner::use_context;
 use leptos::tachys::either::Either;
-use leptos::{component, view, IntoView};
+use leptos::{IntoView, component, view};
 
 use crate::components::DarkModeToggle;
 use crate::providers::AuthContext;
@@ -30,8 +30,8 @@ pub fn Nav() -> impl IntoView {
                     <a href="/portfolio">"Portfolio"</a>
                 </li>
                 <DarkModeToggle />
-                {move || {
-                    async move {
+                <Transition>
+                    {move || Suspend::new(async move {
                         match auth_context.user.await {
                             Ok(Some(_)) => {
                                 Either::Left(
@@ -55,11 +55,8 @@ pub fn Nav() -> impl IntoView {
                                 )
                             }
                         }
-                    }
-                        .suspend()
-                        .transition()
-                        .track()
-                }}
+                    })}
+                </Transition>
             </ul>
         </nav>
     }

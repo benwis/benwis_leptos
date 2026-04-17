@@ -11,24 +11,14 @@ cfg_if! {
         // };
 
 use anyhow::Result;
-use opentelemetry::sdk::{
-    trace::{self, RandomIdGenerator, Sampler},
-    Resource,
-};
-use opentelemetry::KeyValue;
-use std::collections::HashMap;
-use opentelemetry_otlp::WithExportConfig;
 use std::future::Future;
 use tokio::task::{spawn, spawn_blocking, JoinHandle};
-//use tonic::metadata::*;
 use tracing::subscriber::set_global_default;
 use tracing::Subscriber;
 use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
 use tracing_log::LogTracer;
-use tracing_opentelemetry::OpenTelemetryLayer;
 use tracing_subscriber::fmt::MakeWriter;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
-//use std::{fs::File, io::Read};
 
 pub struct TracingSettings{
     pub honeycomb_team: Option<String>,
@@ -37,18 +27,22 @@ pub struct TracingSettings{
 }
 
 /// Configure Honeycomb tracer
-pub async fn otel_layer<S>(
-    conf: &TracingSettings,
-) -> Result<Option<OpenTelemetryLayer<S, opentelemetry::sdk::trace::Tracer>>>
-where
-    S: tracing::Subscriber + for<'span> tracing_subscriber::registry::LookupSpan<'span>,
-{
+///
+/// NOTE: OpenTelemetry integration is temporarily disabled because the
+/// previous implementation targeted the opentelemetry 0.20-era API
+/// (`opentelemetry::sdk::*`, `new_pipeline`, `new_exporter`,
+/// `install_batch(opentelemetry::runtime::Tokio)`) which has been
+/// replaced in opentelemetry 0.31+. Restoring this should be done by
+/// someone who uses Honeycomb actively. For now this returns `None`.
+pub async fn otel_layer(
+    _conf: &TracingSettings,
+) -> Result<Option<()>> {
     match (
-        &conf.honeycomb_team,
-        &conf.honeycomb_dataset,
-        &conf.honeycomb_service_name,
+        &_conf.honeycomb_team,
+        &_conf.honeycomb_dataset,
+        &_conf.honeycomb_service_name,
     ) {
-        (Some(honeycomb_team), Some(honeycomb_dataset), Some(honeycomb_service_name)) => {
+        (Some(_honeycomb_team), Some(_honeycomb_dataset), Some(_honeycomb_service_name)) => {
             //let mut map = MetadataMap::with_capacity(3);
             //map.insert("x-honeycomb-team", honeycomb_team.parse()?);
             //map.insert("x-honeycomb-dataset", honeycomb_dataset.parse()?);
@@ -132,37 +126,8 @@ where
         //.add_root_certificate(honeycomb_cert)
         //.build()
         //.expect("Failed to create Reqwest Client");
-        let client = reqwest::Client::builder()
-            .use_rustls_tls()
-            .build()
-            .expect("Failed to build client!");
-        let tracer = opentelemetry_otlp::new_pipeline()
-        .tracing()
-        .with_exporter(
-            opentelemetry_otlp::new_exporter()
-                .http()
-                .with_endpoint("https://api.honeycomb.io/v1/traces")
-                .with_http_client(client)
-                .with_headers(HashMap::from([
-                    ("x-honeycomb-dataset".into(), honeycomb_dataset.parse()?),
-                    ("x-honeycomb-team".into(), honeycomb_team.parse()?),
-                ]))
-                .with_timeout(std::time::Duration::from_secs(2)),
-        )
-
-         .with_trace_config(
-             trace::config()
-                 .with_sampler(Sampler::AlwaysOn)
-                 .with_id_generator(RandomIdGenerator::default())
-                 //.with_max_events_per_span(64)
-                 //.with_max_attributes_per_span(16)
-                 .with_resource(Resource::new(vec![KeyValue::new(
-                     "service.name",
-                     honeycomb_service_name.clone(),
-                 )]))
-        )
-        .install_batch(opentelemetry::runtime::Tokio)?;
-        Ok(Some(tracing_opentelemetry::layer().with_tracer(tracer)))
+            // Honeycomb OTLP pipeline is temporarily disabled; see note above.
+            Ok(None)
         }
         _ => Ok(None),
     }
@@ -192,13 +157,12 @@ where
     // for more details.
     Sink: for<'a> MakeWriter<'a> + Send + Sync + 'static,
 {
-    let telemetry_layer = otel_layer(conf)
+    let _telemetry_layer = otel_layer(conf)
         .await
         .map_err(|e| {
             println!("Error: {}", e);
             e
         })
-        .unwrap()
         .unwrap();
     print!(
         "Setting up Honeycomb logging for {:?} at {:?}",
@@ -212,7 +176,7 @@ where
 
     Registry::default()
         .with(env_filter)
-        .with(telemetry_layer) // publish to honeycomb backend
+        // OpenTelemetry/Honeycomb backend layer currently disabled; see `otel_layer`.
         .with(JsonStorageLayer)
         .with(tracing_logfmt::layer())
         // .with(formatting_layer)

@@ -1,50 +1,38 @@
 use crate::functions::post::get_post;
 use crate::models::post;
 use leptos::either::EitherOf4;
-use leptos::reactive::computed::Memo;
 use leptos::server::Resource;
 use leptos::{component, IntoView};
 use leptos::{prelude::*, view};
 use leptos_meta::*;
-/*
-#[derive(Params, PartialEq, Clone, Debug)]
-pub struct PostParams {
-    pub slug: String,
-}*/
+use leptos_router::hooks::use_params_map;
 
-pub fn Post(route_data: RouteData) -> impl IntoView {
-    let params = Memo::from(route_data.params);
-    // TODO typed param decoding
-    // TODO blocking resources
+#[component]
+pub fn Post() -> impl IntoView {
+    let params = use_params_map();
     let post = Resource::new(
-        move || {
-            params
-                .with(|p| p.get("slug").map(ToOwned::to_owned))
-                .unwrap_or_default()
-        },
+        move || params.read().get("slug").unwrap_or_default(),
         get_post,
     );
 
-    move || {
-        async move {
-            match post.await {
-                Ok(Ok(Some(post))) => EitherOf4::A(view! { <PostContent post=post /> }),
-                Ok(Ok(None)) => EitherOf4::B(view! { <p>"Post Not Found"</p> }),
-                Ok(Err(_)) => EitherOf4::C(view! { <p>"Server Error"</p> }),
-                Err(_) => EitherOf4::D(view! { <p>"Server Fn Error"</p> }),
-            }
-        }
-        .suspend()
-        .transition()
-        .with_fallback(view! { <p>"Loading..."</p> })
-        .track()
+    view! {
+        <Transition fallback=|| view! { <p>"Loading..."</p> }>
+            {move || {
+                Suspend::new(async move {
+                    match post.await {
+                        Ok(Ok(Some(post))) => EitherOf4::A(view! { <PostContent post=post /> }),
+                        Ok(Ok(None)) => EitherOf4::B(view! { <p>"Post Not Found"</p> }),
+                        Ok(Err(_)) => EitherOf4::C(view! { <p>"Server Error"</p> }),
+                        Err(_) => EitherOf4::D(view! { <p>"Server Fn Error"</p> }),
+                    }
+                })
+            }}
+        </Transition>
     }
 }
 
 #[component]
 pub fn PostContent(post: post::Post) -> impl IntoView {
-    //let auth_context = use_context::<AuthContext>().expect("Failed to get Auth Context");
-
     view! {
         <section class="px-4 w-full">
             <div class="flex justify-between w-full">
