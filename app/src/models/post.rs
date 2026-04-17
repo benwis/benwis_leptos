@@ -17,6 +17,7 @@ if #[cfg(feature = "ssr")] {
      excerpt: Option<String>,
      raw_content: Option<String>,
      content: String,
+     toc: Option<String>,
      created_at: i64,
      updated_at: i64,
      published: bool,
@@ -28,11 +29,25 @@ if #[cfg(feature = "ssr")] {
      tags: Option<String>,
     }
 
+    /// Render markdown to HTML+TOC using femark.
+    pub fn render_markdown(raw: &str) -> (String, Option<String>) {
+        let HTMLOutput { content, toc, .. } =
+            femark::process_markdown_to_html(raw.to_string()).unwrap_or_default();
+        (content, toc)
+    }
+
     impl SqlPost {
         #[tracing::instrument(level = "info", fields(error))]
         pub async fn into_post(self, pool: &SqlitePool) -> Post {
             let raw_content = self.raw_content.clone().unwrap_or_else(|| self.content.clone());
-            let HTMLOutput{content, toc,..} = femark::process_markdown_to_html(raw_content.clone()).unwrap_or_default();
+            // Use cached rendered HTML if available; fall back to rendering on read
+            let (content, toc) = if self.content.starts_with('<') && !self.content.starts_with("---") {
+                // Content looks like pre-rendered HTML
+                (self.content.clone(), self.toc.clone())
+            } else {
+                // Legacy row without pre-rendered HTML — render now
+                render_markdown(&raw_content)
+            };
             let tags: Vec<String> = self.tags.as_deref()
                 .and_then(|t| serde_json::from_str(t).ok())
                 .unwrap_or_default();

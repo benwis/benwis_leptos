@@ -93,7 +93,7 @@ impl SqlUser {
             created_at: self.created_at,
             created_at_pretty: DateTime::from_timestamp(self.created_at, 0).unwrap_or_default().to_string(),
             updated_at: self.updated_at,
-            updated_at_pretty: DateTime::from_timestamp(self.created_at, 0).unwrap_or_default().to_string(),
+            updated_at_pretty: DateTime::from_timestamp(self.updated_at, 0).unwrap_or_default().to_string(),
 
             permissions: if let Some(user_perms) = sql_user_perms {
                 user_perms

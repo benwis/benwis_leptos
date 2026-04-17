@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 cfg_if! {
 if #[cfg(feature = "ssr")] {
     use crate::functions::{pool, auth};
+    use crate::models::post::render_markdown;
     use slug::slugify;
     use leptos_axum::redirect;
     use chrono::{DateTime, NaiveDateTime, prelude::*};
@@ -78,8 +79,11 @@ pub async fn add_post(
     let hero_opt = (!hero.is_empty()).then_some(hero);
     let hero_alt_opt = (!hero_alt.is_empty()).then_some(hero_alt);
     let hero_caption_opt = (!hero_caption.is_empty()).then_some(hero_caption);
-    let toc_opt = (!toc.is_empty()).then_some(toc);
     let excerpt_opt = (!excerpt.is_empty()).then_some(excerpt);
+
+    // Pre-render markdown to HTML server-side (ignore client-side preview)
+    let _ = (content, toc);
+    let (rendered_content, rendered_toc) = render_markdown(&raw_content);
 
     let tags_json = if tags.is_empty() {
         "[]".to_string()
@@ -98,7 +102,7 @@ pub async fn add_post(
     };
 
     match sqlx::query(
-        "INSERT INTO posts (title, slug, user_id, created_at, excerpt, raw_content, content, published, preview, hero, hero_alt, hero_caption, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO posts (title, slug, user_id, created_at, excerpt, raw_content, content, toc, published, preview, hero, hero_alt, hero_caption, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
     )
     .bind(title)
     .bind(slug)
@@ -106,7 +110,8 @@ pub async fn add_post(
     .bind(created_at)
     .bind(excerpt_opt)
     .bind(raw_content)
-    .bind(content)
+    .bind(rendered_content)
+    .bind(rendered_toc)
     .bind(published)
     .bind(preview)
     .bind(hero_opt)
@@ -116,10 +121,7 @@ pub async fn add_post(
     .execute(&pool)
     .await
     {
-        Ok(_row) => {
-            let _ = toc_opt;
-            Ok(())
-        }
+        Ok(_row) => Ok(()),
         Err(e) => Err(ServerFnError::new(e.to_string())),
     }
 }
@@ -131,7 +133,7 @@ pub async fn get_posts() -> Result<Vec<Post>, ServerFnError> {
 
     let mut posts = Vec::new();
     let mut rows =
-        sqlx::query_as::<_, SqlPost>("SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts ORDER BY created_at DESC")
+        sqlx::query_as::<_, SqlPost>("SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts ORDER BY created_at DESC")
             .fetch(&pool);
 
     while let Some(row) = rows.try_next().await.unwrap() {
@@ -158,7 +160,7 @@ pub async fn get_posts_paginated(page: i64, limit: i64) -> Result<Vec<Post>, Ser
 
     let mut posts = Vec::new();
     let mut rows = sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?",
     )
     .bind(limit)
     .bind(offset)
@@ -195,7 +197,7 @@ pub async fn get_some_posts() -> Result<Vec<Post>, ServerFnError> {
 
     let mut posts = Vec::new();
     let mut rows = sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts ORDER by created_at DESC limit 3",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts ORDER by created_at DESC limit 3",
     )
     .fetch(&pool);
 
@@ -244,7 +246,7 @@ pub async fn get_post(slug: String) -> Result<Result<Option<Post>, BenwisAppErro
     let pool = pool()?;
 
     let post = sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE slug=?",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE slug=?",
     )
     .bind(slug)
     .fetch_one(&pool)
@@ -267,7 +269,7 @@ pub async fn get_post_with_siblings(
 
     // Fetch current post
     let current = match sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE slug=?",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE slug=?",
     )
     .bind(&slug)
     .fetch_one(&pool)
@@ -290,7 +292,7 @@ pub async fn get_post_with_siblings(
 
     // Previous = older post (smaller created_at)
     let previous_row = match sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE created_at < ? AND published = 1 ORDER BY created_at DESC LIMIT 1",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE created_at < ? AND published = 1 ORDER BY created_at DESC LIMIT 1",
     )
     .bind(current_created_at)
     .fetch_optional(&pool)
@@ -302,7 +304,7 @@ pub async fn get_post_with_siblings(
 
     // Next = newer post (larger created_at)
     let next_row = match sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE created_at > ? AND published = 1 ORDER BY created_at ASC LIMIT 1",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, toc, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE created_at > ? AND published = 1 ORDER BY created_at ASC LIMIT 1",
     )
     .bind(current_created_at)
     .fetch_optional(&pool)
@@ -369,8 +371,11 @@ pub async fn update_post(
     let hero_opt = (!hero.is_empty()).then_some(hero);
     let hero_alt_opt = (!hero_alt.is_empty()).then_some(hero_alt);
     let hero_caption_opt = (!hero_caption.is_empty()).then_some(hero_caption);
-    let toc_opt = (!toc.is_empty()).then_some(toc);
     let excerpt_opt = (!excerpt.is_empty()).then_some(excerpt);
+
+    // Pre-render markdown to HTML server-side (ignore client-side preview)
+    let _ = (content, toc);
+    let (rendered_content, rendered_toc) = render_markdown(&raw_content);
 
     let tags_json = if tags.is_empty() {
         "[]".to_string()
@@ -386,7 +391,7 @@ pub async fn update_post(
     };
 
     let post = sqlx::query(
-        "UPDATE posts SET title=?, slug=?, hero=?, hero_alt=?, hero_caption=?, created_at=?, excerpt=?, raw_content=?, content=?, published=?, preview=?, tags=? WHERE id=?",
+        "UPDATE posts SET title=?, slug=?, hero=?, hero_alt=?, hero_caption=?, created_at=?, excerpt=?, raw_content=?, content=?, toc=?, published=?, preview=?, tags=? WHERE id=?",
     )
     .bind(title)
     .bind(slug)
@@ -396,14 +401,14 @@ pub async fn update_post(
     .bind(created_at)
     .bind(excerpt_opt)
     .bind(raw_content)
-    .bind(content)
+    .bind(rendered_content)
+    .bind(rendered_toc)
     .bind(published)
     .bind(preview)
     .bind(tags_json)
     .bind(id)
     .execute(&pool)
     .await;
-    let _ = toc_opt;
     let res = match post {
         Ok(_) => Ok(true),
         Err(sqlx::Error::RowNotFound) => Ok(false),
@@ -428,4 +433,35 @@ pub async fn delete_post(id: u16) -> Result<(), ServerFnError> {
         .await
         .map(|_| ())
         .map_err(|e| ServerFnError::new(e.to_string()))
+}
+
+/// One-time startup backfill: re-render markdown for any posts that don't yet
+/// have cached HTML (identified by `toc IS NULL`). Idempotent — skips posts
+/// that already have a `toc` value.
+#[cfg(feature = "ssr")]
+pub async fn backfill_post_html_cache(pool: &sqlx::SqlitePool) {
+    use crate::models::post::render_markdown;
+
+    let rows: Vec<(i64, Option<String>, String)> =
+        sqlx::query_as("SELECT id, raw_content, content FROM posts WHERE toc IS NULL")
+            .fetch_all(pool)
+            .await
+            .unwrap_or_default();
+
+    if rows.is_empty() {
+        return;
+    }
+
+    let count = rows.len();
+    for (id, raw_content, content) in rows {
+        let source = raw_content.unwrap_or(content);
+        let (html, toc) = render_markdown(&source);
+        let _ = sqlx::query("UPDATE posts SET content = ?, toc = ? WHERE id = ?")
+            .bind(&html)
+            .bind(&toc)
+            .bind(id)
+            .execute(pool)
+            .await;
+    }
+    tracing::info!("Backfilled HTML cache for {count} posts");
 }

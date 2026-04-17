@@ -19,15 +19,10 @@ pub async fn file_and_error_handler(
     if res.status() == StatusCode::OK {
         res.into_response()
     } else {
-        println!("not found for {uri:?}");
-        /*let mut errors = Errors::default();
-        errors.insert_with_default_key(BenwisAppError::NotFound);
-        let handler = leptos_axum::render_app_to_stream(
-            options.to_owned(),
-            move || view! { <ErrorTemplate outside_errors=errors.clone()/>},
-        );
-        handler(req).await.into_response()*/
-        todo!()
+        Response::builder()
+            .status(StatusCode::NOT_FOUND)
+            .body(Body::from("Not Found"))
+            .unwrap()
     }
 }
 

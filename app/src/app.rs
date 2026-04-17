@@ -1,3 +1,4 @@
+use crate::error_template::NotFound;
 use crate::layouts::Default;
 use crate::providers::{AuthContext, provide_auth, provide_color_scheme};
 use crate::routes::auth::{Join, Login, Logout};
@@ -25,7 +26,7 @@ pub fn BenwisApp() -> impl IntoView {
     view! {
         <Router>
             <Default>
-                <FlatRoutes fallback=|| "Not found!">
+                <FlatRoutes fallback=NotFound>
                     <Route
                         path=path!("")
                         view=move || view! { <HomeIndex /> }
