@@ -1,51 +1,37 @@
-use leptos::{IntoView, component};
+use leptos::{IntoView, component, prelude::*, view};
 
-// A basic function to display errors served by the error boundaries. Feel free to do more complicated things
-// here than just displaying them
 #[component]
-pub fn ErrorTemplate(/*    #[prop(optional)] outside_errors: Option<Errors>,
-    #[prop(optional)] errors: Option<RwSignal<Errors>>,*/) -> impl IntoView {
-    // TODO
-    /*  let errors = match outside_errors {
-        Some(e) => RwSignal::new(e),
-        None => match errors {
-            Some(e) => e,
-            None => panic!("No Errors found and we expected errors!"),
-        },
-    };
+pub fn ErrorTemplate(
+    #[prop(optional)] status_code: Option<u16>,
+    #[prop(optional)] message: Option<String>,
+) -> impl IntoView {
+    let code = status_code.unwrap_or(404);
+    let msg = message.unwrap_or_else(|| match code {
+        404 => "Page not found".to_string(),
+        401 => "Authentication required".to_string(),
+        500 => "Internal server error".to_string(),
+        _ => "Something went wrong".to_string(),
+    });
 
-    // Get Errors from Signal
-    // Downcast lets us take a type that implements `std::error::Error`
-    let errors: Vec<BenwisAppError> = errors
-        .get()
-        .into_iter()
-        .filter_map(|(_, v)| v.downcast_ref::<BenwisAppError>().cloned())
-        .collect();
+    view! {
+        <div class="error-template" style="text-align: center; padding: 4rem 1rem;">
+            <h1 style="font-size: 3rem; margin-bottom: 0.5rem;">{code}</h1>
+            <p style="font-size: 1.25rem; color: var(--text-secondary, #666);">{msg}</p>
+            <a href="/" style="display: inline-block; margin-top: 2rem;">"Go home"</a>
+        </div>
+    }
+}
 
-    // Only the response code for the first error is actually sent from the server
-    // this may be customized by the specific application
-    cfg_if! {
-      if #[cfg(feature="ssr")]{
-        let response = use_context::<ResponseOptions>();
-        if let Some(response) = response{
-          response.set_status(errors[0].status_code());
+#[component]
+pub fn NotFound() -> impl IntoView {
+    #[cfg(feature = "ssr")]
+    {
+        if let Some(resp) = leptos::prelude::use_context::<leptos_axum::ResponseOptions>() {
+            resp.set_status(http::StatusCode::NOT_FOUND);
         }
-      }
     }
 
     view! {
-        <h1>"Errors"</h1>
-        <For
-            each=move || { errors.clone().into_iter().enumerate() }
-            key=|(index, _error)| *index
-            children=move |error| {
-                let error_string = error.1.to_string();
-                let error_code = error.1.status_code();
-                view! {
-                    <h2>{error_code.to_string()}</h2>
-                    <p>"Error: " {error_string}</p>
-                }
-            }
-        />
-    }*/
+        <ErrorTemplate status_code=404 />
+    }
 }

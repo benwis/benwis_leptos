@@ -135,6 +135,8 @@ async fn main() {
         .await
         .expect("could not run SQLx migrations");
 
+    ::app::functions::post::backfill_post_html_cache(&pool).await;
+
     // Setting this to None means we'll be using cargo-leptos and its env vars
     let conf = get_configuration(None).expect("Failed to get config");
     let leptos_options = conf.leptos_options;
