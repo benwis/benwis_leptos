@@ -1,6 +1,5 @@
 use crate::models::Post;
-use leptos::prelude::*;
-use leptos::{component, IntoView};
+use leptos::{IntoView, component};
 // export type RssEntry = {
 //     title: string;
 //     link: string;
@@ -75,7 +74,7 @@ pub fn generate_rss(title: &str, description: &str, link: &str, posts: Vec<Post>
                 <atom:link href="https://benw.is/rss.xml" rel="self" type="application/rss+xml" />
                 {}
             </channel>
-        </rss>   
+        </rss>
      "#,
         rss_entries
     )
