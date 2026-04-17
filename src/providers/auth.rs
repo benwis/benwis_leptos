@@ -6,14 +6,12 @@ use leptos::prelude::*;
 use leptos::server::{Resource, ServerAction};
 use leptos::server_fn::ServerFnError;
 
-// TODO: actions and resources!
-
 #[derive(Clone)]
 pub struct AuthContext {
     pub login: ServerAction<Login>,
     pub logout: ServerAction<Logout>,
     pub signup: ServerAction<Signup>,
-    pub user: Resource<Result<Option<SafeUser>, ServerFnError>, SerdeJson>,
+    pub user: Resource<Result<Option<SafeUser>, ServerFnError>>,
 }
 /// Get the current user and place it in Context
 pub fn provide_auth() {

@@ -1,79 +1,79 @@
 use cfg_if::cfg_if;
-use leptos::{AutoReload, HydrationScripts};
-use leptos_meta::MetaTags;
-use tokio::net::TcpListener;
 
 // boilerplate to run in different modes
 cfg_if! {
 if #[cfg(feature = "ssr")] {
-    use benwis_leptos::telemetry::TracingSettings;
     use axum::{
         response::{Response, IntoResponse},
-        routing::{post, get},
+        routing::get,
         extract::{Path, State, RawQuery},
         http::{Request, header::HeaderMap},
         body::Body as AxumBody,
         Router,
     };
+    use tokio::net::TcpListener;
     use tower_http::trace::TraceLayer;
     use benwis_leptos::*;
     use benwis_leptos::fallback::file_and_error_handler;
-    use benwis_leptos::telemetry::{get_subscriber,get_subscriber_with_tracing, init_subscriber};
 
     use leptos_axum::{generate_route_list, LeptosRoutes, handle_server_fns_with_context};
-    use leptos::{logging::log, view, context::provide_context, config::get_configuration};
-    use std::env;
+    use leptos::prelude::*;
+    use leptos::logging::log;
+    use leptos::config::{get_configuration, LeptosOptions};
+    use leptos_meta::MetaTags;
     use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
-    use axum_session::{SessionConfig, SessionLayer, SessionMode, SessionStore};
-    use axum_session_auth::{AuthSessionLayer, AuthConfig, SessionSqlitePool};
-    use crate::functions::auth::{AuthSession};
+    use axum_session::{SessionConfig, SessionLayer, SessionStore};
+    use axum_session_auth::{AuthSessionLayer, AuthConfig};
+    use axum_session_sqlx::SessionSqlitePool;
+    use crate::functions::auth::AuthSession;
     use crate::app::*;
     use crate::models::User;
-    use tower_http::{compression::CompressionLayer};
+    use tower_http::compression::CompressionLayer;
     use benwis_leptos::state::AppState;
 
     #[cfg(not(target_env = "msvc"))]
     use jemallocator::Jemalloc;
 
+    fn shell(options: LeptosOptions) -> impl IntoView {
+        view! {
+            <!DOCTYPE html>
+            <html lang="en">
+                <head>
+                    <meta charset="utf-8"/>
+                    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                    <AutoReload options=options.clone() />
+                    <HydrationScripts options=options.clone() islands=false/>
+                    <link rel="stylesheet" id="leptos" href="/pkg/benwis_leptos.css"/>
+                    <link rel="shortcut icon" type="image/ico" href="/favicon.ico"/>
+                    <MetaTags/>
+                </head>
+                <body>
+                    <BenwisApp/>
+                </body>
+            </html>
+        }
+    }
+
     #[tracing::instrument(level = "info", fields(error))]
-    async fn server_fn_handler(State(app_state): State<AppState>, auth_session: AuthSession, path: Path<String>, headers: HeaderMap, raw_query: RawQuery,
+    async fn server_fn_handler(State(app_state): State<AppState>, auth_session: AuthSession, path: Path<String>, _headers: HeaderMap, _raw_query: RawQuery,
     request: Request<AxumBody>) -> impl IntoResponse {
 
         log!("{:?}", path);
 
         handle_server_fns_with_context(move || {
-            provide_context( auth_session.clone());
-            provide_context( app_state.pool.clone());
+            provide_context(auth_session.clone());
+            provide_context(app_state.pool.clone());
         }, request).await
     }
     #[tracing::instrument(level = "info", fields(error))]
-     async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response{
-            let handler = leptos_axum::render_app_to_stream_with_context(app_state.leptos_options.clone(),
+    async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response {
+        let options = app_state.leptos_options.clone();
+        let handler = leptos_axum::render_app_to_stream_with_context(
             move || {
-                provide_context( auth_session.clone());
-                provide_context( app_state.pool.clone());
+                provide_context(auth_session.clone());
+                provide_context(app_state.pool.clone());
             },
-            move || {
-                use leptos::prelude::*;
-
-                view! {
-                    <!DOCTYPE html>
-                    <html lang="en">
-                        <head>
-                            <meta charset="utf-8"/>
-                            <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                            //<AutoReload options=app_state.leptos_options.clone() />
-                            <HydrationScripts options=app_state.leptos_options.clone() islands=false/>
-                            <link rel="stylesheet" id="leptos" href="/pkg/benwis_leptos.css"/>
-                            <link rel="shortcut icon" type="image/ico" href="/favicon.ico"/>
-                            <MetaTags/>
-                        </head>
-                        <body>
-                            <BenwisApp/>
-                        </body>
-                    </html>
-                }
-            }
+            move || shell(options.clone()),
         );
         handler(req).await.into_response()
     }
@@ -92,59 +92,16 @@ if #[cfg(feature = "ssr")] {
             .await
             .expect("Could not make pool.");
 
-        //let parallelism = std::thread::available_parallelism().unwrap().get();
-        //log!("PARALLELISM: {parallelism}");
-
-        let honeycomb_team = match std::env::var("HONEYCOMB_TEAM"){
-            Ok(t) => Some(t),
-            Err(_) => None,
-        };
-
-        let honeycomb_dataset = match std::env::var("HONEYCOMB_DATASET"){
-            Ok(t) => Some(t),
-            Err(_) => None,
-        };
-
-        let honeycomb_service_name = match std::env::var("HONEYCOMB_SERVICE_NAME"){
-        Ok(t) => Some(t),
-        Err(_) => None,
-        };
-
-        let tracing_conf = TracingSettings{
-            honeycomb_team,
-            honeycomb_dataset,
-            honeycomb_service_name,
-        };
-
-        // Get telemetry layer
-        /*if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var").to_lowercase() == "local" {
-            println!("LOCAL ENVIRONMENT");
-            init_subscriber(get_subscriber(
-                "benwis_leptos".into(),
-                "INFO".into(),
-                std::io::stdout,
-            ));
-        } else if env::var("LEPTOS_ENVIRONMENT").expect("Failed to find LEPTOS_ENVIRONMENT Env Var") == "prod_no_trace" {
-            init_subscriber(get_subscriber(
-                "benwis_leptos".into(),
-                "INFO".into(),
-                std::io::stdout,
-             ));
-        } else{
-            init_subscriber(
-                get_subscriber_with_tracing(
-                    "benwis_leptos".into(),
-                    &tracing_conf,
-                    "INFO".into(),
-                    std::io::stdout,
-                ).await);
-        }*/
-
         // Auth section
         let session_config =
             SessionConfig::default().with_table_name("axum_sessions");
         let auth_config = AuthConfig::<i64>::default();
-        let session_store = SessionStore::<SessionSqlitePool>::new(Some(pool.clone().into()), session_config).await.expect("Failed to get Session!");
+        let session_store = SessionStore::<SessionSqlitePool>::new(
+            Some(SessionSqlitePool::from(pool.clone())),
+            session_config,
+        )
+        .await
+        .expect("Failed to get Session!");
 
         sqlx::migrate!()
             .run(&pool)
@@ -152,7 +109,7 @@ if #[cfg(feature = "ssr")] {
             .expect("could not run SQLx migrations");
 
         // Setting this to None means we'll be using cargo-leptos and its env vars
-        let conf = get_configuration(None).await.expect("Failed to get config");
+        let conf = get_configuration(None).expect("Failed to get config");
         let leptos_options = conf.leptos_options;
         let addr = leptos_options.site_addr;
         let routes = generate_route_list(BenwisApp);
@@ -164,7 +121,7 @@ if #[cfg(feature = "ssr")] {
         };
         // build our application with a route
         let app = Router::new()
-        .route("/api/*fn_name", get(server_fn_handler).post(server_fn_handler))
+        .route("/api/{*fn_name}", get(server_fn_handler).post(server_fn_handler))
         .leptos_routes_with_handler(routes, get(leptos_routes_handler) )
         .fallback(file_and_error_handler)
         .layer(TraceLayer::new_for_http())

@@ -1,7 +1,7 @@
 use crate::components::FeatureCard;
-use crate::functions::post::{get_some_posts_meta, AddPost, DeletePost, UpdatePost};
+use crate::functions::post::{AddPost, DeletePost, UpdatePost, get_some_posts_meta};
 use leptos::tachys::either::EitherOf3;
-use leptos::{component, IntoView};
+use leptos::{IntoView, component};
 use leptos::{prelude::*, server::Resource, view};
 use leptos_meta::*;
 
@@ -49,46 +49,45 @@ pub fn Index() -> impl IntoView {
                     "Recent Posts"
                 </h3>
                 <div class="flex flex-col gap-6 md:flex-row">
-                    {async move {
-                        match posts_meta.await {
-                            Err(e) => {
-                                EitherOf3::A(
-                                    view! {
-                                        <pre class="error">"Server Error: " {e.to_string()}</pre>
-                                    },
-                                )
-                            }
-                            Ok(posts_meta) => {
-                                if posts_meta.is_empty() {
-                                    EitherOf3::B(
+                    <Suspense fallback=|| view! { <p>"Loading posts..."</p> }>
+                        {move || Suspend::new(async move {
+                            match posts_meta.await {
+                                Err(e) => {
+                                    EitherOf3::A(
                                         view! {
-                                            <p class="text-black dark:text-white">
-                                                "No posts were found."
-                                            </p>
+                                            <pre class="error">"Server Error: " {e.to_string()}</pre>
                                         },
                                     )
-                                } else {
-                                    EitherOf3::C(
-                                        posts_meta
-                                            .into_iter()
-                                            .map(move |post_meta| {
-                                                view! {
-                                                    <FeatureCard
-                                                        href=post_meta.slug
-                                                        title=post_meta.title
-                                                        date=post_meta.created_at_pretty
-                                                    />
-                                                }
-                                            })
-                                            .collect::<Vec<_>>(),
-                                    )
+                                }
+                                Ok(posts_meta) => {
+                                    if posts_meta.is_empty() {
+                                        EitherOf3::B(
+                                            view! {
+                                                <p class="text-black dark:text-white">
+                                                    "No posts were found."
+                                                </p>
+                                            },
+                                        )
+                                    } else {
+                                        EitherOf3::C(
+                                            posts_meta
+                                                .into_iter()
+                                                .map(move |post_meta| {
+                                                    view! {
+                                                        <FeatureCard
+                                                            href=post_meta.slug
+                                                            title=post_meta.title
+                                                            date=post_meta.created_at_pretty
+                                                        />
+                                                    }
+                                                })
+                                                .collect::<Vec<_>>(),
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    }
-                        .suspend()
-                        .track()
-                        .with_fallback(view! { <p>"Loading posts..."</p> })}
+                        })}
+                    </Suspense>
                 </div>
                 <a
                     class="mt-8 flex h-6 rounded-lg leading-7 text-gray-600 transition-all dark:text-gray-400 dark:hover:text-gray-200"

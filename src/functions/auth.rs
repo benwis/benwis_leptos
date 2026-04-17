@@ -1,21 +1,25 @@
+use crate::models::User;
 use cfg_if::cfg_if;
 use leptos::prelude::*;
+use leptos::server;
 use leptos::server_fn::ServerFnError;
-use leptos::{component, server, IntoView};
+
+#[cfg(feature = "ssr")]
+use crate::functions::{auth, pool};
 
 cfg_if! {
 if #[cfg(feature = "ssr")] {
     use sqlx::SqlitePool;
-    use axum_session_auth::{SessionSqlitePool, Authentication, HasPermission};
+    use axum_session_auth::{Authentication, HasPermission};
+    use axum_session_sqlx::SessionSqlitePool;
+
     use argon2::{
-        password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
+        password_hash::{PasswordHash, PasswordHasher, PasswordVerifier, SaltString, rand_core::OsRng},
         Argon2,
-    };    use crate::functions::{pool, auth};
+    };
     pub type AuthSession = axum_session_auth::AuthSession<User, i64, SessionSqlitePool, SqlitePool>;
     use async_trait::async_trait;
-    use crate::models::User;
     use crate::errors::BenwisAppError;
-    use rand_core::OsRng;
 
     /// Hash Argon2 password
     pub fn hash_password(password: &[u8]) -> Result<String, BenwisAppError> {
