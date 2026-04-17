@@ -1,7 +1,6 @@
-use crate::functions::post::{get_posts, AddPost, DeletePost, UpdatePost};
 use crate::models::Post;
 use leptos::prelude::*;
-use leptos::{component, server, view, IntoView};
+use leptos::{component, IntoView};
 // export type RssEntry = {
 //     title: string;
 //     link: string;

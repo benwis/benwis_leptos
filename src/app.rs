@@ -1,4 +1,4 @@
-use crate::layouts::{Default, Home};
+use crate::layouts::Default;
 use crate::providers::{AuthContext, provide_auth, provide_color_scheme};
 use crate::routes::auth::{Join, Login, Logout};
 use crate::routes::blog::*;
