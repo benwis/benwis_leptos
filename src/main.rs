@@ -7,7 +7,7 @@ if #[cfg(feature = "ssr")] {
         response::{Response, IntoResponse},
         routing::get,
         extract::{Path, State, RawQuery},
-        http::{Request, header::HeaderMap},
+        http::{Request, header, header::HeaderMap},
         body::Body as AxumBody,
         Router,
     };
@@ -65,8 +65,20 @@ if #[cfg(feature = "ssr")] {
             provide_context(app_state.pool.clone());
         }, request).await
     }
+    fn cache_control_for_path(path: &str) -> &'static str {
+        match path {
+            p if p.starts_with("/login")
+                || p.starts_with("/logout")
+                || p.starts_with("/signup")
+                || p.starts_with("/posts/add")
+                || p.contains("/edit") => "private, no-cache",
+            _ => "public, max-age=300, s-maxage=300",
+        }
+    }
+
     #[tracing::instrument(level = "info", fields(error))]
     async fn leptos_routes_handler(auth_session: AuthSession, State(app_state): State<AppState>, req: Request<AxumBody>) -> Response {
+        let path = req.uri().path().to_string();
         let options = app_state.leptos_options.clone();
         let handler = leptos_axum::render_app_to_stream_with_context(
             move || {
@@ -75,7 +87,12 @@ if #[cfg(feature = "ssr")] {
             },
             move || shell(options.clone()),
         );
-        handler(req).await.into_response()
+        let mut response = handler(req).await.into_response();
+        response.headers_mut().insert(
+            header::CACHE_CONTROL,
+            cache_control_for_path(&path).parse().unwrap(),
+        );
+        response
     }
     #[tokio::main]
     async fn main() {
@@ -87,8 +104,10 @@ if #[cfg(feature = "ssr")] {
         // Load .env file if one is present(should only happen in local dev)
         dotenvy::dotenv().ok();
 
+        let database_url = std::env::var("DATABASE_URL")
+            .unwrap_or_else(|_| "sqlite:db/App.db?mode=rwc".to_string());
         let pool = SqlitePoolOptions::new()
-            .connect("sqlite:db/App.db?mode=rwc")
+            .connect(&database_url)
             .await
             .expect("Could not make pool.");
 
