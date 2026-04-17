@@ -1,0 +1,18 @@
+[package]
+name = "frontend"
+version = "0.2.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+app = { path = "../app", features = ["hydrate"] }
+leptos = { workspace = true, features = ["hydrate"] }
+wasm-bindgen = { workspace = true }
+console_log = { workspace = true }
+console_error_panic_hook = { workspace = true }
+log = { workspace = true }
+
+[features]
+hydrate = []

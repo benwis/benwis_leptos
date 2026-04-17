@@ -1,0 +1,29 @@
+[package]
+name = "server"
+version = "0.2.0"
+edition = "2024"
+
+[dependencies]
+app = { path = "../app", features = ["ssr"] }
+leptos = { workspace = true, features = ["ssr"] }
+leptos_axum = { workspace = true }
+leptos_meta = { workspace = true }
+axum = { workspace = true }
+axum-extra = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tower = { workspace = true }
+tower-http = { workspace = true }
+sqlx = { workspace = true }
+axum_session = { workspace = true }
+axum_session_auth = { workspace = true }
+axum_session_sqlx = { workspace = true }
+tracing = { workspace = true }
+dotenvy = { workspace = true }
+http = { workspace = true }
+log = { workspace = true }
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+jemallocator = "0.5"
+
+[features]
+ssr = []
