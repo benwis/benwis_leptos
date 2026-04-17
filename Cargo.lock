@@ -86,6 +86,48 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
 
 [[package]]
+name = "app"
+version = "0.2.0"
+dependencies = [
+ "anyhow",
+ "argon2",
+ "async-trait",
+ "axum",
+ "axum-extra",
+ "axum_session",
+ "axum_session_auth",
+ "axum_session_sqlx",
+ "cfg-if",
+ "chrono",
+ "dotenvy",
+ "femark",
+ "futures",
+ "http",
+ "jemallocator",
+ "leptos",
+ "leptos_axum",
+ "leptos_meta",
+ "leptos_router",
+ "log",
+ "miette",
+ "rand 0.10.1",
+ "rand_core 0.10.1",
+ "serde",
+ "serde-wasm-bindgen",
+ "serde_json",
+ "server_fn_macro",
+ "slug",
+ "sqlx",
+ "thiserror 2.0.18",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "argon2"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -373,50 +415,6 @@ name = "base64ct"
 version = "1.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2af50177e190e07a26ab74f8b1efbfe2ef87da2116221318cb1c2e82baf7de06"
-
-[[package]]
-name = "benwis_leptos"
-version = "0.2.0"
-dependencies = [
- "anyhow",
- "argon2",
- "async-trait",
- "axum",
- "axum-extra",
- "axum_session",
- "axum_session_auth",
- "axum_session_sqlx",
- "cfg-if",
- "chrono",
- "console_error_panic_hook",
- "console_log",
- "dotenvy",
- "femark",
- "futures",
- "http",
- "jemallocator",
- "leptos",
- "leptos_axum",
- "leptos_meta",
- "leptos_router",
- "log",
- "miette",
- "rand 0.10.1",
- "rand_core 0.10.1",
- "serde",
- "serde-wasm-bindgen",
- "serde_json",
- "server_fn_macro",
- "slug",
- "sqlx",
- "thiserror 2.0.18",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "wasm-bindgen",
- "web-sys",
-]
 
 [[package]]
 name = "bitflags"
@@ -1021,6 +1019,18 @@ checksum = "8835f84f38484cc86f110a805655697908257fb9a7af005234060891557198e9"
 dependencies = [
  "nonempty",
  "thiserror 1.0.69",
+]
+
+[[package]]
+name = "frontend"
+version = "0.2.0"
+dependencies = [
+ "app",
+ "console_error_panic_hook",
+ "console_log",
+ "leptos",
+ "log",
+ "wasm-bindgen",
 ]
 
 [[package]]
@@ -2834,6 +2844,30 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "server"
+version = "0.2.0"
+dependencies = [
+ "app",
+ "axum",
+ "axum-extra",
+ "axum_session",
+ "axum_session_auth",
+ "axum_session_sqlx",
+ "dotenvy",
+ "http",
+ "jemallocator",
+ "leptos",
+ "leptos_axum",
+ "leptos_meta",
+ "log",
+ "sqlx",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
 ]
 
 [[package]]
