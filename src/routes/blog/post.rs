@@ -96,7 +96,7 @@ pub fn PostContent(triad: PostTriad) -> impl IntoView {
                                         </div>
                                         <hr />
                                     })}
-                                    <div inner_html=post.html></div>
+                                    <div inner_html=post.content></div>
                                 </main>
                             </div>
                             <div id="page__sidebar">

@@ -74,8 +74,7 @@ pub async fn add_post(
     let created_at = if created_at_pretty.is_empty() {
         Utc::now().timestamp()
     } else {
-        parse_date_flexible(&created_at_pretty)
-            .map_err(|e| ServerFnError::new(e.to_string()))?
+        parse_date_flexible(&created_at_pretty).map_err(|e| ServerFnError::new(e.to_string()))?
     };
 
     let id = match user {
@@ -166,7 +165,7 @@ pub async fn get_posts_paginated(page: i64, limit: i64) -> Result<Vec<Post>, Ser
 
     let mut posts = Vec::new();
     let mut rows = sqlx::query_as::<_, SqlPost>(
-        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?",
+        "SELECT id, user_id, title, slug, excerpt, raw_content, content, created_at, updated_at, published, preview, links, hero, hero_alt, hero_caption, tags FROM posts WHERE published = 1 ORDER BY created_at DESC LIMIT ? OFFSET ?",
     )
     .bind(limit)
     .bind(offset)
@@ -189,7 +188,7 @@ pub async fn get_posts_paginated(page: i64, limit: i64) -> Result<Vec<Post>, Ser
 #[server(GetPostCount, "/api")]
 pub async fn get_post_count() -> Result<i64, ServerFnError> {
     let pool = pool()?;
-    let (count,): (i64,) = sqlx::query_as("SELECT COUNT(*) FROM posts")
+    let (count,): (i64,) = sqlx::query_as("SELECT COUNT(*) FROM posts WHERE published = 1")
         .fetch_one(&pool)
         .await
         .map_err(|e| ServerFnError::new(e.to_string()))?;
@@ -365,8 +364,8 @@ pub async fn update_post(
     let published = published.parse::<bool>().unwrap_or(false);
     let preview = preview.parse::<bool>().unwrap_or(false);
 
-    let created_at = parse_date_flexible(&created_at_pretty)
-        .map_err(|e| ServerFnError::new(e.to_string()))?;
+    let created_at =
+        parse_date_flexible(&created_at_pretty).map_err(|e| ServerFnError::new(e.to_string()))?;
 
     let slug = if slug.is_empty() {
         slugify(&title)

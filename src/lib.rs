@@ -15,7 +15,6 @@ pub mod models;
 pub mod providers;
 #[cfg(feature = "ssr")]
 pub mod state;
-pub mod telemetry;
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

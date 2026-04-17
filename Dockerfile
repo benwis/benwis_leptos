@@ -1,21 +1,20 @@
-FROM rustlang/rust:nightly-bullseye as builder
+FROM rust:bookworm AS builder
 
-# RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
-# RUN tar -xvf cargo-binstall-x86_64-unknown-linux-musl.tgz
-# RUN echo $PATH
-# RUN cp cargo-binstall /usr/local/cargo/bin 
-# RUN cargo binstall cargo-leptos -y
-#RUN cargo install --git https://github.com/akesson/cargo-leptos cargo-leptos
-RUN cargo install --locked cargo-leptos
-RUN rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
-RUN rustup target add wasm32-unknown-unknown
-RUN mkdir -p /app
+RUN apt-get update && apt-get install -y --no-install-recommends mold clang && rm -rf /var/lib/apt/lists/*
+
+RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz \
+    && tar -xvf cargo-binstall-x86_64-unknown-linux-musl.tgz \
+    && cp cargo-binstall /usr/local/cargo/bin \
+    && cargo binstall cargo-leptos -y \
+    && rustup target add wasm32-unknown-unknown
+
 WORKDIR /app
 COPY . .
 ENV LEPTOS_BIN_TARGET_TRIPLE="x86_64-unknown-linux-gnu"
 RUN cargo leptos --manifest-path=./Cargo.toml build --release -vv
 
-FROM rustlang/rust:nightly-bullseye as runner
+FROM debian:bookworm-slim AS runner
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/target/server/x86_64-unknown-linux-gnu/release/benwis_leptos /app/
 COPY --from=builder /app/target/site /app/site
 COPY --from=builder /app/db /app/db

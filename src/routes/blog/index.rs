@@ -41,7 +41,6 @@ pub fn Blog() -> impl IntoView {
                     } else {
                         let cards = posts
                             .into_iter()
-                            .filter(|post| post.published)
                             .map(move |post| {
                                 let post_slug: StoredValue<String> =
                                     StoredValue::new(post.slug.clone());
