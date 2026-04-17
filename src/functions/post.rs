@@ -19,6 +19,24 @@ pub struct PostQuery {
     pub p: Option<i64>,
 }
 
+fn parse_date_flexible(s: &str) -> Result<i64, BenwisAppError> {
+    #[cfg(feature = "ssr")]
+    {
+        if let Ok(d) = DateTime::parse_from_rfc3339(s) {
+            return Ok(d.timestamp());
+        }
+        if let Ok(d) = NaiveDateTime::parse_from_str(s, "%Y-%m-%d %H:%M:%S") {
+            return Ok(d.and_utc().timestamp());
+        }
+        Err(BenwisAppError::BadRequest(format!("Invalid date: {s}")))
+    }
+    #[cfg(not(feature = "ssr"))]
+    {
+        let _ = s;
+        Ok(0)
+    }
+}
+
 #[tracing::instrument(level = "info", fields(error), err)]
 #[server(AddPost, "/api")]
 pub async fn add_post(
