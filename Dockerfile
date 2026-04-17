@@ -10,12 +10,11 @@ RUN wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/c
 
 WORKDIR /app
 COPY . .
-ENV LEPTOS_BIN_TARGET_TRIPLE="x86_64-unknown-linux-gnu"
 RUN cargo leptos --manifest-path=./Cargo.toml build --release -vv
 
 FROM debian:bookworm-slim AS runner
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app/target/server/x86_64-unknown-linux-gnu/release/benwis_leptos /app/
+COPY --from=builder /app/target/release/benwis_leptos /app/
 COPY --from=builder /app/target/site /app/site
 COPY --from=builder /app/db /app/db
 COPY --from=builder /app/Cargo.toml /app/
