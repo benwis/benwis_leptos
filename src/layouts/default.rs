@@ -1,6 +1,6 @@
 use leptos::children::Children;
 use leptos::reactive::owner::use_context;
-use leptos::{component, IntoView};
+use leptos::{IntoView, component};
 use leptos::{prelude::*, view};
 use leptos_meta::*;
 
@@ -12,8 +12,7 @@ pub fn Default(children: Children) -> impl IntoView {
     let color_scheme = use_context::<ColorScheme>().expect("Failed to find ColorScheme");
 
     view! {
-        // TODO I haven't actually implemented <html> and <body> classes in SSR yet
-        <Html attr:class=move || {
+        <Html attr:lang="en-US" attr:class=move || {
             let classes = "h-full";
             let theme = match color_scheme.prefers_dark.get() {
                 true => "dark",
@@ -21,40 +20,40 @@ pub fn Default(children: Children) -> impl IntoView {
             };
             format!("{} {}", classes, theme)
         } />
-        <Body attr:class="h-screen bg-white dark:bg-gray-900 max-w-5xl mx-auto flex flex-col" />
+
+        <Body />
         <Link rel="shortcut icon" type_="image/ico" href="/favicon.ico" />
-
         <Link
-            rel="preload"
-            href="fonts/BerkeleyMono-Regular.woff2"
-            as_="font"
-            type_="font/woff2"
-            crossorigin="anonymous"
+            rel="alternate"
+            type_="application/rss+xml"
+            href="https://benw.is/rss.xml"
+            title="benwis Blog"
         />
-
+        <Link rel="preconnect" href="https://fonts.googleapis.com" />
+        <Link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
         <Link
-            rel="preload"
-            href="fonts/Neue Plak Black.ttf"
-            as_="font"
-            type_="font/ttf"
-            crossorigin="anonymous"
+            href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet"
         />
-
         <Link
-            rel="preload"
-            href="fonts/1296355/af582cef-2f0c-494d-862f-b06b8e7b1cbf.woff2"
-            as_="font"
-            type_="font/woff2"
-            crossorigin="anonymous"
+            href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Orbitron:wght@400..900&display=swap"
+            rel="stylesheet"
         />
-
         // Fathom - beautiful, simple website analytics
-        <script src="https://cdn.usefathom.com/script.js" data-site="MTMCOBMG" defer />
-        <Stylesheet id="leptos" href="/styles/output.css" />
-        <Nav />
-        <main class="mx-auto flex w-full flex-col items-center justify-center border-gray-200 px-4 pb-16 md:pt-4 dark:border-gray-900 sm:px-8">
-            {children()}
-        </main>
-        <Footer />
+        <script
+            src="https://cdn.usefathom.com/script.js"
+            data-site="MTMCOBMG"
+            defer
+        ></script>
+        <Stylesheet id="leptos" href="/pkg/benwis_leptos.css" />
+        <Meta charset="utf-8" />
+
+        <div id="site-viewport">
+            <div id="site-layout">
+                <Nav />
+                {children()}
+                <Footer />
+            </div>
+        </div>
     }
 }

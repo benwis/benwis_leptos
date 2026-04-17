@@ -15,6 +15,7 @@ if #[cfg(feature = "ssr")] {
      title: String,
      slug: String,
      excerpt: Option<String>,
+     raw_content: Option<String>,
      content: String,
      created_at: i64,
      updated_at: i64,
@@ -22,13 +23,19 @@ if #[cfg(feature = "ssr")] {
      preview: bool,
      links: Option<String>,
      hero: Option<String>,
-     tags: String,
+     hero_alt: Option<String>,
+     hero_caption: Option<String>,
+     tags: Option<String>,
     }
 
     impl SqlPost {
         #[tracing::instrument(level = "info", fields(error))]
         pub async fn into_post(self, pool: &SqlitePool) -> Post {
-            let HTMLOutput{content, toc,..} = femark::process_markdown_to_html(self.content.clone()).unwrap_or_default();
+            let raw_content = self.raw_content.clone().unwrap_or_else(|| self.content.clone());
+            let HTMLOutput{content, toc,..} = femark::process_markdown_to_html(raw_content.clone()).unwrap_or_default();
+            let tags: Vec<String> = self.tags.as_deref()
+                .and_then(|t| serde_json::from_str(t).ok())
+                .unwrap_or_default();
             Post {
                 id: self.id,
                 user: SafeUser::get(self.user_id, pool).await,
@@ -38,19 +45,25 @@ if #[cfg(feature = "ssr")] {
                 created_at_pretty: NaiveDateTime::from_timestamp_opt(self.created_at, 0).unwrap_or_default().to_string(),
                 published: self.published,
                 excerpt: self.excerpt,
-                content: self.content,
-                html: content,
+                raw_content,
+                content,
+                html: self.content,
                 toc,
                 updated_at: self.updated_at,
                 updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
+                hero_alt: self.hero_alt,
+                hero_caption: self.hero_caption,
                 links: self.links,
-                tags: self.tags,
+                tags,
             }
         }
         #[tracing::instrument(level = "info",fields(error))]
-        pub async fn into_post_meta(self, pool: &SqlitePool) -> PostMeta {
+        pub async fn into_post_meta(self, _pool: &SqlitePool) -> PostMeta {
+            let tags: Vec<String> = self.tags.as_deref()
+                .and_then(|t| serde_json::from_str(t).ok())
+                .unwrap_or_default();
             PostMeta {
                 id: self.id,
                 user_id: self.user_id,
@@ -64,8 +77,10 @@ if #[cfg(feature = "ssr")] {
                 updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
+                hero_alt: self.hero_alt,
+                hero_caption: self.hero_caption,
                 links: self.links,
-                tags: self.tags,
+                tags,
             }
         }
     }
@@ -82,11 +97,16 @@ if #[cfg(feature = "ssr")] {
      preview: bool,
      links: Option<String>,
      hero: Option<String>,
-     tags: String,
+     hero_alt: Option<String>,
+     hero_caption: Option<String>,
+     tags: Option<String>,
     }
     impl SqlPostMeta{
         #[tracing::instrument(level = "info",fields(error))]
-        pub async fn into_post_meta(self, pool: &SqlitePool) -> PostMeta {
+        pub async fn into_post_meta(self, _pool: &SqlitePool) -> PostMeta {
+            let tags: Vec<String> = self.tags.as_deref()
+                .and_then(|t| serde_json::from_str(t).ok())
+                .unwrap_or_default();
             PostMeta {
                 id: self.id,
                 user_id: self.user_id,
@@ -100,8 +120,10 @@ if #[cfg(feature = "ssr")] {
                 updated_at_pretty: NaiveDateTime::from_timestamp_opt(self.updated_at, 0).unwrap_or_default().to_string(),
                 preview: self.preview,
                 hero: self.hero,
+                hero_alt: self.hero_alt,
+                hero_caption: self.hero_caption,
                 links: self.links,
-                tags: self.tags,
+                tags,
             }
         }
     }
@@ -115,6 +137,7 @@ pub struct Post {
     pub title: String,
     pub slug: String,
     pub excerpt: Option<String>,
+    pub raw_content: String,
     pub content: String,
     pub html: String,
     pub toc: Option<String>,
@@ -126,7 +149,9 @@ pub struct Post {
     pub preview: bool,
     pub links: Option<String>,
     pub hero: Option<String>,
-    pub tags: String,
+    pub hero_alt: Option<String>,
+    pub hero_caption: Option<String>,
+    pub tags: Vec<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -144,5 +169,14 @@ pub struct PostMeta {
     pub preview: bool,
     pub links: Option<String>,
     pub hero: Option<String>,
-    pub tags: String,
+    pub hero_alt: Option<String>,
+    pub hero_caption: Option<String>,
+    pub tags: Vec<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PostTriad {
+    pub previous: Option<Post>,
+    pub post: Post,
+    pub next: Option<Post>,
 }

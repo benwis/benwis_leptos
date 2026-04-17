@@ -15,6 +15,14 @@ pub enum BenwisAppError {
     Argon2Error(String),
     #[error("Invalid Date or Time")]
     InvalidDateTime,
+    #[error("Authentication required")]
+    AuthError,
+    #[error("Bad Request: {0}")]
+    BadRequest(String),
+    #[error("Json Error: {0}")]
+    JsonError(String),
+    #[error("Server Error: {0}")]
+    ServerError(String),
 }
 
 impl BenwisAppError {
@@ -25,7 +33,18 @@ impl BenwisAppError {
             BenwisAppError::SqlxError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             BenwisAppError::Argon2Error(_) => StatusCode::BAD_REQUEST,
             BenwisAppError::InvalidDateTime => StatusCode::BAD_REQUEST,
+            BenwisAppError::AuthError => StatusCode::UNAUTHORIZED,
+            BenwisAppError::BadRequest(_) => StatusCode::BAD_REQUEST,
+            BenwisAppError::JsonError(_) => StatusCode::BAD_REQUEST,
+            BenwisAppError::ServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
+    }
+}
+
+#[cfg(not(feature = "ssr"))]
+impl From<serde_wasm_bindgen::Error> for BenwisAppError {
+    fn from(e: serde_wasm_bindgen::Error) -> Self {
+        BenwisAppError::JsonError(e.to_string())
     }
 }
 
