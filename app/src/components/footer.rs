@@ -58,9 +58,9 @@ pub fn Footer() -> impl IntoView {
                     </li>
                 </ul>
                 <ul id="site-footer__details">
-                    <li class="site-footer__detail">"© 2024 Ben Wishovich"</li>
+                    <li class="site-footer__detail">"© 2026 Ben Wishovich"</li>
                     <li class="site-footer__detail">
-                        "Built with " <a href="https://leptos.dev">"Leptos "</a> "v3"
+                        "Built with " <a href="https://leptos.dev">"Leptos "</a>
                     </li>
                     <li class="site-footer__detail">
                         "Design by "
