@@ -88,7 +88,7 @@ if #[cfg(feature = "ssr")] {
         dotenvy::dotenv().ok();
 
         let pool = SqlitePoolOptions::new()
-            .connect("sqlite:db/App.db")
+            .connect("sqlite:db/App.db?mode=rwc")
             .await
             .expect("Could not make pool.");
 
