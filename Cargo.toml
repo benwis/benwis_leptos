@@ -20,7 +20,6 @@ leptos_router = "0.8.13"
 leptos_axum = { version = "0.8.9", optional = true }
 server_fn_macro = "0.8.10"
 log = "0.4.29"
-simple_logger = "5.2.0"
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0"
 serde-wasm-bindgen = "0.6"
@@ -31,7 +30,7 @@ tower-http = { version = "0.6", features = [
 	"fs",
 	"trace",
 ], optional = true }
-tokio = { version = "1.52.1", features = ["full"], optional = true }
+tokio = { version = "1.52.1", optional = true }
 http = "1"
 sqlx = { version = "0.8.6", features = [
 	"runtime-tokio-rustls",
@@ -52,13 +51,6 @@ slug = "0.1.6"
 chrono = { version = "0.4.44", features = ["serde"] }
 tracing = "0.1.44"
 dotenvy = { version = "0.15.7", optional = true }
-hyper-tls = { version = "0.6.0", optional = true }
-tokio-native-tls = { version = "0.3.1", optional = true }
-native-tls = { version = "0.2.18", features = ["alpn"], optional = true }
-hyper = { version = "1.9", optional = true }
-reqwest = { version = "0.13.2", default-features = false, features = [
-	"rustls",
-], optional = true }
 [target.'cfg(not(target_env = "msvc"))'.dependencies]
 jemallocator = { version = "0.5", optional = true }
 
@@ -69,12 +61,7 @@ hydrate = ["leptos/hydrate"]
 ssr = [
 	"dep:axum",
 	"dep:jemallocator",
-	"dep:hyper",
 	"dep:tower",
-	"dep:hyper-tls",
-	"dep:reqwest",
-	"dep:tokio-native-tls",
-	"dep:native-tls",
 	"dep:dotenvy",
 	"dep:tokio",
 	"dep:tower-http",
