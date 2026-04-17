@@ -1,5 +1,4 @@
 use crate::functions;
-use leptos::prelude::*;
 use leptos::{IntoView, component, server::ServerAction, view};
 use leptos_meta::*;
 use leptos_router::components::Redirect;
